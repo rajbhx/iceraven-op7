@@ -159,7 +159,7 @@ jobs:
             exit 1
           fi
           echo "APK_DIR=$APK_DIR" >> "$GITHUB_ENV"
-          APK_NAME="app-${{ github.event.inputs.abi }}-forkRelease.apk"
+          APK_NAME="app-${{ github.event.inputs.abi }}-forkRelease-unsigned.apk"
           APK="$APK_DIR/$APK_NAME"
           echo "apk_name=$APK_NAME" >> "$GITHUB_OUTPUT"
           echo "APK dir: $APK_DIR"
@@ -192,7 +192,7 @@ jobs:
         with:
           name: op7-validation-${{ steps.metadata.outputs.version_name }}
           path: |
-            ${{ env.APK_DIR }}/app-${{ github.event.inputs.abi }}-forkRelease.apk
+            ${{ env.APK_DIR }}/app-${{ github.event.inputs.abi }}-forkRelease-unsigned.apk
             SHA256SUMS.txt
             build-metadata.json
           retention-days: 30
@@ -274,8 +274,9 @@ jobs:
       - name: Final checksums and metadata
         run: |
           cd release-artifacts
-          sha256sum ./*.apk | tee SHA256SUMS.txt
+          rm -f ./*-unsigned.apk
           ls -la
+          sha256sum ./*.apk | tee SHA256SUMS.txt
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
