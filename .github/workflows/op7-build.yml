@@ -172,8 +172,12 @@ jobs:
           echo "BUILD_TOOLS_VERSION=$BUILD_TOOLS_VERSION" >> "$GITHUB_ENV"
           BADGING="$("$ANDROID_SDK_ROOT/build-tools/$BUILD_TOOLS_VERSION/aapt" dump badging "$APK")"
           echo "$BADGING" | head -n 8
-          echo "$BADGING" | grep -q "package: name='io.github.forkmaintainers'" \
+          echo "$BADGING" | grep -q "package: name='io.github.forkmaintainers.iceraven'" \
             || { echo "::error::unexpected package id"; exit 1; }
+          echo "$BADGING" | grep -q "sdkVersion:'26'" \
+            || { echo "::error::minSdk mismatch, expected 26"; exit 1; }
+          echo "$BADGING" | grep -q "targetSdkVersion:'36'" \
+            || { echo "::error::targetSdk mismatch, expected 36"; exit 1; }
           echo "$BADGING" | grep -q "native-code: '${{ github.event.inputs.abi }}'" \
             || { echo "::error::ABI mismatch, expected ${{ github.event.inputs.abi }}"; exit 1; }
           if ! unzip -l "$APK" | grep -q "lib/${{ github.event.inputs.abi }}/"; then
