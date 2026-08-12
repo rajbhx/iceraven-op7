@@ -124,14 +124,16 @@ jobs:
           GIT_DESCRIBE="$(git -C upstream describe --tags HEAD 2>/dev/null || echo "$VERSION_TXT")"
           VERSION_NAME="${GIT_DESCRIBE}-op7r${REV}"
           echo "version_name=$VERSION_NAME" >> "$GITHUB_OUTPUT"
-          echo "OP7_VERSION_NAME=$VERSION_NAME" >> "$GITHUB_ENV"
-          echo "OP7_ICERAVEN_VERSION=$VERSION_TXT" >> "$GITHUB_ENV"
-          echo "OP7_GECKOVIEW_ARTIFACT=org.mozilla.geckoview:geckoview-omni:${VERSION_TXT}.${BUILDID}" >> "$GITHUB_ENV"
-          echo "OP7_AC_VERSION=$VERSION_TXT" >> "$GITHUB_ENV"
-          echo "OP7_PATCH_REVISION=$REV" >> "$GITHUB_ENV"
-          echo "OP7_ABI=${{ github.event.inputs.abi }}" >> "$GITHUB_ENV"
-          echo "OP7_ANDROID_TARGET=36" >> "$GITHUB_ENV"
-          echo "OP7_UPSTREAM_BRANCH=iceraven" >> "$GITHUB_ENV"
+          {
+            echo "OP7_VERSION_NAME=$VERSION_NAME"
+            echo "OP7_ICERAVEN_VERSION=$VERSION_TXT"
+            echo "OP7_GECKOVIEW_ARTIFACT=org.mozilla.geckoview:geckoview-omni:${VERSION_TXT}.${BUILDID}"
+            echo "OP7_AC_VERSION=$VERSION_TXT"
+            echo "OP7_PATCH_REVISION=$REV"
+            echo "OP7_ABI=${{ github.event.inputs.abi }}"
+            echo "OP7_ANDROID_TARGET=36"
+            echo "OP7_UPSTREAM_BRANCH=iceraven"
+          } >> "$GITHUB_ENV"
           echo "version: $VERSION_NAME"
 
       - name: Build forkRelease (OP7 ABI)
@@ -160,7 +162,7 @@ jobs:
             ls -la "$APK_DIR" || true
             exit 1
           fi
-          BUILD_TOOLS_VERSION="$(ls "$ANDROID_SDK_ROOT/build-tools/" | sort -V | tail -n 1)"
+          BUILD_TOOLS_VERSION="$(find "$ANDROID_SDK_ROOT/build-tools/" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort -V | tail -n 1)"
           echo "BUILD_TOOLS_VERSION=$BUILD_TOOLS_VERSION" >> "$GITHUB_ENV"
           BADGING="$("$ANDROID_SDK_ROOT/build-tools/$BUILD_TOOLS_VERSION/aapt" dump badging "$APK")"
           echo "$BADGING" | head -n 8
@@ -248,7 +250,7 @@ jobs:
       - name: Setup build tool version variable
         run: |
           SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
-          BUILD_TOOLS_VERSION="$(ls "$SDK_ROOT/build-tools/" | sort -V | tail -n 1)"
+          BUILD_TOOLS_VERSION="$(find "$SDK_ROOT/build-tools/" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort -V | tail -n 1)"
           echo "BUILD_TOOLS_VERSION=$BUILD_TOOLS_VERSION" >> "$GITHUB_ENV"
           echo "using build-tools $BUILD_TOOLS_VERSION"
 
@@ -266,7 +268,7 @@ jobs:
       - name: Final checksums and metadata
         run: |
           cd release-artifacts
-          sha256sum *.apk | tee SHA256SUMS.txt
+          sha256sum ./*.apk | tee SHA256SUMS.txt
           ls -la
 
       - name: Create GitHub Release

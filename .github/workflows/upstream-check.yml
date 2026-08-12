@@ -57,11 +57,12 @@ jobs:
       - name: Write summary
         if: always()
         run: |
-          cat >> "$GITHUB_STEP_SUMMARY" << 'SUMMARY'
-          ## Upstream check
-          - pinned commit: `$(cat upstream/commit.txt)`
-          - result: ${{ steps.check.outputs.changed == 'true' && format('new upstream commit {0}', steps.check.outputs.new_head) || 'no change' }}
-          SUMMARY
+          PIN=$(tr -d '[:space:]' < upstream/commit.txt)
+          {
+            echo "## Upstream check"
+            echo "- pinned commit: \`$PIN\`"
+            echo "- result: ${{ steps.check.outputs.changed == 'true' && format('new upstream commit {0}', steps.check.outputs.new_head) || 'no change' }}"
+          } >> "$GITHUB_STEP_SUMMARY"
 
   sync:
     name: Trigger OP7 build on new upstream
@@ -78,8 +79,8 @@ jobs:
               --title "Upstream sync available: ${{ needs.check.outputs.new_head }}" \
               --body "A new upstream commit was detected.
 
-              - upstream commit: \`${{ needs.check.outputs.new_head }}\`
-              - pinned commit: \`$(cat upstream/commit.txt)\`
+              - upstream commit: ${{ needs.check.outputs.new_head }}
+              - pinned commit: $(cat upstream/commit.txt)
 
               The op7-build pipeline has been dispatched. If the OP7 patches conflict,
               publishing stops and this issue records the failure for maintenance."
