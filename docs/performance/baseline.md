@@ -29,6 +29,12 @@ real device; emulator/managed-device numbers are never used as release evidence.
 | Background / battery | `adb shell dumpsys batterystats`, wakeup counters over fixed idle window |
 | Downloads | timed download of fixed-size fixture over fixed network |
 
+## Automated capture
+
+`automation/op7/baseline_capture.sh` automates install, cold/warm start (`am start -W`),
+memory, gfx, and battery capture into `docs/performance/data/<timestamp>/` when adb is
+reachable. Run `baseline_capture.sh devices` first, then `all <apk>`.
+
 ## Capture artifacts
 
 - Perfetto traces + `trace_processor` SQL summaries where practical.
