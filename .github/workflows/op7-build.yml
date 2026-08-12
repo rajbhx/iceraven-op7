@@ -139,27 +139,33 @@ jobs:
       - name: Build forkRelease (OP7 ABI)
         env:
           GRADLE_OPTS: -Dorg.gradle.jvmargs="-XX:MaxMetaspaceSize=4g -Xms1g -Xmx7g -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/dev/stderr"
-        uses: gradle/gradle-build-action@v3
+        uses: gradle/gradle-build-action@v2
         with:
           build-root-directory: mirror
           gradle-home-cache-cleanup: true
           arguments: |
             app:assembleForkRelease
             -PversionName=${{ steps.metadata.outputs.version_name }}
-            -Pandroid.injected.build.abi=${{ github.event.inputs.abi }}
             --stacktrace
             --no-daemon
 
       - name: Validate APK (structural + ABI)
         id: validate
         run: |
-          APK_DIR=mirror/gradle/build/app/outputs/apk/forkRelease
+          APK_DIR="$(find mirror -type d -path '*outputs/apk/forkRelease' | head -n 1)"
+          if [[ -z "$APK_DIR" ]]; then
+            echo "::error::forkRelease APK output directory not found"
+            find mirror -type d -name 'forkRelease' 2>/dev/null | head -n 10 || true
+            exit 1
+          fi
+          echo "APK_DIR=$APK_DIR" >> "$GITHUB_ENV"
           APK_NAME="app-${{ github.event.inputs.abi }}-forkRelease.apk"
           APK="$APK_DIR/$APK_NAME"
           echo "apk_name=$APK_NAME" >> "$GITHUB_OUTPUT"
+          echo "APK dir: $APK_DIR"
+          ls -la "$APK_DIR" || true
           if [[ ! -f "$APK" ]]; then
             echo "::error::APK not found: $APK"
-            ls -la "$APK_DIR" || true
             exit 1
           fi
           BUILD_TOOLS_VERSION="$(find "$ANDROID_SDK_ROOT/build-tools/" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort -V | tail -n 1)"
@@ -186,7 +192,7 @@ jobs:
         with:
           name: op7-validation-${{ steps.metadata.outputs.version_name }}
           path: |
-            mirror/gradle/build/app/outputs/apk/forkRelease/app-${{ github.event.inputs.abi }}-forkRelease.apk
+            ${{ env.APK_DIR }}/app-${{ github.event.inputs.abi }}-forkRelease.apk
             SHA256SUMS.txt
             build-metadata.json
           retention-days: 30
@@ -197,7 +203,7 @@ jobs:
         env:
           BUILD_TOOLS_VERSION: ${{ env.BUILD_TOOLS_VERSION }}
         with:
-          releaseDirectory: mirror/gradle/build/app/outputs/apk/forkRelease/
+          releaseDirectory: ${{ env.APK_DIR }}/
           signingKeyBase64: ${{ secrets.DEBUG_SIGNING_KEY }}
           alias: ${{ secrets.DEBUG_ALIAS }}
           keyStorePassword: ${{ secrets.DEBUG_KEY_STORE_PASSWORD }}
