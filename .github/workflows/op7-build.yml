@@ -84,11 +84,11 @@ jobs:
         run: |
           UPSTREAM_COMMIT="${{ steps.resolve.outputs.upstream_commit }}"
           git clone --filter=blob:none --recurse-submodules \
-            https://github.com/fork-maintainers/iceraven-browser.git upstream
-          git -C upstream checkout "$UPSTREAM_COMMIT"
-          echo "upstream commit: $(git -C upstream rev-parse HEAD)"
-          echo "iceraven version: $(cat upstream/version.txt)"
-          echo "geckoview buildid: $(grep -oP 'MOZ_BUILDID\s+\K[0-9]+' upstream/buildid.h)"
+            https://github.com/fork-maintainers/iceraven-browser.git mirror
+          git -C mirror checkout "$UPSTREAM_COMMIT"
+          echo "upstream commit: $(git -C mirror rev-parse HEAD)"
+          echo "iceraven version: $(cat mirror/version.txt)"
+          echo "geckoview buildid: $(grep -oP 'MOZ_BUILDID\s+\K[0-9]+' mirror/buildid.h)"
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -98,13 +98,13 @@ jobs:
 
       - name: Install Android SDK (upstream script)
         run: |
-          cd upstream
+          cd mirror
           ./automation/iceraven/install-sdk.sh
           echo "ANDROID_SDK_ROOT=$HOME/android-sdk/android-sdk-linux" >> "$GITHUB_ENV"
 
       - name: Apply Iceraven patch layer (as upstream CI does)
         run: |
-          cd upstream
+          cd mirror
           ./automation/iceraven/patch_android_components.sh
           sed -i 's/Firefox/Iceraven/g' app/src/*/res/values*/*strings.xml
           sed -i '/about_content/s/Mozilla/@forkmaintainers/' app/src/*/res/values*/*strings.xml
@@ -112,16 +112,16 @@ jobs:
 
       - name: Apply OP7 patches (fails closed on conflict)
         run: |
-          cd upstream
+          cd mirror
           OP7_LAYER_DIR="$GITHUB_WORKSPACE" "$GITHUB_WORKSPACE/automation/op7/apply_patches.sh"
 
       - name: Collect build metadata
         id: metadata
         run: |
-          VERSION_TXT="$(cat upstream/version.txt | tr -d '[:space:]')"
-          BUILDID="$(grep -oP 'MOZ_BUILDID\s+\K[0-9]+' upstream/buildid.h)"
+          VERSION_TXT="$(cat mirror/version.txt | tr -d '[:space:]')"
+          BUILDID="$(grep -oP 'MOZ_BUILDID\s+\K[0-9]+' mirror/buildid.h)"
           REV="$(cat op7-revision.txt | tr -d '[:space:]')"
-          GIT_DESCRIBE="$(git -C upstream describe --tags HEAD 2>/dev/null || echo "$VERSION_TXT")"
+          GIT_DESCRIBE="$(git -C mirror describe --tags HEAD 2>/dev/null || echo "$VERSION_TXT")"
           VERSION_NAME="${GIT_DESCRIBE}-op7r${REV}"
           echo "version_name=$VERSION_NAME" >> "$GITHUB_OUTPUT"
           {
@@ -141,7 +141,7 @@ jobs:
           GRADLE_OPTS: -Dorg.gradle.jvmargs="-XX:MaxMetaspaceSize=4g -Xms1g -Xmx7g -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/dev/stderr"
         uses: gradle/gradle-build-action@v3
         with:
-          build-root-directory: upstream
+          build-root-directory: mirror
           gradle-home-cache-cleanup: true
           arguments: |
             app:assembleForkRelease
@@ -153,7 +153,7 @@ jobs:
       - name: Validate APK (structural + ABI)
         id: validate
         run: |
-          APK_DIR=upstream/gradle/build/app/outputs/apk/forkRelease
+          APK_DIR=mirror/gradle/build/app/outputs/apk/forkRelease
           APK_NAME="app-${{ github.event.inputs.abi }}-forkRelease.apk"
           APK="$APK_DIR/$APK_NAME"
           echo "apk_name=$APK_NAME" >> "$GITHUB_OUTPUT"
@@ -186,7 +186,7 @@ jobs:
         with:
           name: op7-validation-${{ steps.metadata.outputs.version_name }}
           path: |
-            upstream/gradle/build/app/outputs/apk/forkRelease/app-${{ github.event.inputs.abi }}-forkRelease.apk
+            mirror/gradle/build/app/outputs/apk/forkRelease/app-${{ github.event.inputs.abi }}-forkRelease.apk
             SHA256SUMS.txt
             build-metadata.json
           retention-days: 30
@@ -197,7 +197,7 @@ jobs:
         env:
           BUILD_TOOLS_VERSION: ${{ env.BUILD_TOOLS_VERSION }}
         with:
-          releaseDirectory: upstream/gradle/build/app/outputs/apk/forkRelease/
+          releaseDirectory: mirror/gradle/build/app/outputs/apk/forkRelease/
           signingKeyBase64: ${{ secrets.DEBUG_SIGNING_KEY }}
           alias: ${{ secrets.DEBUG_ALIAS }}
           keyStorePassword: ${{ secrets.DEBUG_KEY_STORE_PASSWORD }}

@@ -9,7 +9,7 @@ local.properties
 # Build output (never committed)
 build/
 out/
-upstream/           # upstream mirror checkout, created by CI
+mirror/           # upstream mirror checkout, created by CI
 netwerk/dns/        # fetched TLD data, created by Iceraven patch layer
 
 # Benchmark data (large captures live in docs/performance/data/)
