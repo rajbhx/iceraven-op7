@@ -1,0 +1,21 @@
+diff --git a/app/build.gradle b/app/build.gradle
+--- a/app/build.gradle
++++ b/app/build.gradle
+@@ -190,13 +190,13 @@ android {
+         forkRelease releaseTemplate >> {
+             buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
+-            applicationIdSuffix ".iceraven"
+-            def deepLinkSchemeValue = "iceraven"
++            applicationIdSuffix ".iceraven.op7"
++            def deepLinkSchemeValue = "iceraven-op7"
+             buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
+             manifestPlaceholders.putAll([
+-                    "sharedUserId": "io.github.forkmaintainers.iceraven.sharedID",
+-                    "deepLinkScheme": deepLinkSchemeValue,
++                    "sharedUserId": "io.github.forkmaintainers.iceraven.op7.sharedID",
++                    "deepLinkScheme": deepLinkSchemeValue,
+             ])
+             // Use custom default allowed addon list
+             buildConfigField "String", "AMO_COLLECTION_USER", "\"18187371\""
+             buildConfigField "String", "AMO_COLLECTION_NAME", "\"Iceraven_Addon_Collection\""
+         }
