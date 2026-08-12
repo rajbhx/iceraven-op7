@@ -1,0 +1,67 @@
+name: CI
+
+# Static validation for this repository (docs, automation scripts, workflows).
+# Full browser builds are intentionally NOT run here: they are expensive and belong
+# to the op7-build pipeline (manual/dispatch-triggered with explicit upstream pin).
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate repo layer
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Lint workflow YAML (actionlint)
+        uses: docker://rhysd/actionlint:latest
+        with:
+          args: -color
+
+      - name: Shellcheck automation scripts
+        run: |
+          command -v shellcheck || sudo apt-get install -y shellcheck
+          shellcheck automation/op7/*.sh
+
+      - name: Validate upstream pin format
+        run: |
+          PIN=$(tr -d '[:space:]' < upstream/commit.txt)
+          if ! [[ "$PIN" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "::error::upstream/commit.txt must contain a 40-char hex SHA, got '$PIN'"
+            exit 1
+          fi
+          echo "pinned upstream commit: $PIN"
+
+      - name: Validate OP7 patch revision file
+        run: |
+          REV=$(tr -d '[:space:]' < op7-revision.txt)
+          if ! [[ "$REV" =~ ^[0-9]+$ ]]; then
+            echo "::error::op7-revision.txt must contain an integer, got '$REV'"
+            exit 1
+          fi
+          echo "OP7 patch revision: r$REV"
+
+      - name: Check patch dir consistency
+        run: |
+          if [[ -d patches/op7 ]]; then
+            COUNT=$(find patches/op7 -maxdepth 1 -name '*.patch' | wc -l)
+            echo "OP7 patches present: $COUNT"
+          fi
+
+      - name: Write job summary
+        if: always()
+        run: |
+          cat >> "$GITHUB_STEP_SUMMARY" << 'SUMMARY'
+          ## CI — repo layer validation
+
+          - actionlint: workflow syntax check
+          - shellcheck: automation scripts
+          - pin + revision format validation
+          - Full browser build: **not run here** — use the `OP7 Build` workflow (dispatch).
+          SUMMARY

@@ -1,0 +1,297 @@
+name: OP7 Build
+
+# Full Iceraven OP7 pipeline (Phases 3, 9).
+# - Mirrors the pinned upstream commit (or an explicit one), applies the Iceraven
+#   patch layer (as upstream CI does), then applies the OP7 patch set.
+# - Any patch conflict STOPS the pipeline before build/release (never auto-resolves).
+# - Validation gates: source sync, patch apply, dependency resolution, compile,
+#   APK structural validity, ABI check, checksums, metadata.
+# - release=true additionally requires passing quality gates and publishes a GitHub
+#   Release from the `release` job, which is the ONLY job with access to the release
+#   keystore secrets and runs under the `release` environment.
+#
+# Security: workflow_dispatch only (maintainers). PRs from untrusted forks never
+# reach this workflow or its secrets.
+
+on:
+  workflow_dispatch:
+    inputs:
+      upstream_commit:
+        description: 'Upstream commit to build (default: pinned in upstream/commit.txt)'
+        required: false
+        default: ''
+      abi:
+        description: 'APK ABI to build'
+        required: false
+        default: 'arm64-v8a'
+      patch_ref:
+        description: 'Ref of this repo to test (e.g. refs/pull/42/head); default = default branch'
+        required: false
+        default: ''
+      release:
+        description: 'Create a GitHub Release (requires release_tag + release secrets)'
+        required: false
+        default: 'false'
+      release_tag:
+        description: 'Release tag, format op7-<iceraven-version>-r<rev> (required if release=true)'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: op7-build-${{ github.event.inputs.upstream_commit || 'pinned' }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Mirror, patch, build, validate
+    runs-on: ubuntu-latest
+    outputs:
+      upstream_commit: ${{ steps.resolve.outputs.upstream_commit }}
+      version_name: ${{ steps.metadata.outputs.version_name }}
+      release_tag: ${{ steps.resolve.outputs.release_tag }}
+      apk_name: ${{ steps.validate.outputs.apk_name }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.patch_ref || '' }}
+          fetch-depth: 0
+
+      - name: Resolve upstream commit and release inputs
+        id: resolve
+        run: |
+          if [[ -n "${{ github.event.inputs.upstream_commit }}" ]]; then
+            UPSTREAM_COMMIT="${{ github.event.inputs.upstream_commit }}"
+          else
+            UPSTREAM_COMMIT="$(cat upstream/commit.txt)"
+          fi
+          echo "upstream_commit=$UPSTREAM_COMMIT" >> "$GITHUB_OUTPUT"
+          echo "Resolved upstream commit: $UPSTREAM_COMMIT"
+
+          RELEASE="${{ github.event.inputs.release }}"
+          if [[ "$RELEASE" == "true" ]]; then
+            TAG="${{ github.event.inputs.release_tag }}"
+            if [[ -z "$TAG" ]]; then
+              echo "::error::release=true requires release_tag (format op7-<iceraven-version>-r<rev>)"
+              exit 1
+            fi
+            echo "release_tag=$TAG" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout upstream at pinned commit
+        run: |
+          UPSTREAM_COMMIT="${{ steps.resolve.outputs.upstream_commit }}"
+          git clone --filter=blob:none --recurse-submodules \
+            https://github.com/fork-maintainers/iceraven-browser.git upstream
+          git -C upstream checkout "$UPSTREAM_COMMIT"
+          echo "upstream commit: $(git -C upstream rev-parse HEAD)"
+          echo "iceraven version: $(cat upstream/version.txt)"
+          echo "geckoview buildid: $(grep -oP 'MOZ_BUILDID\s+\K[0-9]+' upstream/buildid.h)"
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: temurin
+
+      - name: Install Android SDK (upstream script)
+        run: |
+          cd upstream
+          ./automation/iceraven/install-sdk.sh
+          echo "ANDROID_SDK_ROOT=$HOME/android-sdk/android-sdk-linux" >> "$GITHUB_ENV"
+
+      - name: Apply Iceraven patch layer (as upstream CI does)
+        run: |
+          cd upstream
+          ./automation/iceraven/patch_android_components.sh
+          sed -i 's/Firefox/Iceraven/g' app/src/*/res/values*/*strings.xml
+          sed -i '/about_content/s/Mozilla/@forkmaintainers/' app/src/*/res/values*/*strings.xml
+          sed -i '/<string name="trackers_blocked_panel_categorical_num_trackers_blocked">/s/%s/%1$s/g; /<string name="trackers_blocked_panel_categorical_num_trackers_blocked">/s/%d/%2$d/g' app/src/*/res/values*/*strings.xml
+
+      - name: Apply OP7 patches (fails closed on conflict)
+        run: |
+          cd upstream
+          OP7_LAYER_DIR="$GITHUB_WORKSPACE" "$GITHUB_WORKSPACE/automation/op7/apply_patches.sh"
+
+      - name: Collect build metadata
+        id: metadata
+        run: |
+          VERSION_TXT="$(cat upstream/version.txt | tr -d '[:space:]')"
+          BUILDID="$(grep -oP 'MOZ_BUILDID\s+\K[0-9]+' upstream/buildid.h)"
+          REV="$(cat op7-revision.txt | tr -d '[:space:]')"
+          GIT_DESCRIBE="$(git -C upstream describe --tags HEAD 2>/dev/null || echo "$VERSION_TXT")"
+          VERSION_NAME="${GIT_DESCRIBE}-op7r${REV}"
+          echo "version_name=$VERSION_NAME" >> "$GITHUB_OUTPUT"
+          echo "OP7_VERSION_NAME=$VERSION_NAME" >> "$GITHUB_ENV"
+          echo "OP7_ICERAVEN_VERSION=$VERSION_TXT" >> "$GITHUB_ENV"
+          echo "OP7_GECKOVIEW_ARTIFACT=org.mozilla.geckoview:geckoview-omni:${VERSION_TXT}.${BUILDID}" >> "$GITHUB_ENV"
+          echo "OP7_AC_VERSION=$VERSION_TXT" >> "$GITHUB_ENV"
+          echo "OP7_PATCH_REVISION=$REV" >> "$GITHUB_ENV"
+          echo "OP7_ABI=${{ github.event.inputs.abi }}" >> "$GITHUB_ENV"
+          echo "OP7_ANDROID_TARGET=36" >> "$GITHUB_ENV"
+          echo "OP7_UPSTREAM_BRANCH=iceraven" >> "$GITHUB_ENV"
+          echo "version: $VERSION_NAME"
+
+      - name: Build forkRelease (OP7 ABI)
+        env:
+          GRADLE_OPTS: -Dorg.gradle.jvmargs="-XX:MaxMetaspaceSize=4g -Xms1g -Xmx7g -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/dev/stderr"
+        uses: gradle/gradle-build-action@v3
+        with:
+          build-root-directory: upstream
+          gradle-home-cache-cleanup: true
+          arguments: |
+            app:assembleForkRelease
+            -PversionName=${{ steps.metadata.outputs.version_name }}
+            -Pandroid.injected.build.abi=${{ github.event.inputs.abi }}
+            --stacktrace
+            --no-daemon
+
+      - name: Validate APK (structural + ABI)
+        id: validate
+        run: |
+          APK_DIR=upstream/gradle/build/app/outputs/apk/forkRelease
+          APK_NAME="app-${{ github.event.inputs.abi }}-forkRelease.apk"
+          APK="$APK_DIR/$APK_NAME"
+          echo "apk_name=$APK_NAME" >> "$GITHUB_OUTPUT"
+          if [[ ! -f "$APK" ]]; then
+            echo "::error::APK not found: $APK"
+            ls -la "$APK_DIR" || true
+            exit 1
+          fi
+          BUILD_TOOLS_VERSION="$(ls "$ANDROID_SDK_ROOT/build-tools/" | sort -V | tail -n 1)"
+          echo "BUILD_TOOLS_VERSION=$BUILD_TOOLS_VERSION" >> "$GITHUB_ENV"
+          BADGING="$("$ANDROID_SDK_ROOT/build-tools/$BUILD_TOOLS_VERSION/aapt" dump badging "$APK")"
+          echo "$BADGING" | head -n 8
+          echo "$BADGING" | grep -q "package: name='io.github.forkmaintainers'" \
+            || { echo "::error::unexpected package id"; exit 1; }
+          echo "$BADGING" | grep -q "native-code: '${{ github.event.inputs.abi }}'" \
+            || { echo "::error::ABI mismatch, expected ${{ github.event.inputs.abi }}"; exit 1; }
+          if ! unzip -l "$APK" | grep -q "lib/${{ github.event.inputs.abi }}/"; then
+            echo "::error::no native libs for ${{ github.event.inputs.abi }}"
+            exit 1
+          fi
+          sha256sum "$APK" | tee SHA256SUMS.txt
+          echo "VALIDATION PASSED for $APK"
+
+      - name: Write build metadata
+        run: |
+          "$GITHUB_WORKSPACE/automation/op7/write_build_metadata.sh" build-metadata.json
+
+      - name: Upload unsigned APK + validation artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: op7-validation-${{ steps.metadata.outputs.version_name }}
+          path: |
+            upstream/gradle/build/app/outputs/apk/forkRelease/app-${{ github.event.inputs.abi }}-forkRelease.apk
+            SHA256SUMS.txt
+            build-metadata.json
+          retention-days: 30
+
+      - name: Debug-sign APK (validation builds only)
+        if: github.event.inputs.release != 'true'
+        uses: abhijitvalluri/sign-apks@v0.8
+        env:
+          BUILD_TOOLS_VERSION: ${{ env.BUILD_TOOLS_VERSION }}
+        with:
+          releaseDirectory: upstream/gradle/build/app/outputs/apk/forkRelease/
+          signingKeyBase64: ${{ secrets.DEBUG_SIGNING_KEY }}
+          alias: ${{ secrets.DEBUG_ALIAS }}
+          keyStorePassword: ${{ secrets.DEBUG_KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.DEBUG_KEY_PASSWORD }}
+
+      - name: Upload debug-signed APK (validation builds only)
+        if: github.event.inputs.release != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: op7-signed-${{ steps.metadata.outputs.version_name }}
+          path: upstream/gradle/build/app/outputs/apk/forkRelease/app-${{ github.event.inputs.abi }}-forkRelease.apk
+          retention-days: 30
+
+      - name: Write job summary
+        if: always()
+        run: |
+          cat >> "$GITHUB_STEP_SUMMARY" << 'SUMMARY'
+          ## OP7 build report
+          - upstream commit: `${{ steps.resolve.outputs.upstream_commit }}`
+          - version name: `${{ steps.metadata.outputs.version_name }}`
+          - ABI: `${{ github.event.inputs.abi }}`
+          - patch status: applied by `automation/op7/apply_patches.sh` (fail = stopped before build)
+          - validation: aapt badging + native-lib ABI check + SHA-256
+          - release mode: ${{ github.event.inputs.release }}
+          SUMMARY
+
+  release:
+    name: Sign with release key and publish
+    needs: build
+    if: github.event.inputs.release == 'true'
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: write
+    steps:
+      - name: Guard release secrets
+        run: |
+          for SECRET in OP7_RELEASE_KEYSTORE_BASE64 OP7_RELEASE_KEYSTORE_PASSWORD OP7_RELEASE_KEY_ALIAS OP7_RELEASE_KEY_PASSWORD; do
+            if [[ -z "${!SECRET:-}" ]]; then
+              echo "::error::$SECRET is not configured; refusing to publish"
+              exit 1
+            fi
+          done
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: op7-validation-${{ needs.build.outputs.version_name }}
+          path: release-artifacts
+
+      - name: Setup build tool version variable
+        run: |
+          SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
+          BUILD_TOOLS_VERSION="$(ls "$SDK_ROOT/build-tools/" | sort -V | tail -n 1)"
+          echo "BUILD_TOOLS_VERSION=$BUILD_TOOLS_VERSION" >> "$GITHUB_ENV"
+          echo "using build-tools $BUILD_TOOLS_VERSION"
+
+      - name: Sign APK with dedicated release key
+        uses: abhijitvalluri/sign-apks@v0.8
+        env:
+          BUILD_TOOLS_VERSION: ${{ env.BUILD_TOOLS_VERSION }}
+        with:
+          releaseDirectory: release-artifacts/
+          signingKeyBase64: ${{ secrets.OP7_RELEASE_KEYSTORE_BASE64 }}
+          alias: ${{ secrets.OP7_RELEASE_KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.OP7_RELEASE_KEYSTORE_PASSWORD }}
+          keyPassword: ${{ secrets.OP7_RELEASE_KEY_PASSWORD }}
+
+      - name: Final checksums and metadata
+        run: |
+          cd release-artifacts
+          sha256sum *.apk | tee SHA256SUMS.txt
+          ls -la
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.build.outputs.release_tag }}
+          name: "Iceraven OP7 ${{ needs.build.outputs.version_name }}"
+          body: |
+            ## Iceraven OP7 release
+
+            - upstream commit: `${{ needs.build.outputs.upstream_commit }}`
+            - version: `${{ needs.build.outputs.version_name }}`
+            - target ABI: `${{ github.event.inputs.abi }}`
+            - artifacts: APK + `SHA256SUMS.txt` + `build-metadata.json`
+            - signed with the dedicated release key (GitHub `release` environment)
+          files: |
+            release-artifacts/*.apk
+            release-artifacts/SHA256SUMS.txt
+            release-artifacts/build-metadata.json
+          fail_on_unmatched_files: true
+
+      - name: Write job summary
+        run: |
+          cat >> "$GITHUB_STEP_SUMMARY" << 'SUMMARY'
+          ## Release published
+          - tag: `${{ needs.build.outputs.release_tag }}`
+          - artifacts signed with the release key and attached to the GitHub Release.
+          SUMMARY

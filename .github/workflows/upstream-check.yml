@@ -1,0 +1,108 @@
+name: Upstream Check
+
+# Lightweight upstream change detection (Phase 4).
+# This workflow NEVER builds the browser. It compares the pinned upstream commit
+# against the upstream `iceraven` branch HEAD; when a new commit exists it:
+#   1. opens/updates a sync issue,
+#   2. dispatches the op7-build pipeline with the new upstream commit,
+#   3. writes a summary.
+#
+# NOTE on scheduling: GitHub may disable scheduled workflows in public repos after
+# ~60 days without repo activity. Upstream Iceraven releases roughly monthly, and
+# every dispatch/push resets that window. Manual dispatch and `repository_dispatch`
+# are the secondary update mechanism; the 60-day rule is documented in
+# docs/op7-project-audit.md (Risks).
+
+on:
+  schedule:
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+  repository_dispatch:
+    types: [upstream-check]
+
+permissions:
+  contents: read
+  issues: write
+  actions: write
+
+jobs:
+  check:
+    name: Detect upstream changes
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.check.outputs.changed }}
+      new_head: ${{ steps.check.outputs.new_head }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: check
+        name: Compare upstream HEAD with pin
+        run: |
+          set +e
+          OUT="$(./automation/op7/check_upstream.sh 2>&1)"
+          RC=$?
+          set -e
+          echo "$OUT"
+          if [[ $RC -eq 1 ]]; then
+            NEW_HEAD="$(printf '%s\n' "$OUT" | sed -n 's/^new_head=//p')"
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "new_head=$NEW_HEAD" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            if [[ $RC -eq 2 ]]; then
+              echo "::warning::upstream unreachable during scheduled check"
+            fi
+          fi
+
+      - name: Write summary
+        if: always()
+        run: |
+          cat >> "$GITHUB_STEP_SUMMARY" << 'SUMMARY'
+          ## Upstream check
+          - pinned commit: `$(cat upstream/commit.txt)`
+          - result: ${{ steps.check.outputs.changed == 'true' && format('new upstream commit {0}', steps.check.outputs.new_head) || 'no change' }}
+          SUMMARY
+
+  sync:
+    name: Trigger OP7 build on new upstream
+    needs: check
+    if: needs.check.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Open sync issue
+        run: |
+          if ! gh issue list --search "upstream sync available" --state open --json number --jq '.[0].number' | grep -q .; then
+            gh issue create \
+              --title "Upstream sync available: ${{ needs.check.outputs.new_head }}" \
+              --body "A new upstream commit was detected.
+
+              - upstream commit: \`${{ needs.check.outputs.new_head }}\`
+              - pinned commit: \`$(cat upstream/commit.txt)\`
+
+              The op7-build pipeline has been dispatched. If the OP7 patches conflict,
+              publishing stops and this issue records the failure for maintenance."
+          else
+            echo "sync issue already open; skipping creation"
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Dispatch op7-build
+        run: |
+          gh workflow run op7-build.yml \
+            -f upstream_commit="${{ needs.check.outputs.new_head }}" \
+            -f abi=arm64-v8a \
+            -f release=false
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Write summary
+        run: |
+          cat >> "$GITHUB_STEP_SUMMARY" << 'SUMMARY'
+          ## Sync dispatched
+          - new upstream commit: `${{ needs.check.outputs.new_head }}`
+          - build pipeline: `op7-build.yml` (arm64-v8a, validation build)
+          - conflict policy: any patch failure stops publishing and is reported in the issue above.
+          SUMMARY
