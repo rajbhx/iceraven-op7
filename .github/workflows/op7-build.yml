@@ -36,6 +36,10 @@ on:
         description: 'Release tag, format op7-<iceraven-version>-r<rev> (required if release=true)'
         required: false
         default: ''
+      fast:
+        description: 'Fast validation build (skips R8/shrink via -PdisableOptimization); use for iteration, NOT for release evidence'
+        required: false
+        default: 'false'
 
 permissions:
   contents: read
@@ -146,6 +150,10 @@ jobs:
           arguments: |
             app:assembleForkRelease
             -PversionName=${{ steps.metadata.outputs.version_name }}
+            --parallel
+            --max-workers=2
+            --build-cache
+            ${{ github.event.inputs.fast == 'true' && '-PdisableOptimization' || '' }}
             --stacktrace
             --no-daemon
 
@@ -234,6 +242,7 @@ jobs:
           - patch status: applied by `automation/op7/apply_patches.sh` (fail = stopped before build)
           - validation: aapt badging + native-lib ABI check + SHA-256
           - release mode: ${{ github.event.inputs.release }}
+          - fast mode (no R8): ${{ github.event.inputs.fast }}
           SUMMARY
 
   release:
