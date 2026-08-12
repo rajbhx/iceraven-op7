@@ -150,6 +150,7 @@ jobs:
           arguments: |
             app:assembleForkRelease
             -PversionName=${{ steps.metadata.outputs.version_name }}
+            -Pandroid.injected.build.abi=${{ github.event.inputs.abi }}
             --parallel
             --max-workers=2
             --build-cache
@@ -160,22 +161,24 @@ jobs:
       - name: Validate APK (structural + ABI)
         id: validate
         run: |
-          APK_DIR="$(find mirror -type d -path '*outputs/apk/forkRelease' | head -n 1)"
-          if [[ -z "$APK_DIR" ]]; then
-            echo "::error::forkRelease APK output directory not found"
-            find mirror -type d -name 'forkRelease' 2>/dev/null | head -n 10 || true
+          APK="$(find mirror -type f -name 'app-*-forkRelease*.apk' | head -n 1)"
+          if [[ -z "$APK" ]]; then
+            echo "::error::no forkRelease APK found (ABI=${{ github.event.inputs.abi }})"
+            find mirror -type f -name '*.apk' 2>/dev/null | head -n 20 || true
             exit 1
           fi
+          APK_DIR="$(dirname "$APK")"
+          echo "APK_PATH=$APK" >> "$GITHUB_ENV"
           echo "APK_DIR=$APK_DIR" >> "$GITHUB_ENV"
-          APK_NAME="app-${{ github.event.inputs.abi }}-forkRelease-unsigned.apk"
-          APK="$APK_DIR/$APK_NAME"
-          echo "apk_name=$APK_NAME" >> "$GITHUB_OUTPUT"
-          echo "APK dir: $APK_DIR"
-          ls -la "$APK_DIR" || true
-          if [[ ! -f "$APK" ]]; then
-            echo "::error::APK not found: $APK"
-            exit 1
+          if [[ "$APK" == *-unsigned.apk ]]; then
+            SIGNED_PATH="${APK%-unsigned.apk}.apk"
+          else
+            SIGNED_PATH="$APK"
           fi
+          echo "SIGNED_PATH=$SIGNED_PATH" >> "$GITHUB_ENV"
+          echo "apk_name=$(basename "$APK")" >> "$GITHUB_OUTPUT"
+          echo "APK: $APK"
+          ls -la "$APK_DIR" || true
           SIGN_SDK="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
           BUILD_TOOLS_VERSION="$(find "$SIGN_SDK/build-tools/" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort -V | tail -n 1)"
           echo "BUILD_TOOLS_VERSION=$BUILD_TOOLS_VERSION" >> "$GITHUB_ENV"
@@ -206,7 +209,7 @@ jobs:
         with:
           name: op7-validation-${{ steps.metadata.outputs.version_name }}
           path: |
-            ${{ env.APK_DIR }}/app-${{ github.event.inputs.abi }}-forkRelease-unsigned.apk
+            ${{ env.APK_PATH }}
             SHA256SUMS.txt
             build-metadata.json
           retention-days: 30
@@ -228,7 +231,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: op7-signed-${{ steps.metadata.outputs.version_name }}
-          path: upstream/gradle/build/app/outputs/apk/forkRelease/app-${{ github.event.inputs.abi }}-forkRelease.apk
+          path: ${{ env.SIGNED_PATH }}
           retention-days: 30
 
       - name: Write job summary
