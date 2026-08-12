@@ -147,13 +147,14 @@ jobs:
         with:
           build-root-directory: mirror
           gradle-home-cache-cleanup: true
+          gradle-home-cache-excludes: |
+            glean
           arguments: |
             app:assembleForkRelease
             -PversionName=${{ steps.metadata.outputs.version_name }}
             -Pandroid.injected.build.abi=${{ github.event.inputs.abi }}
-            --parallel
-            --max-workers=2
             --build-cache
+            -I "${{ github.workspace }}/automation/op7/clean-glean-bootstrap.groovy"
             ${{ github.event.inputs.fast == 'true' && '-PdisableOptimization' || '' }}
             --stacktrace
             --no-daemon
