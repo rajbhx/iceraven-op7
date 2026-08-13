@@ -22,12 +22,16 @@ Iceraven OP7 = **stock Iceraven, engineered for this OnePlus 7**:
 
 | Revision | Content | Status |
 |---|---|---|
-| `r0` | Unmodified Iceraven (arm64-only distribution, signed, metadata) — **the baseline** | build in progress |
-| `r1` | First measured optimization (top baseline bottleneck) | gated on Phase 2 data |
-| `r2+` | One optimization per revision, each with before/after benchmark | gated |
+| `r0` | Unmodified Iceraven (arm64-only distribution, signed, metadata) — **the baseline** | ✅ shipped (r2 build on device; baseline docs recorded) |
+| `r1` | First arm64-only build — testOnly bug found | ✅ shipped; bug fixed in r2 (E11) |
+| `r2` | Installable arm64-only build (testOnly removed) | ✅ on device; baseline measured |
+| `r3` | `DeviceCapabilities` observability layer (Phase 5) | ✅ shipped + verified fingerprint |
+| `r4` | 004 seamless launch (splash→surface color match) | ✅ shipped + verified |
+| `r5` | 005 AMOLED true-black dark theme (safe enhancement) | 🔄 this revision — ready for validation build |
+| `r6+` | One measured optimization per revision (C2 background, C4/C5 smoothness, C6 startup) | gated on r5 validation + benchmarks |
 | release | `op7-<iceraven-version>-r<rev>` tag + signed APK + SHA-256 + metadata | after gates pass |
 
-Revisions do NOT skip phases: r1 exists only after baseline measurements exist.
+Revisions do NOT skip phases: each optimization ships only after its baseline measurement exists.
 
 ## 3. Phase status (from the Phase-0 audit)
 
@@ -39,8 +43,8 @@ Revisions do NOT skip phases: r1 exists only after baseline measurements exist.
 | 3 | GitHub Actions reliability (cache, arm64-only, parallel) | 🔄 implemented, needs green run |
 | 4 | Automatic upstream sync + conflict stop | ✅ implemented, unproven on real upstream move |
 | 5 | `DeviceCapabilities` (design + device report) | ✅ design + report; Kotlin impl after baseline |
-| 6 | On-device profiling | ⏳ |
-| 7 | First measured optimization | ⏳ gated |
+| 6 | On-device profiling | ✅ profiling tooling + contended sweep (`docs/performance/profiling.md`) |
+| 7 | Measured optimizations | 🔄 r4/r5 shipped; C1–C6 verified/measured, gated on clean-window runs |
 | 8 | Benchmark/regression loop | ⏳ |
 | 9 | Automated release (gates, signing, checksums, Release) | ✅ skeleton, unproven end-to-end |
 | 10 | Long-term upstream maintenance | ⏳ |

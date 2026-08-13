@@ -240,6 +240,11 @@ sections:
         cause: "rapid force-stop + start cycles under system contention (daily driver in use) hit Binder transaction failures; force-stop needs settle time or the old process survives"
         solution: "measure cold start as single commands: force-stop, sleep 3, verify no pid, then am start -W; confirm LaunchState: COLD per run; label contended samples honestly"
         tags: [startup, cold-start, binder, measurement, contention]
+      - id: D27
+        problem: "C4/C5 smoothness numbers were captured on the wrong layer (activity window, not WebRender content)"
+        cause: "gfxinfo reports only the main process (UI thread); the real content layer is a SurfaceView under HomeActivity#0"
+        solution: "verify via `dumpsys SurfaceFlinger --list` — confirmed `SurfaceView - ...HomeActivity#0`; use SurfaceFlinger latency for content frame timing"
+        tags: [smoothness, surfaceflinger, layer, measurement]
   - id: E
     title: CI quality
     entries:
@@ -275,6 +280,16 @@ sections:
         cause: "git reset unstaged files; regenerated diff from only one staged file"
         solution: "always re-stage ALL touched files before regenerating a patch; verify patch touches expected files (grep '^diff --git')"
         tags: [patch, git, regeneration]
+      - id: E8
+        problem: "generated patch 005 lost its `diff --git`/`index` header on first write"
+        cause: "`sed '1,2d'` stripped the ---/+++ pair before the header replacement could run"
+        solution: "insert header before first hunk; verify with `git apply --check` on a fresh post-004 checkout, then full 001→005 sequence on a clean worktree"
+        tags: [patch, git-apply, generation]
+      - id: E9
+        problem: "`git add -A` staged a 148 MB APK even though `.gitignore` listed `op7apk/`"
+        cause: "gitignore does NOT support inline comments — `op7apk/  # comment` makes the whole line a pattern that never matches; only `#` on its own line is a comment"
+        solution: "move comments to their own lines; verify with `git check-ignore -v <path>` before committing large files"
+        tags: [gitignore, git, large-files, apk, footgun]
   - id: F
     title: UI / perceived performance
     entries:
@@ -283,6 +298,11 @@ sections:
         cause: "hard-coded splash brand color (#FCF3EE / #210340) differs from home surface (#F7F6FB / #1D1B1F)"
         solution: "splash background references @color/fx_mobile_surface (patch 004) — seamless iOS-style launch, cosmetic only"
         tags: [splash, theming, perceived-performance]
+      - id: F2
+        problem: "dark theme uses dark-grey surfaces (#1d1b1f/#312f33), not true black, so AMOLED pixels stay lit"
+        cause: "values-night/colors.xml maps Material3 surface tokens to novaGray65-85 / photonDarkGrey30/80"
+        solution: "patch 005 remaps surfaces to #000000 scale with subtle elevation steps (#070707-#242424); contrast 18.6:1 preserved; light theme untouched"
+        tags: [amoled, dark-theme, colors, battery, resource-only]
   - id: G
     title: Playbook & knowledge
     entries:

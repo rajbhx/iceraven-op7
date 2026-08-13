@@ -54,3 +54,4 @@ content never appears there. Do not compare against them.
 - `docs/performance/data/20260813-c45-smoothness/sf-latency-real-github-surfaceview.txt`
 - `docs/performance/data/20260813-c45-smoothness/sf-latency-auto.txt` (stress — wrong layer, retained only as a retraction record)
 - `docs/performance/data/20260813-c45-smoothness/beacons-scroll.log` (fixture motion proof)
+- `docs/performance/data/20260813-c5-layer-verify/sf-layers.txt` — layer identity proof: real content is `SurfaceView - ...HomeActivity#0` (2026-08-13, 9-tab session)

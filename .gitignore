@@ -7,14 +7,23 @@ local.properties
 *.iml
 
 # Build output (never committed)
+# (upstream mirror checkout created by CI; fetched TLD data from Iceraven patch layer)
 build/
 out/
-mirror/           # upstream mirror checkout, created by CI
-netwerk/dns/        # fetched TLD data, created by Iceraven patch layer
+mirror/
+netwerk/dns/
 
 # Benchmark data (large captures live in docs/performance/data/)
 docs/performance/data/
-op7apk/            # locally downloaded OP7 APKs (large, never commit)
+# Locally downloaded OP7 APKs (large, never commit)
+op7apk/
 
 # Python tooling
 __pycache__/
+
+# Large generated on-device test pages (not build inputs; small fixtures ARE committed)
+media-fixtures/s
+media-fixtures/s.html
+media-fixtures/s2.html
+media-fixtures/test-scroll.html
+media-fixtures/test-scroll2.html

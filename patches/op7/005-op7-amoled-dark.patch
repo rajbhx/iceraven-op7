@@ -1,0 +1,59 @@
+Problem: the dark theme uses dark-grey surfaces (#1d1b1f / #312f33 / #42414d etc.), not true black. On the OnePlus 7's AMOLED panel every non-black pixel is lit, so the browser UI draws current even when idle and the theme never looks 'all-black' premium.
+Root cause: values-night/colors.xml maps the Material3 surface tokens to novaGray65-85 (dark greys) and layer tokens to photonDarkGrey30/80. None of them are #000000, so AMOLED pixels stay on.
+Affected layer: app UI resources only (values-night/colors.xml). No Kotlin, no GeckoView, no build config.
+Implementation: remap the dark-theme surface scale to a true-black AMOLED scale: background/surface/dim/lowest -> #000000, containers -> #070707/#0F0F0F/#1A1A1A/#1F1F1F/#242424 so elevation hierarchy is preserved while every base pixel is off.
+Expected benefit: AMOLED panel power saving proportional to lit-pixel reduction on UI chrome (toolbar, menus, dialogs, home), plus the requested all-black premium look. Measurable via screen-on drain deltas and pixel-coverage screenshots (before/after).
+Benchmark: TBD Phase 8 — capture black-pixel coverage + screen-on mA before/after this patch on the OnePlus 7 (docs/performance/baseline.md method). No frame-time claim.
+Regression risk: cosmetic only; contrast is preserved (on-surface text stays near-white #f2f0f8). Dark-grey elevation steps remain for cards/dialogs. Light theme untouched. Revert = drop patch.
+Upstream relationship: not for upstream (device-specific AMOLED preference); Fenix deliberately uses Material dark greys. Could be proposed as an optional AMOLED toggle later.
+
+diff --git a/app/src/main/res/values-night/colors.xml b/app/src/main/res/values-night/colors.xml
+index d74cdcb99860d182485c3b63ce9f0dcd40d3d563..84e1ab090fa87a4e1db41a3561a251e710e44fcb 100644
+@@ -17,11 +17,11 @@
+     <color name="fx_mobile_on_tertiary">@color/novaGray80</color>
+     <color name="fx_mobile_tertiary_container">@color/novaVioletDesaturated90</color>
+     <color name="fx_mobile_on_tertiary_container">@color/novaVioletDesaturated0</color>
+-    <color name="fx_mobile_background">@color/novaGray75</color>
++    <color name="fx_mobile_background">@color/novaBlack</color>
+     <color name="fx_mobile_on_background">@color/novaVioletDesaturated0</color>
+-    <color name="fx_mobile_surface">@color/novaGray75</color>
++    <color name="fx_mobile_surface">@color/novaBlack</color>
+     <color name="fx_mobile_on_surface">@color/novaVioletDesaturated0</color>
+-    <color name="fx_mobile_surface_variant">@color/novaGray65</color>
++    <color name="fx_mobile_surface_variant">#FF141414</color>
+     <color name="fx_mobile_on_surface_variant">@color/novaVioletDesaturated0A70</color>
+     <color name="fx_mobile_surface_inverse">@color/novaGray30</color>
+     <color name="fx_mobile_on_surface_inverse">@color/novaGray80</color>
+@@ -41,13 +41,13 @@
+     <color name="fx_mobile_on_warning_container">@color/novaVioletDesaturated0</color>
+     <color name="fx_mobile_outline">@color/novaGray45</color>
+     <color name="fx_mobile_outline_variant">@color/novaGray65</color>
+-    <color name="fx_mobile_surface_bright">@color/novaGray65</color>
+-    <color name="fx_mobile_surface_dim">@color/novaGray85</color>
+-    <color name="fx_mobile_surface_container">@color/novaGray75</color>
+-    <color name="fx_mobile_surface_container_high">@color/novaGray70</color>
+-    <color name="fx_mobile_surface_container_highest">@color/novaGray65</color>
+-    <color name="fx_mobile_surface_container_low">@color/novaGray80</color>
+-    <color name="fx_mobile_surface_container_lowest">@color/novaGray85</color>
++    <color name="fx_mobile_surface_bright">#FF1F1F1F</color>
++    <color name="fx_mobile_surface_dim">@color/novaBlack</color>
++    <color name="fx_mobile_surface_container">#FF0F0F0F</color>
++    <color name="fx_mobile_surface_container_high">#FF1A1A1A</color>
++    <color name="fx_mobile_surface_container_highest">#FF242424</color>
++    <color name="fx_mobile_surface_container_low">#FF070707</color>
++    <color name="fx_mobile_surface_container_lowest">@color/novaBlack</color>
+     <color name="fx_mobile_autofill_text">@color/novaVioletDesaturated30A55</color>
+     <color name="fx_mobile_selected_text">@color/novaGray45A80</color>
+     <color name="fx_mobile_icon_private">@color/novaViolet50</color>
+@@ -59,9 +59,9 @@
+ 
+     <!-- Layers -->
+     <!-- Card background, Menu background, Dialog, Banner -->
+-    <color name="fx_mobile_layer_color_2">@color/photonDarkGrey30</color>
++    <color name="fx_mobile_layer_color_2">#FF1A1A1A</color>
+     <!-- Search -->
+-    <color name="fx_mobile_layer_color_3">@color/photonDarkGrey80</color>
++    <color name="fx_mobile_layer_color_3">#FF0F0F0F</color>
+     <!-- Tooltip -->
+     <color name="fx_mobile_layer_color_gradient_start">@color/photonViolet70</color>
+     <!-- Tooltip -->

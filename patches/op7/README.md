@@ -107,3 +107,37 @@ splash). If the home palette changes, splash follows by design.
 
 Upstream relationship: not for upstream (cosmetic preference); could be
 proposed as a general polish later.
+
+## 005-op7-amoled-dark.patch
+
+Problem: the dark theme uses dark-grey surfaces (#1d1b1f / #312f33 / #42414d etc.),
+not true black. On the OnePlus 7's AMOLED panel every non-black pixel is lit, so the
+browser UI draws current even when idle and the theme never looks 'all-black' premium.
+
+Root cause: `values-night/colors.xml` maps the Material3 surface tokens to
+`novaGray65-85` (dark greys) and layer tokens to `photonDarkGrey30/80`. None of them
+are `#000000`, so AMOLED pixels stay on.
+
+Affected layer: app UI resources only (`app/src/main/res/values-night/colors.xml`).
+No Kotlin, no GeckoView, no build config.
+
+Implementation: remap the dark-theme surface scale to a true-black AMOLED scale:
+background/surface/dim/lowest -> `#000000` (`@color/novaBlack`); containers ->
+`#070707` / `#0F0F0F` / `#1A1A1A` / `#1F1F1F` / `#242424` so elevation hierarchy is
+preserved while every base pixel is off. Splash already follows the surface color
+(004), so launch is seamless black in dark mode.
+
+Expected benefit: AMOLED panel power saving proportional to lit-pixel reduction on UI
+chrome (toolbar, menus, dialogs, home), plus the requested all-black premium look.
+Measurable via screen-on drain deltas and black-pixel coverage screenshots.
+
+Benchmark: TBD Phase 8 — capture black-pixel coverage + screen-on mA before/after on
+the OnePlus 7 (method in `docs/performance/baseline.md`). No frame-time claim.
+
+Regression risk: cosmetic only; on-surface text stays near-white (`#f2f0f8`, contrast
+18.6:1 on black), light theme untouched, private-mode violet palette untouched.
+Revert = drop the patch.
+
+Upstream relationship: not for upstream (device-specific AMOLED preference); Fenix
+deliberately uses Material dark greys. Could be proposed as an optional AMOLED toggle
+later.
