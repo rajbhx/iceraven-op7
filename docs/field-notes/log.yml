@@ -196,6 +196,10 @@ sections:
         solution: "verified via logcat `GeckoViewRemoteDebugger: listening on .../firefox-debugger-socket`"
         tags: [devtools, debugging, socket, geckoview]
       - id: D18
+        problem: "cannot reach the abstract socket without adb"
+        cause: "SELinux denies the proot app domain (EACCES on connect); shell toybox nc has no -U; user declined adb authorization"
+        solution: "accept the constraint — devtools measurement channel is unavailable on this setup; keep Shizuku dumpsys/top/logcat as the measurement stack"
+        tags: [devtools, selinux, adb, constraint]
       - id: D19
         problem: "C1 'verified' was wrong — codec enumeration is not playback"
         cause: "r5 probe logged HardwareCodecCapability decoder selection + low CPU, but the probe clip URLs were 404, so no MediaCodec session ever ran; 'verified' was inferred, not observed"
@@ -211,10 +215,6 @@ sections:
         cause: "am start -n on a foreground activity logs 'Activity not started' and only brings the task forward; new tab was never fetched (background tabs don't fetch until foregrounded)"
         solution: "cold-start reliably: am force-stop, then am start with the intent; or let the chooser resolve (no -n); drive navigation by tapping the URL bar + input text + keyevent 66"
         tags: [intents, fenix, navigation, tabs]
-        problem: "cannot reach the abstract socket without adb"
-        cause: "SELinux denies the proot app domain (EACCES on connect); shell toybox nc has no -U; user declined adb authorization"
-        solution: "accept the constraint — devtools measurement channel is unavailable on this setup; keep Shizuku dumpsys/top/logcat as the measurement stack"
-        tags: [devtools, selinux, adb, constraint]
   - id: E
     title: CI quality
     entries:
