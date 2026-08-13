@@ -42,7 +42,7 @@ shizuku sh -c "mkdir -p '$DEV_APK_DIR' && curl -s -o '$DEV_APK' 'http://127.0.0.
 echo "== [3/5] verify size =="
 LOCAL_SIZE=$(stat -c %s "$APK")
 DEV_SIZE=""
-for i in 1 2 3; do
+for _ in 1 2 3; do
   DEV_SIZE=$(shizuku sh -c "stat -c %s '$DEV_APK'" 2>/dev/null | tr -d '[:space:]')
   [ -n "$DEV_SIZE" ] && break
   sleep 1
