@@ -15,8 +15,8 @@ would be added via `GeckoRuntimeSettings.Builder().setRuntimePrefs(mapOf(...))`.
 | C1 | Hardware media codecs (battery: video) | ~~runtime pref~~ **VERIFIED r5: no change needed** | lower playback drain | done: `docs/performance/media.md` — GeckoView already selects OMX.qcom hw decoders for H.264/HEVC/VP9; peak decode CPU ~10 % | — |
 | C2 | Background discipline (battery: screen-off) | verify/keep tab discard + timers; wakeups audit | near-silent background | overnight `drain` test + `wakeups` | low-medium; keep privacy intact |
 | C3 | Content-process count on 8 GB | ~~setContentProcessHint~~ **VERIFIED r5.5: no change needed** | — | done: `docs/performance/tabs.md` — process cap ~3, memory flat vs tabs (241→265 MB @3→10 tabs); 8 GB device has no pressure | — |
-| C4 | Memory stability (smoothness) | image cache / GC pressure; discard policy | fewer GC stalls → less jank | scroll jank on image-heavy pages + meminfo over long session | low |
-| C5 | Renderer backend/settings (smoothness) | runtime prefs `gfx.webrender.*` (benchmark, don't assume) | frame pacing | Perfetto frame timings / gfxinfo framestats | medium; needs adb |
+| C4 | Memory stability (smoothness) | image cache / GC pressure; discard policy | fewer GC stalls → less jank | **baseline done** `docs/performance/smoothness.md` — heavy synthetic page shows periodic ~200 ms main-thread stalls; typical 1-vsync interval; no change yet | low |
+| C5 | Renderer backend/settings (smoothness) | runtime prefs `gfx.webrender.*` (benchmark, don't assume) | frame pacing | **baseline done** — use SurfaceFlinger latency (gfxinfo = main process only, field note D23); real-page gesture run pending | medium; needs adb |
 | C6 | Startup: defer non-critical init | startup stage audit (pattern exists: `initializeEmojiCompat` on IO) | cold start 600→~450 ms | stage timings (`am start -W` + Perfetto) | low-medium; keep first-paint budget |
 
 ## Never-touch list (security/architecture — speed is not worth these)

@@ -215,6 +215,21 @@ sections:
         cause: "am start -n on a foreground activity logs 'Activity not started' and only brings the task forward; new tab was never fetched (background tabs don't fetch until foregrounded)"
         solution: "cold-start reliably: am force-stop, then am start with the intent; or let the chooser resolve (no -n); drive navigation by tapping the URL bar + input text + keyevent 66"
         tags: [intents, fenix, navigation, tabs]
+      - id: D22
+        problem: "alias URL http://127.0.0.1:8790/s rendered a blank page in Iceraven"
+        cause: "the alias file 's' has no extension; python http.server serves it as application/octet-stream, and Gecko refuses to render a binary blob as HTML — page fetches 200 but shows nothing, JS never runs"
+        solution: "always give fixture files a .html extension (or set MIME) — check Content-Type before relying on a local fixture; blank page + 200 = wrong MIME, not a browser bug"
+        tags: [media, fixtures, mime, http, debugging]
+      - id: D23
+        problem: "dumpsys gfxinfo <pkg> framestats showed 0 frames while the page was actively scrolling"
+        cause: "gfxinfo measures only the main process; WebRender content renders in :tab_* and :gpu processes, so page frames never appear in the package's gfxinfo"
+        solution: "measure compositor-level smoothness with dumpsys SurfaceFlinger --latency '<pkg>/<activity>#0' (line 1 = refresh ns, rows = desired/actual/ready); only judge deltas during continuous motion (idle gaps are not jank)"
+        tags: [smoothness, framestats, surfaceflinger, measurement]
+      - id: D24
+        problem: "intent-opened URL tab never ran JS (no beacons) and showed blank/frozen"
+        cause: "cold start with VIEW intent restores the old session in front and adds the URL tab in the background; background tabs suspend JS timers/rAF until foregrounded"
+        solution: "foreground-only web tests: have the user paste the URL in the address bar (works reliably), or use the chooser route; don't expect the intent tab to run until it is the active tab"
+        tags: [tabs, background, intent, foreground, gecko]
   - id: E
     title: CI quality
     entries:
