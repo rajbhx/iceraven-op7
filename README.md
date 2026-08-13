@@ -15,7 +15,7 @@
   <a href="https://github.com/rajbhx/iceraven-op7/actions/workflows/op7-build.yml"><img src="https://github.com/rajbhx/iceraven-op7/actions/workflows/op7-build.yml/badge.svg" alt="OP7 Build"/></a>
   <a href="https://github.com/rajbhx/iceraven-op7/actions/workflows/ci.yml"><img src="https://github.com/rajbhx/iceraven-op7/actions/workflows/ci.yml/badge.svg" alt="CI"/></a>
   <a href="https://github.com/rajbhx/iceraven-op7/actions/workflows/upstream-check.yml"><img src="https://github.com/rajbhx/iceraven-op7/actions/workflows/upstream-check.yml/badge.svg" alt="Upstream Check"/></a>
-  <img src="https://img.shields.io/badge/revision-r5-EB0028?style=flat-square" alt="OP7 revision r5"/>
+  <img src="https://img.shields.io/badge/revision-r6-EB0028?style=flat-square" alt="OP7 revision r6"/>
   <img src="https://img.shields.io/badge/license-MPL--2.0-blue?style=flat-square" alt="License"/>
 </p>
 
@@ -40,8 +40,9 @@ Everything Gecko does stays Gecko. The OP7 layer is thin, measurable, documented
 | r1–r2 | arm64-only distribution, installable APK (testOnly bug fixed) | ✅ shipped |
 | r3 | `DeviceCapabilities` fingerprint (ABI, RAM, GLES/Vulkan, codecs) | ✅ shipped |
 | r4 | Seamless launch — splash matches home surface | ✅ shipped |
-| **r5** | **AMOLED true-black dark theme** — `#000000` surfaces, power-friendly | ✅ this revision |
-| r6+ | One measured optimization per revision, gated on before/after benchmarks | 🔄 planned |
+| **r5** | **AMOLED true-black dark theme** — `#000000` surfaces, power-friendly | ✅ shipped |
+| **r6** | **Settings visible on AMOLED** — preference rows as `#1A1A1A` cards on black, container scale lifted off pure black | ✅ this revision |
+| r7+ | One measured optimization per revision, gated on before/after benchmarks | 🔄 planned |
 
 Verification-only (no code change, measured on device): hardware video decode (H.264/HEVC/VP9), content-process cap, background drain, real-page smoothness 60 Hz / ~5 % jank.
 
