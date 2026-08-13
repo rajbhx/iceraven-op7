@@ -170,6 +170,16 @@ sections:
         cause: "naive grep of leading digits grabbed the wrong column from top output"
         solution: "report peak from raw per-process samples; verify against cpu-all.txt before trusting a number"
         tags: [measurement, cpu, parsing]
+      - id: D13
+        problem: "\"3/6/10 tabs\" memory captures were invalid — no new tabs were actually opened"
+        cause: "repeated `am start -a VIEW -d <url>` on an already-foreground Fenix reuses the existing tab/task instead of creating new tabs; user confirmed no new tabs appeared"
+        solution: "validate tab creation before measuring (uiautomator dump + user observation); VIEW-intent counts are not tab counts. Correct path: user opens tabs manually, or tap the real \"New tab\" toolbar node (from the Iceraven a11y dump) then drive the awesome bar"
+        tags: [tabs, measurement, intent, ui-automation]
+      - id: D14
+        problem: "a11y dumps can show the WRONG app — the gptos assistant overlay, not the browser"
+        cause: "the assistant host app renders its own floating UI on top; `uiautomator dump` captured that package's nodes"
+        solution: "grep the dump for package=\"...iceraven...\" and confirm mCurrentFocus before trusting coordinates/taps"
+        tags: [shizuku, ui-automation, overlay]
   - id: E
     title: CI quality
     entries:

@@ -220,6 +220,28 @@ cmd_framestats() {
 }
 
 # Background/process state: which of our processes stay alive after backgrounding.
+cmd_tabs() {
+  # WARNING: VIEW intents do NOT create tabs in an already-foreground Fenix;
+  # they reuse the current tab. This command's meminfo is NOT per-tab-count data
+  # (see field note D13). Use it only to measure process-count vs memory at the
+  # CURRENT tab state, or drive the real 'New tab' a11y node instead.
+  local n="${1:-5}"
+  mkdir -p "$OUT_DIR"
+  log "tabs: opening $n tabs via VIEW intents"
+  kill_ensure
+  run_sh "am start -n $COMPONENT" >/dev/null 2>&1 || true
+  sleep 6
+  for i in $(seq 1 "$n"); do
+    run_sh "am start -a android.intent.action.VIEW -d 'https://example.com/?t=$i' -n $PKG/.App" >/dev/null 2>&1 || true
+    sleep 2
+  done
+  sleep 6
+  run_capture "dumpsys meminfo $PKG" "$OUT_DIR/meminfo-${n}tabs.txt"
+  run_capture "ps -A -o NAME,USER,PID,RES | grep forkmaintainers" "$OUT_DIR/procs-${n}tabs.txt" "forkmaintainers"
+  grep "TOTAL" "$OUT_DIR/meminfo-${n}tabs.txt" | head -2
+  log "results: $OUT_DIR/meminfo-${n}tabs.txt"
+}
+
 cmd_procstats() {
   mkdir -p "$OUT_DIR"
   log "procstats: current snapshot (package filter)"
@@ -338,6 +360,7 @@ case "${1:-}" in
   gfx)            cmd_gfx ;;
   framestats)     cmd_framestats ;;
   procstats)      cmd_procstats ;;
+  tabs)           cmd_tabs "${2:-5}" ;;
   cpu)            cmd_cpu "${2:-6}" ;;
   page-load)      cmd_page_load "${2:-https://example.com}" ;;
   profile)        cmd_profile ;;
