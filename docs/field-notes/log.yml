@@ -121,8 +121,16 @@ sections:
         solution: "parse JSON; read streams with BufferedReader loops"
       - id: D7
         problem: "warm-start impossible in proot env"
-        cause: "HOME no-op; am finish unavailable; BACK intercepted"
+        cause: "HOME no-op; am finish and am task move-task-to-back unknown on this Android build; BACK intercepted"
         solution: "record as pending; needs adb or HOME-capable session"
+      - id: D8
+        problem: "dumpsys meminfo/gfxinfo returned 'No process found' or empty"
+        cause: "app process was force-stopped by the preceding cold-start loop"
+        solution: "launch the app and let it render BEFORE capturing mem/gfx (cmd_mem launches; run gfx after mem)"
+      - id: D9
+        problem: "large dumpsys outputs (>40 KB) only partially pull through Shizuku"
+        cause: "wrapper stdout race gets worse with payload size; 400 KB batterystats truncated at 82% after 15 retries"
+        solution: "accept partial captures and label them, or use chunked pulls / adb / MediaStore for full captures"
   - id: E
     title: CI quality
     entries:
