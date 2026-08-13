@@ -8,7 +8,7 @@ Regression risk: cosmetic only; all accent roles retain a dark and a light varia
 Upstream relationship: not for upstream (device-brand theming); Fenix keeps violet as its brand color. Could be proposed as a configurable accent later.
 
 diff --git a/app/src/main/res/values-night/colors.xml b/app/src/main/res/values-night/colors.xml
-index a08f5cc..a95a8bd 100644
+index d48c7ab..2ccbeb8 100644
 --- a/app/src/main/res/values-night/colors.xml
 +++ b/app/src/main/res/values-night/colors.xml
 @@ -4,11 +4,11 @@

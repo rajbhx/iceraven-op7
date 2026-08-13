@@ -17,6 +17,11 @@
   section: E
   tags: patch-generation, git-apply, validation
 
+- **P** 005 v3 failed in CI at values-night/colors.xml:39 while local pristine-file verification passed
+  cause: CI applies patches AFTER 004 (seamless launch) and the Iceraven patch layer; 004 already rewrites the splash line (#210340 -> @color/fx_mobile_surface), so 005's combined hunk that edited the same line could not match
+  solution: 005 no longer touches the splash line — 004 references fx_mobile_surface, which 005 remaps to novaBlack, so the splash is pure black by reference; re-verified the CI order (pristine -> 004 -> 005 -> 006) in a scratch repo, tree byte-identical to target
+  section: E
+  tags: patch-order, ci, 004-ownership, splash
 ## Notes
 - #EB0029 on #000000 ≈ 4.6:1 contrast — passes AA for normal-size accent text; safe for links/buttons/icons.
 - Home cards now blend into the backdrop (structure via content, not fills) — intentional pure-black look; on-surface text stays #f2f0f8 (18.6:1).

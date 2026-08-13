@@ -128,7 +128,7 @@ Affected layer: app UI resources only (`values-night/colors.xml`, `values/styles
 Implementation (r7 v3): collapse the ENTIRE dark-theme surface scale to `#000000` —
 background/surface/dim, `surface_variant`, `surface_bright`, all
 `surface_container_*`, `layer_color_2` (cards/menus/dialogs), `layer_color_3`
-(search), and the splash background (004's seam becomes instant-black AMOLED).
+(search), (the splash needs no direct edit — 004 already references fx_mobile_surface, which this patch remaps to novaBlack, so the 004 seam becomes instant-black AMOLED).
 Structure is carried by hairlines instead of lit fills: `outline` `#2A2A2A`,
 `outline_variant` `#242424`, and the settings row card gets a 1dp `#242424` stroke
 (`op7_preference_row_background`) around its pure-black fill via
