@@ -1,0 +1,149 @@
+diff --git a/app/src/main/java/org/mozilla/fenix/HomeActivity.kt b/app/src/main/java/org/mozilla/fenix/HomeActivity.kt
+index 34d74f1d51..b2bab1f72c 100644
+--- a/app/src/main/java/org/mozilla/fenix/HomeActivity.kt
++++ b/app/src/main/java/org/mozilla/fenix/HomeActivity.kt
+@@ -16,6 +16,7 @@ import android.os.Build
+ import android.os.Bundle
+ import android.os.StrictMode
+ import android.text.format.DateUtils
++import android.util.Log
+ import android.util.AttributeSet
+ import android.view.ActionMode
+ import android.view.KeyEvent
+@@ -419,6 +420,9 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity, Crash
+         // DO NOT MOVE ANYTHING ABOVE THIS getProfilerTime CALL.
+         val startTimeProfiler = components.core.engine.profiler?.getProfilerTime()
+ 
++        // OP7 capability fingerprint (Phase 5): observability only, no behavior change.
++        Log.d("OP7Capabilities", DeviceCapabilities.get(applicationContext).describe())
++
+         // Setup nimbus-cli tooling. This is a NOOP when launching normally.
+         components.nimbus.sdk.initializeTooling(applicationContext, intent)
+         components.strictMode.attachListenerToDisablePenaltyDeath(supportFragmentManager)
+diff --git a/app/src/main/java/org/mozilla/fenix/op7/DeviceCapabilities.kt b/app/src/main/java/org/mozilla/fenix/op7/DeviceCapabilities.kt
+new file mode 100644
+index 0000000000..ff5dafd171
+--- /dev/null
++++ b/app/src/main/java/org/mozilla/fenix/op7/DeviceCapabilities.kt
+@@ -0,0 +1,121 @@
++package org.mozilla.fenix.op7
++
++import android.app.ActivityManager
++import android.content.Context
++import android.content.pm.PackageManager
++import android.media.MediaCodecInfo
++import android.media.MediaCodecList
++import android.os.Build
++import android.os.Environment
++import android.os.StatFs
++
++/**
++ * OP7 capability model (Phase 5).
++ *
++ * Single place to ask "what can this device do?" instead of scattering
++ * `Build.MODEL` checks. Generic Android capability checks are preferred over
++ * device-specific ones; no optimization is gated on this class yet.
++ *
++ * Consumers ask for capabilities, never for the model string. Initialized once
++ * and memoized. Observability only — no behavior changes.
++ */
++data class DeviceCapabilities(
++    val abiList: List<String>,
++    val is64Bit: Boolean,
++    val apiLevel: Int,
++    val manufacturer: String,
++    val model: String,
++    val totalRamBytes: Long,
++    val memoryClassMb: Int,
++    val largeMemoryClassMb: Int,
++    val isLowRamDevice: Boolean,
++    val glesVersion: String?,
++    val vulkanSupported: Boolean,
++    val openGlEsSupported: Boolean,
++    val hardwareVideoDecoders: List<String>,
++    val displayWidthPx: Int,
++    val displayHeightPx: Int,
++    val densityDpi: Int,
++    val totalStorageBytes: Long,
++    val availableStorageBytes: Long,
++) {
++    val hasArm64Only: Boolean get() = abiList == listOf("arm64-v8a")
++    val hasLargeRam: Boolean get() = totalRamBytes >= 7L * 1024 * 1024 * 1024
++    val hasHardwareVideoDecoder: Boolean get() = hardwareVideoDecoders.isNotEmpty()
++
++    fun hasHardwareDecoder(mimePrefix: String): Boolean =
++        hardwareVideoDecoders.any { it.startsWith(mimePrefix) }
++
++    /** Compact, stable fingerprint for on-device verification (logcat). */
++    fun describe(): String {
++        val gles = glesVersion ?: "unknown"
++        val ramGb = "%.1f".format(totalRamBytes / (1024.0 * 1024.0 * 1024.0))
++        val storageGb = "%.0f".format(totalStorageBytes / (1024.0 * 1024.0 * 1024.0))
++        return "model=$manufacturer:$model api=$apiLevel abi=${abiList.joinToString("+")} " +
++            "ram=${ramGb}G memClass=$memoryClassMb/$largeMemoryClassMb lowRam=$isLowRamDevice " +
++            "gles=$gles vulkan=$vulkanSupported gles32=$openGlEsSupported " +
++            "hwDecoders=[${hardwareVideoDecoders.joinToString(",")}] " +
++            "display=${displayWidthPx}x${displayHeightPx}@$densityDpi storage=${storageGb}G"
++    }
++
++    companion object {
++        @Volatile
++        private var cached: DeviceCapabilities? = null
++
++        fun get(context: Context): DeviceCapabilities =
++            cached ?: synchronized(this) {
++                cached ?: capture(context.applicationContext).also { cached = it }
++            }
++
++        private fun capture(context: Context): DeviceCapabilities {
++            val activityManager =
++                context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
++            val memoryInfo = ActivityManager.MemoryInfo().also { activityManager.getMemoryInfo(it) }
++            val packageManager = context.packageManager
++            val displayMetrics = context.resources.displayMetrics
++            val dataStats = StatFs(Environment.getDataDirectory().path)
++
++            val glesFeature = packageManager
++                .getSystemFeatureInfo(PackageManager.FEATURE_OPENGLES_VERSION)
++
++            val videoDecoders = mutableListOf<String>()
++            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
++                val codecList = MediaCodecList(MediaCodecList.ALL_CODECS)
++                for (info in codecList.codecInfos) {
++                    if (info.isEncoder || !info.isHardwareAccelerated) continue
++                    val supportsVideo = info.supportedTypes.any { it.startsWith("video/") }
++                    if (supportsVideo) {
++                        videoDecoders += info.supportedTypes
++                            .firstOrNull { it.startsWith("video/") } ?: "video/unknown"
++                    }
++                }
++            }
++            videoDecoders.sort()
++            videoDecoders.distinct()
++
++            return DeviceCapabilities(
++                abiList = Build.SUPPORTED_ABIS.toList(),
++                is64Bit = Build.SUPPORTED_64_BIT_ABIS.isNotEmpty(),
++                apiLevel = Build.VERSION.SDK_INT,
++                manufacturer = Build.MANUFACTURER,
++                model = Build.MODEL,
++                totalRamBytes = memoryInfo.totalMem,
++                memoryClassMb = activityManager.memoryClass,
++                largeMemoryClassMb = activityManager.largeMemoryClass,
++                isLowRamDevice = activityManager.isLowRamDevice,
++                glesVersion = glesFeature?.let { "0x%08x".format(it.version) },
++                vulkanSupported = packageManager.hasSystemFeature(
++                    PackageManager.FEATURE_VULKAN_HARDWARE_VERSION,
++                ),
++                openGlEsSupported = packageManager.hasSystemFeature(PackageManager.FEATURE_OPENGLES_3_1) ||
++                    packageManager.hasSystemFeature(PackageManager.FEATURE_OPENGLES_3_2),
++                hardwareVideoDecoders = videoDecoders,
++                displayWidthPx = displayMetrics.widthPixels,
++                displayHeightPx = displayMetrics.heightPixels,
++                densityDpi = displayMetrics.densityDpi,
++                totalStorageBytes = dataStats.totalBytes,
++                availableStorageBytes = dataStats.availableBytes,
++            )
++        }
++    }
++}

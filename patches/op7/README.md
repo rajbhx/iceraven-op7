@@ -50,3 +50,32 @@ Benchmark: none (distribution change, no runtime perf impact).
 Regression risk: only arm64-v8a APKs are produced; other ABI inputs fail
 validation (intended for the OP7 target).
 Upstream relationship: N/A — distribution choice; upstream ships all ABIs.
+
+## 003-op7-device-capabilities.patch
+
+Problem: no capability-detection layer exists; future optimizations would risk
+scattered `Build.MODEL == "GM1901"` checks and hard-coded device assumptions.
+
+Root cause: new infrastructure (Phase 5) — the app has no single place to ask
+"what can this device do?" (ABI, RAM class, GLES/Vulkan, hardware codecs).
+
+Affected layer: app UI (observability hook in `HomeActivity.onCreate`); new
+`org.mozilla.fenix.op7.DeviceCapabilities` data model.
+
+Implementation: memoized `DeviceCapabilities.get(context)` reading Build fields,
+ActivityManager memory, PackageManager GLES/Vulkan features, MediaCodecList
+hardware video decoders, display metrics, and StatFs storage. Wired to a single
+debug log `OP7Capabilities` at startup — observability only, no behavior change.
+
+Expected benefit: Phase 5/6/7 foundation; on-device verification of the
+capability fingerprint via logcat; consumers later ask capabilities, never
+model strings.
+
+Benchmark: none — no behavior change (verified: no codec/backend/process policy
+is toggled by this class yet).
+
+Regression risk: minimal — one debug log line; R8 retains the class because
+HomeActivity references it.
+
+Upstream relationship: not for upstream (device-build specific). A generic
+capability model could be proposed upstream later after Phase-7 measurements.
