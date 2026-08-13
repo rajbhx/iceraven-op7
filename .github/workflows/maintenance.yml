@@ -78,6 +78,8 @@ jobs:
       - name: Write summary
         if: always()
         run: |
-          echo "## Maintenance" >> "$GITHUB_STEP_SUMMARY"
-          echo "- pruned artifacts >14d, caches >14d, runs beyond newest 20" >> "$GITHUB_STEP_SUMMARY"
-          echo "- keeps the repo inside GitHub free-tier storage limits automatically" >> "$GITHUB_STEP_SUMMARY"
+          {
+            echo "## Maintenance"
+            echo "- pruned artifacts >14d, caches >14d, runs beyond newest 20"
+            echo "- keeps the repo inside GitHub free-tier storage limits automatically"
+          } >> "$GITHUB_STEP_SUMMARY"
