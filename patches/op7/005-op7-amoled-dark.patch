@@ -1,94 +1,12 @@
-Problem: (r5) the dark theme used dark-grey surfaces (#1d1b1f / #312f33 / #42414d etc.), not true black, so AMOLED pixels stay lit. (r6) after the r5 remap, the Settings page became a pure-black void: androidx.preference rows are transparent ripples on the fragment backdrop (colorBackground = fx_mobile_background = #000000), and its list dividers are #1f000000 (invisible on black) — the whole page read as an empty black screen.
-Root cause: values-night/colors.xml maps the Material3 surface tokens to novaGray65-85 (dark greys) and layer tokens to photonDarkGrey30/80 — none are #000000, so AMOLED pixels stay on (r5). The r6 settings void is caused by the preference stack itself: androidx.preference 1.2.1 paints no row background (Preference styleable has no android:background; preference_material.xml root uses only a transparent selectableItemBackground ripple), PreferenceFragmentCompat renders rows over the activity colorBackground, and its divider drawable is #1f000000 — all structure carriers vanished once the backdrop became #000000.
+Problem: (r5) the dark theme used dark-grey surfaces (#1d1b1f / #312f33 / #42414d etc.), not true black, so AMOLED pixels stay lit. (r6) after the r5 remap, the Settings page became a pure-black void: androidx.preference rows are transparent ripples on the fragment backdrop and its list dividers are #1f000000, so the whole page read as an empty black screen; the r6 fix added #1A1A1A card rows, which the user rejected as a "mix of gray and pureblack". (r7) this revision removes every gray fill: all surface/container/layer tokens are now pure black, and structure is carried by 1dp hairlines instead of lit-gray fills.
+Root cause: values-night/colors.xml maps the Material3 surface tokens to novaGray65-85 (dark greys) and layer tokens to photonDarkGrey30/80 — none are #000000, so AMOLED pixels stay on (r5). The r6 settings void is caused by the preference stack itself: androidx.preference 1.2.1 paints no row background, and its divider drawable is #1f000000 — all structure carriers vanished once the backdrop became #000000. The r7 remaining gray is the r6 container scale itself (#0A0A0A-#242424) plus outline/layer tokens that still referenced dark greys.
 Affected layer: app UI resources only (values-night/colors.xml, values/styles.xml, drawable/, layout/). No Kotlin, no GeckoView, no build config.
-Implementation: keep the true-black AMOLED base (background/surface/dim = #000000) and lift the container scale off pure black so elevation hierarchy is preserved and lowest-tier surfaces stay distinguishable (lowest #0A0A0A < low #121212 < container #1A1A1A < high #1F1F1F < highest #242424; surface_variant #161616; search layer_color_3 #141414). Fix the settings void at the source: preference rows now render on an inset rounded card (@layout/op7_preference_row + @drawable/op7_preference_row_background, fill ?attr/colorSurfaceContainer = #1A1A1A, same as home cards) via PreferenceTheme.preferenceStyle and SwitchCompatPreferenceMaterialStyle; androidx list dividers are neutralized (transparent) so full-width lines don't cross the card gaps. Card rows are visible on the black backdrop while home/chrome stays AMOLED-black.
-Expected benefit: AMOLED panel power saving proportional to lit-pixel reduction on UI chrome (toolbar, menus, dialogs, home) plus a usable, premium settings page: visible card rows on a pure-black backdrop, consistent with the home screen. Measurable via screen-on drain deltas and pixel-coverage screenshots (before/after).
-Benchmark: r5 baseline in docs/performance/ (black-pixel coverage + screen-on mA method). r6 target: settings page no longer a void (visual QA) + no regression in r5 black-pixel coverage on home/chrome. No frame-time claim.
-Regression risk: cosmetic/theme only; text contrast preserved (on-surface stays near-white #f2f0f8). Card row layout is a pinned copy of androidx.preference 1.2.1 preference_material — upstream bump that changes that layout will surface as a patch conflict and stop the pipeline (by design). Light theme untouched. Revert = drop patch.
+Implementation: keep the true-black AMOLED base and collapse the entire elevation scale to #000000: background/surface/dim/surface_variant/surface_bright, all surface_container_* tokens, layer_color_2 (cards/menus/dialogs), layer_color_3 (search), and the splashscreen background (#210340 purple -> pure black for an instant-black AMOLED splash). Structure now comes from hairlines: outline #2A2A2A / outline_variant #242424, and the settings row card (op7_preference_row_background) gets a 1dp #242424 stroke around its pure-black fill via PreferenceTheme.preferenceStyle + SwitchCompatPreferenceMaterialStyle; androidx list dividers stay neutralized. Row layout is a pinned copy of androidx.preference 1.2.1 preference_material.
+Expected benefit: maximum AMOLED power saving — every non-content pixel on UI chrome (toolbar, menus, dialogs, home, settings, splash) is now truly off, with card structure preserved by hairlines that cost ~0 pixels. Measurable via screen-on drain deltas and black-pixel coverage screenshots (before/after).
+Benchmark: r5 baseline in docs/performance/ (black-pixel coverage + screen-on mA method). r7 target: 100% pure-black coverage on UI chrome surfaces (vs r5 ~10% pure black), settings rows visible via hairline (visual QA), no regression in on-surface text contrast. No frame-time claim.
+Regression risk: cosmetic/theme only; on-surface text stays near-white (#f2f0f8) on pure black. Home cards now blend into the backdrop (structure carried by content, not fills) — intentional pure-black look. Row layout is a pinned copy of androidx.preference 1.2.1 — an upstream bump that changes that layout surfaces as a patch conflict and stops the pipeline (by design). Light theme untouched. Revert = drop patch.
 Upstream relationship: not for upstream (device-specific AMOLED preference + settings visibility); Fenix deliberately uses Material dark greys and flat preference rows. Could be proposed as an optional AMOLED toggle later.
 
-diff --git a/app/src/main/res/values-night/colors.xml b/app/src/main/res/values-night/colors.xml
-index cee5b72..6728acc 100644
---- a/app/src/main/res/values-night/colors.xml
-+++ b/app/src/main/res/values-night/colors.xml
-@@ -17,11 +17,11 @@
-     <color name="fx_mobile_on_tertiary">@color/novaGray80</color>
-     <color name="fx_mobile_tertiary_container">@color/novaVioletDesaturated90</color>
-     <color name="fx_mobile_on_tertiary_container">@color/novaVioletDesaturated0</color>
--    <color name="fx_mobile_background">@color/novaGray75</color>
-+    <color name="fx_mobile_background">@color/novaBlack</color>
-     <color name="fx_mobile_on_background">@color/novaVioletDesaturated0</color>
--    <color name="fx_mobile_surface">@color/novaGray75</color>
-+    <color name="fx_mobile_surface">@color/novaBlack</color>
-     <color name="fx_mobile_on_surface">@color/novaVioletDesaturated0</color>
--    <color name="fx_mobile_surface_variant">@color/novaGray65</color>
-+    <color name="fx_mobile_surface_variant">#FF161616</color>
-     <color name="fx_mobile_on_surface_variant">@color/novaVioletDesaturated0A70</color>
-     <color name="fx_mobile_surface_inverse">@color/novaGray30</color>
-     <color name="fx_mobile_on_surface_inverse">@color/novaGray80</color>
-@@ -41,13 +41,13 @@
-     <color name="fx_mobile_on_warning_container">@color/novaVioletDesaturated0</color>
-     <color name="fx_mobile_outline">@color/novaGray45</color>
-     <color name="fx_mobile_outline_variant">@color/novaGray65</color>
--    <color name="fx_mobile_surface_bright">@color/novaGray65</color>
--    <color name="fx_mobile_surface_dim">@color/novaGray85</color>
--    <color name="fx_mobile_surface_container">@color/novaGray75</color>
--    <color name="fx_mobile_surface_container_high">@color/novaGray70</color>
--    <color name="fx_mobile_surface_container_highest">@color/novaGray65</color>
--    <color name="fx_mobile_surface_container_low">@color/novaGray80</color>
--    <color name="fx_mobile_surface_container_lowest">@color/novaGray85</color>
-+    <color name="fx_mobile_surface_bright">#FF1F1F1F</color>
-+    <color name="fx_mobile_surface_dim">@color/novaBlack</color>
-+    <color name="fx_mobile_surface_container">#FF1A1A1A</color>
-+    <color name="fx_mobile_surface_container_high">#FF1F1F1F</color>
-+    <color name="fx_mobile_surface_container_highest">#FF242424</color>
-+    <color name="fx_mobile_surface_container_low">#FF121212</color>
-+    <color name="fx_mobile_surface_container_lowest">#FF0A0A0A</color>
-     <color name="fx_mobile_autofill_text">@color/novaVioletDesaturated30A55</color>
-     <color name="fx_mobile_selected_text">@color/novaGray45A80</color>
-     <color name="fx_mobile_icon_private">@color/novaViolet50</color>
-@@ -59,9 +59,9 @@
- 
-     <!-- Layers -->
-     <!-- Card background, Menu background, Dialog, Banner -->
--    <color name="fx_mobile_layer_color_2">@color/photonDarkGrey30</color>
-+    <color name="fx_mobile_layer_color_2">#FF1A1A1A</color>
-     <!-- Search -->
--    <color name="fx_mobile_layer_color_3">@color/photonDarkGrey80</color>
-+    <color name="fx_mobile_layer_color_3">#FF141414</color>
-     <!-- Tooltip -->
-     <color name="fx_mobile_layer_color_gradient_start">@color/photonViolet70</color>
-     <!-- Tooltip -->
-diff --git a/app/src/main/res/values/styles.xml b/app/src/main/res/values/styles.xml
-index c279db4..7b85585 100644
---- a/app/src/main/res/values/styles.xml
-+++ b/app/src/main/res/values/styles.xml
-@@ -527,9 +527,17 @@
- 
-     <style name="PreferenceTheme" parent="PreferenceThemeOverlay.v14.Material">
-         <item name="android:fontFamily">sans-serif</item>
-+        <item name="preferenceStyle">@style/PreferenceTheme.Preference</item>
-         <item name="switchPreferenceCompatStyle">@style/SwitchCompatPreferenceMaterialStyle</item>
-     </style>
- 
-+    <!-- OP7 r6: preference rows render on a visible AMOLED card instead of the
-+         stock transparent ripple, which vanished on the pure-black settings
-+         backdrop. -->
-+    <style name="PreferenceTheme.Preference" parent="Preference.Material">
-+        <item name="android:layout">@layout/op7_preference_row</item>
-+    </style>
-+
-     <style name="HeaderTextStyle" parent="TextAppearance.MaterialComponents.Subtitle1">
-         <item name="android:textSize">18sp</item>
-         <item name="android:textColor">?attr/colorOnSurface</item>
-@@ -772,6 +780,7 @@
-     <style name="SwitchCompatPreferenceMaterialStyle" parent="@style/Preference.SwitchPreferenceCompat.Material">
-         <item name="widgetLayout">@layout/preference_material_switch</item>
-         <item name="singleLineTitle">false</item>
-+        <item name="android:layout">@layout/op7_preference_row</item>
-     </style>
- 
-     <style name="MaterialSwitchStyle" parent="Widget.Material3.CompoundButton.MaterialSwitch">
 diff --git a/app/src/main/res/drawable-v21/preference_list_divider_material.xml b/app/src/main/res/drawable-v21/preference_list_divider_material.xml
 new file mode 100644
 index 0000000..3b6d6d9
@@ -107,20 +25,24 @@ index 0000000..3b6d6d9
 +</shape>
 diff --git a/app/src/main/res/drawable/op7_preference_row_background.xml b/app/src/main/res/drawable/op7_preference_row_background.xml
 new file mode 100644
-index 0000000..ccf76bf
+index 0000000..d41621f
 --- /dev/null
 +++ b/app/src/main/res/drawable/op7_preference_row_background.xml
-@@ -0,0 +1,14 @@
+@@ -0,0 +1,18 @@
 +<?xml version="1.0" encoding="utf-8"?>
-+<!-- OP7 r6: preference row card surface (AMOLED dark). Solid fill uses
-+     ?attr/colorSurfaceContainer (#1A1A1A in values-night/colors.xml) so rows
-+     stay visible on the pure-black settings backdrop; ripple keeps press
-+     feedback. Same token as home cards (layer_color_2) for a consistent look. -->
++<!-- OP7 r7: preference row card on the AMOLED dark settings page. Fill uses
++     ?attr/colorSurfaceContainer (pure black in values-night/colors.xml) so the
++     row melts into the pure-black backdrop; a 1dp hairline stroke (#242424)
++     keeps the card structure visible without lighting AMOLED pixels. Ripple
++     keeps press feedback. -->
 +<ripple xmlns:android="http://schemas.android.com/apk/res/android"
 +    android:color="?attr/colorControlHighlight">
 +    <item>
 +        <shape android:shape="rectangle">
 +            <solid android:color="?attr/colorSurfaceContainer" />
++            <stroke
++                android:width="1dp"
++                android:color="#FF242424" />
 +            <corners android:radius="12dp" />
 +        </shape>
 +    </item>
@@ -217,3 +139,94 @@ index 0000000..10f5bad
 +        android:orientation="vertical"/>
 +
 +</LinearLayout>
+diff --git a/app/src/main/res/values-night/colors.xml b/app/src/main/res/values-night/colors.xml
+index cee5b72..a08f5cc 100644
+--- a/app/src/main/res/values-night/colors.xml
++++ b/app/src/main/res/values-night/colors.xml
+@@ -17,11 +17,11 @@
+     <color name="fx_mobile_on_tertiary">@color/novaGray80</color>
+     <color name="fx_mobile_tertiary_container">@color/novaVioletDesaturated90</color>
+     <color name="fx_mobile_on_tertiary_container">@color/novaVioletDesaturated0</color>
+-    <color name="fx_mobile_background">@color/novaGray75</color>
++    <color name="fx_mobile_background">@color/novaBlack</color>
+     <color name="fx_mobile_on_background">@color/novaVioletDesaturated0</color>
+-    <color name="fx_mobile_surface">@color/novaGray75</color>
++    <color name="fx_mobile_surface">@color/novaBlack</color>
+     <color name="fx_mobile_on_surface">@color/novaVioletDesaturated0</color>
+-    <color name="fx_mobile_surface_variant">@color/novaGray65</color>
++    <color name="fx_mobile_surface_variant">#FF000000</color>
+     <color name="fx_mobile_on_surface_variant">@color/novaVioletDesaturated0A70</color>
+     <color name="fx_mobile_surface_inverse">@color/novaGray30</color>
+     <color name="fx_mobile_on_surface_inverse">@color/novaGray80</color>
+@@ -39,29 +39,29 @@
+     <color name="fx_mobile_on_warning">@color/novaGray80</color>
+     <color name="fx_mobile_warning_container">@color/novaYellow70</color>
+     <color name="fx_mobile_on_warning_container">@color/novaVioletDesaturated0</color>
+-    <color name="fx_mobile_outline">@color/novaGray45</color>
+-    <color name="fx_mobile_outline_variant">@color/novaGray65</color>
+-    <color name="fx_mobile_surface_bright">@color/novaGray65</color>
+-    <color name="fx_mobile_surface_dim">@color/novaGray85</color>
+-    <color name="fx_mobile_surface_container">@color/novaGray75</color>
+-    <color name="fx_mobile_surface_container_high">@color/novaGray70</color>
+-    <color name="fx_mobile_surface_container_highest">@color/novaGray65</color>
+-    <color name="fx_mobile_surface_container_low">@color/novaGray80</color>
+-    <color name="fx_mobile_surface_container_lowest">@color/novaGray85</color>
++    <color name="fx_mobile_outline">#FF2A2A2A</color>
++    <color name="fx_mobile_outline_variant">#FF242424</color>
++    <color name="fx_mobile_surface_bright">#FF000000</color>
++    <color name="fx_mobile_surface_dim">@color/novaBlack</color>
++    <color name="fx_mobile_surface_container">#FF000000</color>
++    <color name="fx_mobile_surface_container_high">#FF000000</color>
++    <color name="fx_mobile_surface_container_highest">#FF000000</color>
++    <color name="fx_mobile_surface_container_low">#FF000000</color>
++    <color name="fx_mobile_surface_container_lowest">#FF000000</color>
+     <color name="fx_mobile_autofill_text">@color/novaVioletDesaturated30A55</color>
+     <color name="fx_mobile_selected_text">@color/novaGray45A80</color>
+     <color name="fx_mobile_icon_private">@color/novaViolet50</color>
+     <color name="fx_mobile_scrim">@color/novaBlackA50</color>
+ 
+-    <color name="fx_mobile_splashscreen_background">#210340</color>
++    <color name="fx_mobile_splashscreen_background">#FF000000</color>
+ 
+     <!-- Design system color variables -->
+ 
+     <!-- Layers -->
+     <!-- Card background, Menu background, Dialog, Banner -->
+-    <color name="fx_mobile_layer_color_2">@color/photonDarkGrey30</color>
++    <color name="fx_mobile_layer_color_2">#FF000000</color>
+     <!-- Search -->
+-    <color name="fx_mobile_layer_color_3">@color/photonDarkGrey80</color>
++    <color name="fx_mobile_layer_color_3">#FF000000</color>
+     <!-- Tooltip -->
+     <color name="fx_mobile_layer_color_gradient_start">@color/photonViolet70</color>
+     <!-- Tooltip -->
+diff --git a/app/src/main/res/values/styles.xml b/app/src/main/res/values/styles.xml
+index c279db4..7b85585 100644
+--- a/app/src/main/res/values/styles.xml
++++ b/app/src/main/res/values/styles.xml
+@@ -527,9 +527,17 @@
+ 
+     <style name="PreferenceTheme" parent="PreferenceThemeOverlay.v14.Material">
+         <item name="android:fontFamily">sans-serif</item>
++        <item name="preferenceStyle">@style/PreferenceTheme.Preference</item>
+         <item name="switchPreferenceCompatStyle">@style/SwitchCompatPreferenceMaterialStyle</item>
+     </style>
+ 
++    <!-- OP7 r6: preference rows render on a visible AMOLED card instead of the
++         stock transparent ripple, which vanished on the pure-black settings
++         backdrop. -->
++    <style name="PreferenceTheme.Preference" parent="Preference.Material">
++        <item name="android:layout">@layout/op7_preference_row</item>
++    </style>
++
+     <style name="HeaderTextStyle" parent="TextAppearance.MaterialComponents.Subtitle1">
+         <item name="android:textSize">18sp</item>
+         <item name="android:textColor">?attr/colorOnSurface</item>
+@@ -772,6 +780,7 @@
+     <style name="SwitchCompatPreferenceMaterialStyle" parent="@style/Preference.SwitchPreferenceCompat.Material">
+         <item name="widgetLayout">@layout/preference_material_switch</item>
+         <item name="singleLineTitle">false</item>
++        <item name="android:layout">@layout/op7_preference_row</item>
+     </style>
+ 
+     <style name="MaterialSwitchStyle" parent="Widget.Material3.CompoundButton.MaterialSwitch">

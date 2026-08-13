@@ -113,31 +113,80 @@ proposed as a general polish later.
 Problem: the dark theme uses dark-grey surfaces (#1d1b1f / #312f33 / #42414d etc.),
 not true black. On the OnePlus 7's AMOLED panel every non-black pixel is lit, so the
 browser UI draws current even when idle and the theme never looks 'all-black' premium.
+r6 fixed the invisible settings page with `#1A1A1A` card rows, but that left a
+"mix of gray and pureblack"; r7 removes every gray fill.
 
 Root cause: `values-night/colors.xml` maps the Material3 surface tokens to
 `novaGray65-85` (dark greys) and layer tokens to `photonDarkGrey30/80`. None of them
-are `#000000`, so AMOLED pixels stay on.
+are `#000000`, so AMOLED pixels stay on. androidx.preference rows are transparent
+ripples and its dividers are `#1f000000`, so once the backdrop is black the settings
+page loses all structure.
 
-Affected layer: app UI resources only (`app/src/main/res/values-night/colors.xml`).
-No Kotlin, no GeckoView, no build config.
+Affected layer: app UI resources only (`values-night/colors.xml`, `values/styles.xml`,
+`drawable/`, `layout/`). No Kotlin, no GeckoView, no build config.
 
-Implementation: remap the dark-theme surface scale to a true-black AMOLED scale:
-background/surface/dim/lowest -> `#000000` (`@color/novaBlack`); containers ->
-`#070707` / `#0F0F0F` / `#1A1A1A` / `#1F1F1F` / `#242424` so elevation hierarchy is
-preserved while every base pixel is off. Splash already follows the surface color
-(004), so launch is seamless black in dark mode.
+Implementation (r7 v3): collapse the ENTIRE dark-theme surface scale to `#000000` —
+background/surface/dim, `surface_variant`, `surface_bright`, all
+`surface_container_*`, `layer_color_2` (cards/menus/dialogs), `layer_color_3`
+(search), and the splash background (004's seam becomes instant-black AMOLED).
+Structure is carried by hairlines instead of lit fills: `outline` `#2A2A2A`,
+`outline_variant` `#242424`, and the settings row card gets a 1dp `#242424` stroke
+(`op7_preference_row_background`) around its pure-black fill via
+`PreferenceTheme.preferenceStyle` + `SwitchCompatPreferenceMaterialStyle`
+(`@layout/op7_preference_row`, a pinned copy of androidx.preference 1.2.1
+`preference_material`). androidx list dividers stay neutralized.
 
-Expected benefit: AMOLED panel power saving proportional to lit-pixel reduction on UI
-chrome (toolbar, menus, dialogs, home), plus the requested all-black premium look.
-Measurable via screen-on drain deltas and black-pixel coverage screenshots.
+Expected benefit: maximum AMOLED power saving — every non-content chrome pixel
+(toolbar, menus, dialogs, home, settings, splash) is truly off, with card structure
+preserved by hairlines that cost ~0 pixels. Measurable via screen-on drain deltas and
+black-pixel coverage screenshots (before/after).
 
-Benchmark: TBD Phase 8 — capture black-pixel coverage + screen-on mA before/after on
-the OnePlus 7 (method in `docs/performance/baseline.md`). No frame-time claim.
+Benchmark: r5 baseline in `docs/performance/` (black-pixel coverage + screen-on mA
+method). r7 target: ~100% pure-black coverage on UI chrome surfaces vs r5 ~10%,
+settings rows visible via hairline (visual QA). No frame-time claim.
 
 Regression risk: cosmetic only; on-surface text stays near-white (`#f2f0f8`, contrast
 18.6:1 on black), light theme untouched, private-mode violet palette untouched.
+Home cards now blend into the backdrop (structure by content, not fills) — the
+intended pure-black look. Row layout is pinned to androidx.preference 1.2.1; an
+upstream bump that changes it surfaces as a patch conflict and stops the pipeline.
 Revert = drop the patch.
 
 Upstream relationship: not for upstream (device-specific AMOLED preference); Fenix
 deliberately uses Material dark greys. Could be proposed as an optional AMOLED toggle
 later.
+
+## 006-op7-onephone-red-accent.patch
+
+Problem: the default Iceraven accent is Mozilla violet; a OnePlus 7 themed build
+should carry the OnePlus brand red (`#EB0029`) so the browser feels native to the
+device.
+
+Root cause: `values-night/colors.xml` and `values/colors.xml` map
+`fx_mobile_primary` / `primary_container` / `primary_inverse` and the dark-mode
+accent family to the nova/photon violet palette.
+
+Affected layer: app UI resources only (`values-night/colors.xml`,
+`values/colors.xml`). No Kotlin, no GeckoView, no build config.
+
+Implementation: remap the accent family to OnePlus red. Night: `primary`
+`#FFEB0029`, `primary_container` `#FF4D000F`, `primary_inverse` `#FFFF3346`,
+`accent_normal_theme` `#FFEB0029`, `accent_high_contrast_normal_theme` `#FFFF3346`,
+fill-link-from-clipboard `#FFEB0029`, login cursor `#FFEB0029`, protections progress
+bar `#FFEB0029`. Day: `primary` `#FFEB0029`, `primary_container` `#FFFFD9DE`,
+`primary_inverse` `#FFFF4D5E`. Private-mode identity (violet) is intentionally kept
+so private browsing stays visually distinct; day-theme text stays ink-dark
+(`accent_normal_theme` day = `photonInk20` is text color, not brand accent).
+
+Expected benefit: OnePlus brand identity in toolbar icons, links, toggles, buttons
+and the dashboard, on top of the r7 pure-black AMOLED base. `#EB0029` on `#000000`
+is ~4.6:1 contrast (AA for normal-size accent text).
+
+Benchmark: visual QA (accent present across settings/toolbar/tabs) + r7 black-pixel
+coverage unchanged (accent pixels are a tiny fraction of chrome). No perf claim.
+
+Regression risk: cosmetic only; both themes keep dark and light accent variants for
+contrast. No security/permission/process changes. Revert = drop the patch.
+
+Upstream relationship: not for upstream (device-brand theming); Fenix keeps violet as
+its brand color. Could be proposed as a configurable accent later.

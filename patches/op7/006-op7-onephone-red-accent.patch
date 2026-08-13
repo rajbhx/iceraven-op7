@@ -1,0 +1,75 @@
+Problem: the default Iceraven accent is Mozilla violet; a OnePlus 7 themed build should carry the OnePlus brand red (#EB0029) so the browser feels like part of the device.
+Root cause: values-night/colors.xml and values/colors.xml map fx_mobile_primary / primary_container / primary_inverse and the dark-mode accent family (accent_normal_theme, accent_high_contrast_normal_theme, fill_link_from_clipboard_normal_theme, prompt_login cursor, protections progress bar) to the nova/photon violet palette.
+Affected layer: app UI resources only (values-night/colors.xml, values/colors.xml). No Kotlin, no GeckoView, no build config.
+Implementation: remap the accent family to OnePlus red. Night: primary #FFEB0029, primary_container #FF4D000F (dark red), primary_inverse #FFFF3346 (bright red for dark surfaces), accent_normal_theme #FFEB0029, accent_high_contrast_normal_theme #FFFF3346, fill-link-from-clipboard button #FFEB0029, login cursor #FFEB0029, protections dashboard progress bar #FFEB0029. Day: primary #FFEB0029, primary_container #FFFFD9DE (light red chip), primary_inverse #FFFF4D5E. Private-mode identity (icon_color_accent_violet, private dashboard colors, secondary/tertiary surfaces) intentionally stays violet so private browsing remains visually distinct. Light-theme text stays ink-dark (accent_normal_theme day = photonInk20 is untouched — it is text color, not brand accent).
+Expected benefit: OnePlus brand identity in the browser (toolbar icons, links, toggles, buttons, dashboard) while preserving all other architecture and the pure-black r7 AMOLED base. #EB0029 on #000000 has ~4.6:1 contrast, passing AA for normal-size accent text.
+Benchmark: visual QA (accent present across settings, toolbar, tabs) + r7 black-pixel coverage unchanged (accent pixels are a tiny fraction of chrome). No performance claim.
+Regression risk: cosmetic only; all accent roles retain a dark and a light variant for contrast in both themes. No security/permission/process changes. Revert = drop patch.
+Upstream relationship: not for upstream (device-brand theming); Fenix keeps violet as its brand color. Could be proposed as a configurable accent later.
+
+diff --git a/app/src/main/res/values-night/colors.xml b/app/src/main/res/values-night/colors.xml
+index a08f5cc..a95a8bd 100644
+--- a/app/src/main/res/values-night/colors.xml
++++ b/app/src/main/res/values-night/colors.xml
+@@ -4,11 +4,11 @@
+    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+ <resources xmlns:tools="http://schemas.android.com/tools">
+     <!-- Material3 color variables -->
+-    <color name="fx_mobile_primary">@color/novaViolet20</color>
++    <color name="fx_mobile_primary">#FFEB0029</color>
+     <color name="fx_mobile_on_primary">@color/novaGray80</color>
+-    <color name="fx_mobile_primary_container">@color/novaViolet60</color>
++    <color name="fx_mobile_primary_container">#FF4D000F</color>
+     <color name="fx_mobile_on_primary_container">@color/novaVioletDesaturated0</color>
+-    <color name="fx_mobile_primary_inverse">@color/novaViolet70</color>
++    <color name="fx_mobile_primary_inverse">#FFFF3346</color>
+     <color name="fx_mobile_secondary">@color/novaGray20</color>
+     <color name="fx_mobile_on_secondary">@color/novaGray80</color>
+     <color name="fx_mobile_secondary_container">@color/novaVioletDesaturated70</color>
+@@ -95,22 +95,22 @@
+     <color name="fx_mobile_icon_color_accent_yellow">@color/photonYellow20</color>
+ 
+     <!-- Normal theme colors for dark mode -->
+-    <color name="accent_normal_theme">@color/photonViolet50</color>
+-    <color name="accent_high_contrast_normal_theme">@color/photonViolet40</color>
++    <color name="accent_normal_theme">#FFEB0029</color>
++    <color name="accent_high_contrast_normal_theme">#FFFF3346</color>
+     <color name="neutral_normal_theme">@color/photonGrey20</color>
+     <color name="neutral_faded_normal_theme">#1FFBFBFE</color>
+     <color name="toggle_off_knob_normal_theme">@color/toggle_off_knob_dark_theme</color>
+     <color name="toggle_off_track_normal_theme">@color/toggle_off_track_dark_theme</color>
+-    <color name="fill_link_from_clipboard_normal_theme">@color/photonViolet40</color>
++    <color name="fill_link_from_clipboard_normal_theme">#FFEB0029</color>
+     <color name="add_on_private_browsing_exterior_circle_background_normal_theme">@color/accent_normal_theme</color>
+-    <color name="prompt_login_edit_text_cursor_color_normal_theme">@color/photonViolet50</color>
++    <color name="prompt_login_edit_text_cursor_color_normal_theme">#FFEB0029</color>
+     <color name="search_suggestion_indicator_icon_color_normal_theme">@color/photonGreen60</color>
+     <color name="search_suggestion_indicator_icon_bookmark_color_normal_theme">@color/photonBlue40</color>
+ 
+     <!-- Protections Dashboard colors -->
+     <color name="protections_dashboard_chip_background">#FF3D3264</color>
+     <color name="protections_dashboard_chip_text">#FFD9D0F5</color>
+-    <color name="protections_dashboard_progress_bar">@color/novaViolet50</color>
++    <color name="protections_dashboard_progress_bar">#FFEB0029</color>
+     <color name="protections_dashboard_gradient_start">@color/novaVioletDesaturated90</color>
+     <color name="protections_dashboard_gradient_end">@color/novaOrange70</color>
+ 
+diff --git a/app/src/main/res/values/colors.xml b/app/src/main/res/values/colors.xml
+index 792cc22..1db9514 100644
+--- a/app/src/main/res/values/colors.xml
++++ b/app/src/main/res/values/colors.xml
+@@ -4,11 +4,11 @@
+    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+ <resources xmlns:tools="http://schemas.android.com/tools">
+     <!-- Material3 color variables -->
+-    <color name="fx_mobile_primary">@color/novaViolet70</color>
++    <color name="fx_mobile_primary">#FFEB0029</color>
+     <color name="fx_mobile_on_primary">@color/novaWhite</color>
+-    <color name="fx_mobile_primary_container">@color/novaViolet20</color>
++    <color name="fx_mobile_primary_container">#FFFFD9DE</color>
+     <color name="fx_mobile_on_primary_container">@color/novaVioletDesaturated90</color>
+-    <color name="fx_mobile_primary_inverse">@color/novaViolet20</color>
++    <color name="fx_mobile_primary_inverse">#FFFF4D5E</color>
+     <color name="fx_mobile_secondary">@color/novaGray50</color>
+     <color name="fx_mobile_on_secondary">@color/novaWhite</color>
+     <color name="fx_mobile_secondary_container">@color/novaVioletDesaturated10</color>
