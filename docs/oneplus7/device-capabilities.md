@@ -52,3 +52,32 @@ this report — including the actual Android version if the device was updated.
 - Hard-coding CPU instructions or `-march=native`.
 - Using capabilities to disable security features (sandboxing, HTTPS, site isolation).
 - Guessing codec support instead of reading `MediaCodecList`.
+
+## Verified on-device fingerprint (r4, 2026-08-13)
+
+Captured from `logcat -s OP7Capabilities` after launching
+`io.github.forkmaintainers.iceraven.op7` (revision r4, arm64-v8a APK):
+
+```
+model=OnePlus:GM1901 api=29 abi=arm64-v8a+armeabi-v7a+armeabi ram=7.3G
+memClass=256/512 lowRam=false gles=0x00030002 vulkan=true gles32=true
+hwDecoders=[video/3gpp,video/avc,video/divx,video/divx4,video/hevc,
+            video/mp4v-es,video/mpeg2,video/x-ms-wmv,video/x-vnd.on2.vp8,
+            video/x-vnd.on2.vp9]
+display=1080x2260@420 storage=223G
+```
+
+Interpretation (facts, not assumptions):
+
+- `api=29` → Android 10 (OxygenOS 10), as expected.
+- `abi` lists all device-supported ABIs; the shipped APK packages **only**
+  `arm64-v8a` (CI badging gate enforces it).
+- `gles=0x00030002` → OpenGL ES 3.2; `vulkan=true`; `gles32=true` → Adreno 640
+  full pipeline available to GeckoView/WebRender.
+- Hardware decoders confirmed: H.264 (`video/avc`), HEVC (`video/hevc`),
+  VP8/VP9 (`video/x-vnd.on2.vp8/vp9`), MPEG-2, WMV, DivX. GeckoView should use
+  hardware decode for the common web codecs on this device; Phase 6/7 will
+  verify actual codec utilization rather than assume it.
+- `display=1080x2260@420` → FHD+ panel; `storage=223G` free.
+- Cold launch via `am start -W` measured `TotalTime: 740 ms` (warm finger on
+  this run; treat as informational).

@@ -100,6 +100,11 @@ sections:
         cause: "assistant app foreground; HOME keyevent ineffective in proot env"
         solution: "verify mCurrentFocus; use explicit component; validate LaunchState/Activity in logs"
         tags: [automation, activity, shizuku]
+      - id: C5
+        problem: "am start with HomeActivity failed (Error type 3: activity does not exist)"
+        cause: "launcher activity is the Fenix delegate `.App`, and the package id is io.github.forkmaintainers.iceraven.op7 (not org.mozilla.fenix.iceraven.op7)"
+        solution: "resolve the launcher with `cmd package resolve-activity --brief -c android.intent.category.LAUNCHER <pkg>` before launching"
+        tags: [install, activity, package-id]
   - id: D
     title: Measurement and transfer
     entries:
@@ -145,6 +150,11 @@ sections:
         cause: "wrapper stdout race gets worse with payload size; 400 KB batterystats truncated at 82% after 15 retries"
         solution: "accept partial captures and label them, or use chunked pulls / adb / MediaStore for full captures"
         tags: [dumpsys, transfer, truncation]
+      - id: D10
+        problem: "proot files invisible to the real device shell (shizuku)"
+        cause: "proot runs inside the app (gptos.intelligence.assistant); its /storage/emulated/0 is an app-private bind, not the real /sdcard"
+        solution: "proot shares the device network, so serve the APK with a persistent loopback HTTP server (setsid nohup python3 -m http.server) and pull with curl on the real shell to /sdcard/Download/op7/; verify size; copy to /data/local/tmp then pm install -r"
+        tags: [transfer, shizuku, sdcard, loopback]
   - id: E
     title: CI quality
     entries:
