@@ -39,3 +39,14 @@ Populated on first successful unmodified build (Phase 1). Every field is require
 1. Update `upstream/commit.txt` only via `automation/op7/sync_upstream.sh`.
 2. Re-capture the baseline measurements before evaluating any optimization.
 3. Any optimization must reference this baseline in its benchmark result.
+
+## Phase 2 — first on-device measurement (2026-08-13)
+
+- APK installed via Shizuku `pm install -r`; verified `primaryCpuAbi=arm64-v8a`,
+  `versionCode=2016178394`, `versionName=iceraven-2.46.0-op7r2`, not testOnly.
+- Cold start (`am start -W`, LaunchState COLD, 5 runs): **median 595 ms**
+  (min 575, max 617) — **contended** (device in active use, Shizuku transport,
+  existing profile). Not a clean idle baseline.
+- Raw data: `docs/performance/data/20260813-baseline-r2/`.
+- Gap: warm start needs a HOME-capable session (adb preferred); gfxinfo/meminfo/
+  batterystats pending an idle window.

@@ -36,6 +36,41 @@ run_sh() {
   fi
 }
 
+# Reliable capture: run the remote command, write its output to a device temp
+# file, then cat it back. Shizuku's streaming stdout can truncate on large
+# outputs; staging on-device avoids that. Retries once if the file is empty.
+run_capture() {
+  local remote="$1" localfile="$2" need="${3:-}"
+  if [[ "$TRANSPORT" != "shizuku" ]]; then
+    "$ADB" "${ADB_ARGS[@]}" shell "$remote" > "$localfile"
+    return 0
+  fi
+  local tmp="/data/local/tmp/op7cap-$$.txt" size="" i cur
+  shizuku sh -c "$remote > $tmp 2>&1" || true
+  for i in 1 2 3 4 5; do
+    size="$(shizuku sh -c "wc -c < $tmp" 2>/dev/null | tr -d '[:space:]')"
+    [[ -n "$size" ]] && break
+    sleep 1
+  done
+  if [[ -z "$size" ]]; then
+    echo "error: cannot probe capture size: $remote" >&2
+    return 1
+  fi
+  for i in $(seq 1 15); do
+    shizuku sh -c "cat $tmp" > "$localfile" 2>/dev/null || true
+    cur="$(wc -c < "$localfile")"
+    [[ "$cur" == "$size" ]] && { shizuku sh -c "rm -f $tmp" >/dev/null 2>&1 || true; break; }
+    sleep 1
+  done
+  shizuku sh -c "rm -f $tmp" >/dev/null 2>&1 || true
+  if [[ "$(wc -c < "$localfile")" != "$size" ]]; then
+    echo "error: capture incomplete ($(wc -c < "$localfile")/$size bytes): $remote" >&2
+    return 1
+  fi
+  [[ -z "$need" ]] || grep -q "$need" "$localfile" || log "note: '$need' not found in capture (kept as-is)"
+  return 0
+}
+
 require_transport() {
   if [[ "$TRANSPORT" == "shizuku" ]]; then
     command -v shizuku >/dev/null || { echo "error: shizuku not found on PATH"; exit 2; }
@@ -71,22 +106,51 @@ cmd_install() {
   fi
 }
 
+# Health-check the transport between runs (Shizuku can drop under battery
+# optimization); tells the user to reopen Shizuku instead of failing silently.
+transport_ok() {
+  if [[ "$TRANSPORT" == "shizuku" ]]; then
+    [[ "$(shizuku whoami 2>&1 | head -n1)" == *shell* ]]
+  else
+    "$ADB" "${ADB_ARGS[@]}" get-state >/dev/null 2>&1
+  fi
+}
+
+# Kill the app and verify it is gone (retry loop). Verifies by pid output
+# content, not exit code: the Shizuku wrapper can mangle remote exit codes.
+kill_ensure() {
+  local pids=""
+  for _ in 1 2 3; do
+    run_sh "am force-stop $PKG" >/dev/null 2>&1 || true
+    sleep 2
+    pids="$(run_sh "pidof $PKG" 2>/dev/null || true)"
+    [[ -n "$pids" ]] || return 0
+    log "still alive ($pids), retrying force-stop"
+  done
+  log "warning: could not verify $PKG stopped; continuing"
+}
+
 start_measure() {
   local label="$1" runs="${2:-5}"
   mkdir -p "$OUT_DIR"
   local logfile="$OUT_DIR/${label}.txt"
   : > "$logfile"
   for i in $(seq 1 "$runs"); do
-    run_sh "am force-stop $PKG" >/dev/null 2>&1 || true
-    sleep 2
+    transport_ok || { echo "error: transport lost (reopen Shizuku / re-enable adb)" >&2; return 1; }
+    kill_ensure
     log "$label run $i/$runs"
     {
       echo "=== $label run $i ==="
-      run_sh "am start -W -n $COMPONENT"
+      run_capture "am start -W -n $COMPONENT" "$OUT_DIR/.run-$i.txt" Complete
+      cat "$OUT_DIR/.run-$i.txt"
     } >> "$logfile"
+    if grep -q "LaunchState: COLD" "$OUT_DIR/.run-$i.txt"; then
+      log "run $i: valid COLD launch"
+    else
+      log "run $i: NOT a cold launch (skipped in summary)"
+    fi
+    kill_ensure
     sleep 3
-    run_sh "am force-stop $PKG" >/dev/null 2>&1 || true
-    sleep 5
   done
   log "results: $logfile (parse ThisTime/TotalTime)"
 }
@@ -100,10 +164,17 @@ cmd_warm() {
   run_sh "am start -n $COMPONENT" >/dev/null 2>&1 || true
   sleep 8
   for i in $(seq 1 "$runs"); do
+    # HOME first so the activity is backgrounded, not top-most.
+    run_sh "input keyevent KEYCODE_HOME" >/dev/null 2>&1 || true
+    sleep 3
     {
       echo "=== warm run $i ==="
-      run_sh "am start -W -n $COMPONENT"
+      run_capture "am start -W -n $COMPONENT" "$OUT_DIR/.warm-$i.txt" Complete
+      cat "$OUT_DIR/.warm-$i.txt"
     } >> "$logfile"
+    if grep -q "TotalTime: 0" "$OUT_DIR/.warm-$i.txt"; then
+      log "run $i: TotalTime 0 (activity stayed top-most; warm start needs adb/HOME-capable session)"
+    fi
     sleep 5
   done
   log "results: $logfile"
@@ -117,13 +188,13 @@ cmd_mem() {
   sleep 10
   log "opening $tabs tabs (manual seed required if auto-nav is not yet scripted)"
   sleep 5
-  run_sh "dumpsys meminfo $PKG" > "$memfile"
+  run_capture "dumpsys meminfo $PKG" "$memfile"
   log "results: $memfile"
 }
 
 cmd_gfx() {
   mkdir -p "$OUT_DIR"
-  run_sh "dumpsys gfxinfo $PKG" > "$OUT_DIR/gfxinfo.txt"
+  run_capture "dumpsys gfxinfo $PKG" "$OUT_DIR/gfxinfo.txt"
   log "results: $OUT_DIR/gfxinfo.txt"
 }
 
@@ -135,7 +206,7 @@ cmd_battery_start() {
 cmd_battery_stop() {
   local label="${1:-battery}"
   mkdir -p "$OUT_DIR"
-  run_sh "dumpsys batterystats" > "$OUT_DIR/${label}.txt"
+  run_capture "dumpsys batterystats" "$OUT_DIR/${label}.txt"
   log "results: $OUT_DIR/${label}.txt"
 }
 
@@ -145,6 +216,7 @@ cmd_all() {
   cmd_cold "$runs"
   cmd_warm "$runs"
   cmd_mem 5
+  rm -f "$OUT_DIR"/.run-*.txt "$OUT_DIR"/.warm-*.txt
   log "baseline capture complete -> $OUT_DIR"
 }
 

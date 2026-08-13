@@ -48,3 +48,14 @@ reachable. Run `baseline_capture.sh devices` first, then `all <apk>`.
   web compatibility beyond tolerance (±5% where measurable).
 - Any optimization that improves one benchmark while damaging another is rejected until
   reworked. No exceptions.
+
+## Results so far (Phase 2, 2026-08-13 — contended conditions)
+
+| Metric | Baseline (r2, contended) | Method | Notes |
+|---|---|---|---|
+| Cold start (median) | 595 ms (575–617) | `am start -W`, COLD ×5, Shizuku | device in active use; re-capture when idle |
+| Warm start | pending | HOME not available in proot env | needs adb or HOME-capable session |
+| Memory (1 tab) | pending | `dumpsys meminfo` | blocked by transport flakiness during active use |
+| gfxinfo / battery | pending | `dumpsys gfxinfo` / `batterystats` | idle window required |
+
+Decision rule unchanged: no optimization without a clean baseline comparison.
