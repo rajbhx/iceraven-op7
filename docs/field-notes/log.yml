@@ -188,8 +188,30 @@ sections:
         cause: "hard-coded splash brand color (#FCF3EE / #210340) differs from home surface (#F7F6FB / #1D1B1F)"
         solution: "splash background references @color/fx_mobile_surface (patch 004) — seamless iOS-style launch, cosmetic only"
         tags: [splash, theming, perceived-performance]
+  - id: G
+    title: Playbook & knowledge
+    entries:
+      - id: G1
+        problem: "full journey tables (docs/09, projects/*/README.md) cost agents too many tokens"
+        cause: "every entry rendered in one big markdown table; an agent must read all of it to find one answer"
+        solution: "notes/ layer — INDEX.md keyword->ids map (grep-able, ~150 lines), one entries/<id>.md per problem, lookup.py ranked search; agents read only the matching entry"
+        tags: [playbook, tokens, search]
+      - id: G2
+        problem: "keyword auto-extraction produced a noisy index (478 lines of '1.5', '2-core', 'add')"
+        cause: "naive tokenization of problem+cause+solution text"
+        solution: "curated INDEX from problem text + explicit tags only; full text kept in index.json for ranked lookup.py matching; stopwords + prefix-collapse"
+        tags: [keywords, search, index]
+      - id: G3
+        problem: "conversation digests lived only in the build repo, not the playbook"
+        cause: "playbook sync fetched only log.yml"
+        solution: "sync also lists docs/field-notes/sessions and fetches each *.md (skip _template) into _logs/sessions/<slug>/; SESSIONS.md generated with summaries"
+        tags: [sessions, conversations, sync]
+      - id: G4
+        problem: "optional tags would be stripped by session_to_notes re-render"
+        cause: "canonical renderer wrote only id/problem/cause/solution"
+        solution: "renderer + digest parser now carry tags: [...] through"
+        tags: [tags, tooling, yaml]
 recurring_signature: |
-
   If output is "sometimes there, sometimes not": it is almost always a transport
   race, not the command. Fix by staging on-device + verifying size/content, then
   retry. This pattern solved the most frustrating debugging hours.
