@@ -54,8 +54,9 @@ reachable. Run `baseline_capture.sh devices` first, then `all <apk>`.
 | Metric | Baseline (r2, contended) | Method | Notes |
 |---|---|---|---|
 | Cold start (median) | 595 ms (575–617) | `am start -W`, COLD ×5, Shizuku | device in active use; re-capture when idle |
-| Warm start | pending | HOME not available in proot env | needs adb or HOME-capable session |
-| Memory (1 tab) | pending | `dumpsys meminfo` | blocked by transport flakiness during active use |
-| gfxinfo / battery | pending | `dumpsys gfxinfo` / `batterystats` | idle window required |
+| Warm start | pending | `am start -W` after backgrounding | HOME no-op / `am finish` unknown on this build; needs adb |
+| Memory (1 tab) | 152 MB TOTAL PSS (Java 10 MB, Native 22 MB, Graphics 2 MB) | `dumpsys meminfo` | contended; fresh launch |
+| gfxinfo | 8 frames, 37.5% janky, p50 12 ms / p95 150 ms | `dumpsys gfxinfo` | first-render only; scroll session pending |
+| Battery | 15.6 mAh screen-on session discharge | `dumpsys batterystats` | partial capture (82%); idle window required |
 
 Decision rule unchanged: no optimization without a clean baseline comparison.

@@ -47,6 +47,10 @@ Populated on first successful unmodified build (Phase 1). Every field is require
 - Cold start (`am start -W`, LaunchState COLD, 5 runs): **median 595 ms**
   (min 575, max 617) — **contended** (device in active use, Shizuku transport,
   existing profile). Not a clean idle baseline.
-- Raw data: `docs/performance/data/20260813-baseline-r2/`.
-- Gap: warm start needs a HOME-capable session (adb preferred); gfxinfo/meminfo/
-  batterystats pending an idle window.
+- Raw data: `docs/performance/data/20260813-baseline-r2/` and
+  `docs/performance/data/20260813-baseline-r2b/`.
+- Second batch (r2b, still contended): cold-start median **615 ms** (601-727),
+  memory TOTAL PSS **~152 MB** (1 tab), gfxinfo first-render 8 frames
+  (37.5% janky, p50 12 ms), battery session discharge 15.6 mAh (partial capture).
+- Gap: warm start needs a HOME-capable session (adb preferred); clean idle
+  re-capture + full batterystats pending an idle window.

@@ -1,0 +1,74 @@
+Applications Memory Usage (in Kilobytes):
+Uptime: 32041189 Realtime: 36270781
+
+** MEMINFO in pid 13646 [io.github.forkmaintainers.iceraven.op7] **
+                   Pss  Private  Private  SwapPss     Heap     Heap     Heap
+                 Total    Dirty    Clean    Dirty     Size    Alloc     Free
+                ------   ------   ------   ------   ------   ------   ------
+  Native Heap    21916    21888        0       12    36864    27825     9038
+  Dalvik Heap     7786     7772        0       15    10712     8034     2678
+ Dalvik Other     4453     4452        0        0                           
+        Stack      188      188        0        0                           
+       Ashmem      326      324        0        0                           
+      Gfx dev     2320     2320        0        0                           
+    Other dev       60        0       60        0                           
+     .so mmap    60067     7528    50568        2                           
+    .jar mmap     3355        0     1008        0                           
+    .apk mmap     5012        0     3964        0                           
+    .ttf mmap      269        0      124        0                           
+    .dex mmap    10495        4        0        0                           
+    .oat mmap      590        0       72        0                           
+    .art mmap     2643     2472        0        4                           
+   Other mmap     1095      184      416        0                           
+      Unknown    35468    30656     4808        0                           
+        TOTAL   156076    77788    61020       33    47576    35859    11716
+ 
+ App Summary
+                       Pss(KB)
+                        ------
+           Java Heap:    10244
+         Native Heap:    21888
+                Code:    63268
+               Stack:      188
+            Graphics:     2320
+       Private Other:    40900
+              System:    17268
+ 
+               TOTAL:   156076       TOTAL SWAP PSS:       33
+ 
+ Objects
+               Views:       18         ViewRootImpl:        1
+         AppContexts:        7           Activities:        1
+              Assets:       21        AssetManagers:        0
+       Local Binders:       34        Proxy Binders:       40
+       Parcel memory:       14         Parcel count:       57
+    Death Recipients:        4      OpenSSL Sockets:        0
+            WebViews:        0
+ 
+ SQL
+         MEMORY_USED:     2704
+  PAGECACHE_OVERFLOW:      491          MALLOC_SIZE:      117
+ 
+ DATABASES
+      pgsz     dbsz   Lookaside(b)          cache  Dbname
+         4       32             26         2/38/3  /data/user/0/io.github.forkmaintainers.iceraven.op7/databases/tab_collections
+         4        8                         0/0/0    (attached) temp
+         4       32             44         5/25/4  /data/user/0/io.github.forkmaintainers.iceraven.op7/databases/tab_collections (1)
+         4       32             18         0/21/1  /data/user/0/io.github.forkmaintainers.iceraven.op7/databases/manifests
+         4        8                         0/0/0    (attached) temp
+         4       32             36         3/22/4  /data/user/0/io.github.forkmaintainers.iceraven.op7/databases/manifests (1)
+         4       32             18         0/21/1  /data/user/0/io.github.forkmaintainers.iceraven.op7/databases/crashes
+         4        8                         0/0/0    (attached) temp
+         4       32             38         3/24/4  /data/user/0/io.github.forkmaintainers.iceraven.op7/databases/crashes (1)
+         4       24             18         0/21/1  /data/user/0/io.github.forkmaintainers.iceraven.op7/databases/mozac_downloads_database
+         4        8                         0/0/0    (attached) temp
+         4       24             55         3/22/4  /data/user/0/io.github.forkmaintainers.iceraven.op7/databases/mozac_downloads_database (1)
+         4       24             18         0/21/1  /data/user/0/io.github.forkmaintainers.iceraven.op7/databases/top_sites
+         4        8                         0/0/0    (attached) temp
+         4       24             45         7/22/4  /data/user/0/io.github.forkmaintainers.iceraven.op7/databases/top_sites (1)
+         4      104            107     272/214/25  /data/user/0/io.github.forkmaintainers.iceraven.op7/no_backup/androidx.work.workdb
+         4        8                         0/0/0    (attached) temp
+         4      104             91        45/41/8  /data/user/0/io.github.forkmaintainers.iceraven.op7/no_backup/androidx.work.workdb (1)
+         4       24             22         1/30/2  /data/user/0/io.github.forkmaintainers.iceraven.op7/databases/recently_closed_tabs
+         4        8                         0/0/0    (attached) temp
+         4       24             44         3/24/4  /data/user/0/io.github.forkmaintainers.iceraven.op7/databases/recently_closed_tabs (1)
