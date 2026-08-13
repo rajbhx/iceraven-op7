@@ -1,8 +1,16 @@
 diff --git a/app/src/main/java/org/mozilla/fenix/HomeActivity.kt b/app/src/main/java/org/mozilla/fenix/HomeActivity.kt
-index 34d74f1d51..e711e7bd1e 100644
+index 34d74f1d51..d0a37769a7 100644
 --- a/app/src/main/java/org/mozilla/fenix/HomeActivity.kt
 +++ b/app/src/main/java/org/mozilla/fenix/HomeActivity.kt
-@@ -179,6 +179,7 @@ import org.mozilla.fenix.splashscreen.SplashScreenOperation
+@@ -17,6 +17,7 @@ import android.os.Bundle
+ import android.os.StrictMode
+ import android.text.format.DateUtils
+ import android.util.AttributeSet
++import android.util.Log
+ import android.view.ActionMode
+ import android.view.KeyEvent
+ import android.view.LayoutInflater
+@@ -179,6 +180,7 @@ import org.mozilla.fenix.splashscreen.SplashScreenOperation
  import org.mozilla.fenix.tabhistory.TabHistoryDialogFragment
  import org.mozilla.fenix.theme.DefaultThemeManager
  import org.mozilla.fenix.theme.StatusBarColorManager
@@ -10,7 +18,7 @@ index 34d74f1d51..e711e7bd1e 100644
  import org.mozilla.fenix.theme.ThemeManager
  import org.mozilla.fenix.translations.TranslationsAIControllableFeatureRegistrar
  import org.mozilla.fenix.translations.TranslationsEnabledSettings
-@@ -419,6 +420,9 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity, Crash
+@@ -419,6 +421,9 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity, Crash
          // DO NOT MOVE ANYTHING ABOVE THIS getProfilerTime CALL.
          val startTimeProfiler = components.core.engine.profiler?.getProfilerTime()
  
