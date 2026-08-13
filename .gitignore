@@ -15,3 +15,6 @@ netwerk/dns/        # fetched TLD data, created by Iceraven patch layer
 # Benchmark data (large captures live in docs/performance/data/)
 docs/performance/data/
 op7apk/            # locally downloaded OP7 APKs (large, never commit)
+
+# Python tooling
+__pycache__/
