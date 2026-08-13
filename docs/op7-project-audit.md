@@ -33,7 +33,7 @@ modifying it:
 
 Verified build facts that the OP7 project must not silently change:
 
-- Application ID: `io.github.forkmaintainers`; `forkRelease` build type appends `.iceraven`; shared user ID `io.github.forkmaintainers.iceraven.sharedID` (`app/build.gradle`).
+- Application ID: `io.github.forkmaintainers`; `forkRelease` appends `.iceraven` upstream, and the OP7 patch layer appends `.iceraven.op7` (final `io.github.forkmaintainers.iceraven.op7`); OP7 shared user ID `io.github.forkmaintainers.iceraven.op7.sharedID` (`app/build.gradle` + `patches/op7/001-op7-application-id.patch`).
 - The releasable variant is `app:assembleForkRelease`; output layout `gradle/build/app/outputs/apk/forkRelease/` (build dir relocated by `settings.gradle`).
 - No Gradle product flavors exist in the current source set layout (`app/src/forkRelease/`, `app/src/forkDebug/` are source sets of the `forkRelease`/`forkDebug` build types). The README's `assemblefenixForkRelease` spelling is stale; the CI uses `app:assembleForkRelease`.
 - Iceraven's own branding delta is applied **at CI time** (`automation/iceraven/patch_android_components.sh` + `sed` of string resources), not committed into the tree. This is the pattern the OP7 patch layer must follow.

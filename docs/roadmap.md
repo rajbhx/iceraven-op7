@@ -56,7 +56,7 @@ Legend: 🔴 seen in our runs · 🟡 anticipated
 | E2 🔴 | `removeUnusedEntriesOlderThan` write-only property crash | gradle-build-action v3 cleanup incompatible with Gradle 9.5.1 | use gradle-build-action **v2** (upstream-proven) | pin action version to upstream's |
 | E3 🔴 | `APK not found` (first time) | hardcoded output path; ABI selection changes AGP output layout | `find`-based discovery, name-agnostic | never assume AGP output paths/names |
 | E4 🔴 | `APK not found` (second time) | unsigned APKs are named `*-forkRelease-unsigned.apk` (no signing config in forkRelease) | discovery + `-unsigned` handling; sign action renames to `.apk` | validation of actual file listing |
-| E5 🔴 | `unexpected package id` | `forkRelease` appends `.iceraven` to app id | expect `io.github.forkmaintainers.iceraven` | derive from `app/build.gradle`, not defaultConfig |
+| E5 🟢 | `unexpected package id` (fixed) | OP7 patch appends `.iceraven.op7` to app id | expect `io.github.forkmaintainers.iceraven.op7` | derived at runtime from OP7 patches + `app/build.gradle` defaultConfig |
 | E6 🔴 | sign action "build-tools not found" risk | action reads `ANDROID_HOME` (runner SDK), we pointed at `ANDROID_SDK_ROOT` (custom SDK) | compute `BUILD_TOOLS_VERSION` from `ANDROID_HOME` like upstream | read third-party action source before use |
 | E7 🔴 | GitHub cache service outage (`400` / "services aren't available") | GitHub-side transient | non-fatal warnings; next run restores | cache keys stable; don't churn build inputs |
 | E8 🟡 | R8 OOM with `--parallel` on 2-core/7 GB runner | heap vs workers | tune `GRADLE_OPTS`, reduce `--max-workers`, drop `--parallel` if needed | watch `free -h` step; keep release builds serial if flaky |
@@ -114,7 +114,7 @@ Expected: arm64-only build, `--parallel --build-cache`, validation (package/SDK/
 Exit criteria (all must pass):
 - [ ] source sync + patches apply
 - [ ] `assembleForkRelease` succeeds (arm64 only)
-- [ ] badging: package `io.github.forkmaintainers.iceraven`, minSdk 26, targetSdk 36, `native-code: arm64-v8a`
+- [ ] badging: package `io.github.forkmaintainers.iceraven.op7`, minSdk 26, targetSdk 36, `native-code: arm64-v8a`
 - [ ] `lib/arm64-v8a/` present in APK
 - [ ] debug-sign succeeds; SHA-256 written; metadata written
 - [ ] artifacts uploaded; summary shows cache restore status

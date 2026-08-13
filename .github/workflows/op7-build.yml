@@ -186,8 +186,16 @@ jobs:
           echo "using build-tools $BUILD_TOOLS_VERSION @ $SIGN_SDK"
           BADGING="$("$SIGN_SDK/build-tools/$BUILD_TOOLS_VERSION/aapt" dump badging "$APK")"
           echo "$BADGING" | head -n 8
-          echo "$BADGING" | grep -q "package: name='io.github.forkmaintainers.iceraven'" \
-            || { echo "::error::unexpected package id"; exit 1; }
+          BASE_ID="$(grep -m1 -E '^\s*applicationId "' mirror/app/build.gradle | sed -E 's/.*applicationId "([^"]+)".*/\1/')"
+          OP7_SUFFIX="$(grep -h '^+.*applicationIdSuffix' patches/op7/*.patch | sed -E 's/.*applicationIdSuffix "([^"]+)".*/\1/' | tail -n 1)"
+          EXPECTED_ID="${BASE_ID}${OP7_SUFFIX}"
+          if [[ -z "$BASE_ID" || -z "$OP7_SUFFIX" ]]; then
+            echo "::error::could not derive expected package id (base='$BASE_ID' suffix='$OP7_SUFFIX')"
+            exit 1
+          fi
+          echo "expect package: $EXPECTED_ID"
+          echo "$BADGING" | grep -q "package: name='${EXPECTED_ID}'" \
+            || { echo "::error::unexpected package id (expected $EXPECTED_ID)"; exit 1; }
           echo "$BADGING" | grep -q "sdkVersion:'26'" \
             || { echo "::error::minSdk mismatch, expected 26"; exit 1; }
           echo "$BADGING" | grep -q "targetSdkVersion:'36'" \

@@ -12,8 +12,8 @@
 #   automation/op7/baseline_capture.sh all <path.apk> [runs]
 set -euo pipefail
 
-PKG="io.github.forkmaintainers.iceraven"
-COMPONENT="io.github.forkmaintainers.iceraven/org.mozilla.fenix.HomeActivity"
+PKG="io.github.forkmaintainers.iceraven.op7"
+COMPONENT="io.github.forkmaintainers.iceraven.op7/org.mozilla.fenix.HomeActivity"
 ADB="${ADB:-adb}"
 ADB_ARGS=()
 if [[ -n "${ADB_SERIAL:-}" ]]; then ADB_ARGS=(-s "$ADB_SERIAL"); fi
