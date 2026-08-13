@@ -62,6 +62,7 @@ Legend: 🔴 seen in our runs · 🟡 anticipated
 | E8 🟡 | R8 OOM with `--parallel` on 2-core/7 GB runner | heap vs workers | tune `GRADLE_OPTS`, reduce `--max-workers`, drop `--parallel` if needed | watch `free -h` step; keep release builds serial if flaky |
 | E9 🟡 | `native-code` badging line absent (universal APK) | ABI selection ignored by some AGP versions | validation fails loudly; adjust `-Pandroid.injected.build.abi` or patch `splits.abi` | validation gates exist by design |
 | E10 🟡 | PKCS12 alias mismatch at signing | openssl `-name` vs apksigner alias | verify with `apksigner --list-keys`; both are `iceravenop7debug`/`iceravenop7release` | document keystore contents in `/root/op7-keystores/` |
+| E11 🟢 | `App not installed` on device (r1) | APK marked `android:testOnly=true` | dropped `-Pandroid.injected.build.abi`; arm64 via `splits.abi`; CI testOnly gate | fixed in r2; gate prevents regression |
 | E11 🟡 | APK artifact too large for retention | 131 MB APK + 3 ABIs | arm64-only now; retention-days 30 | releases live on GitHub Releases, not artifacts |
 
 ### Upstream sync
@@ -115,6 +116,7 @@ Exit criteria (all must pass):
 - [ ] source sync + patches apply
 - [ ] `assembleForkRelease` succeeds (arm64 only)
 - [ ] badging: package `io.github.forkmaintainers.iceraven.op7`, minSdk 26, targetSdk 36, `native-code: arm64-v8a`
+- [ ] APK is NOT `android:testOnly` (CI gate; Android blocks UI installs of testOnly APKs)
 - [ ] `lib/arm64-v8a/` present in APK
 - [ ] debug-sign succeeds; SHA-256 written; metadata written
 - [ ] artifacts uploaded; summary shows cache restore status

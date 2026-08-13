@@ -21,7 +21,7 @@ on:
         required: false
         default: ''
       abi:
-        description: 'APK ABI to build'
+        description: 'Target ABI (OP7 build is arm64-v8a only; other values fail validation)'
         required: false
         default: 'arm64-v8a'
       patch_ref:
@@ -152,7 +152,6 @@ jobs:
           arguments: |
             app:assembleForkRelease
             -PversionName=${{ steps.metadata.outputs.version_name }}
-            -Pandroid.injected.build.abi=${{ github.event.inputs.abi }}
             --build-cache
             -I "${{ github.workspace }}/automation/op7/clean-glean-bootstrap.groovy"
             ${{ github.event.inputs.fast == 'true' && '-PdisableOptimization' || '' }}
@@ -206,6 +205,10 @@ jobs:
             echo "::error::no native libs for ${{ github.event.inputs.abi }}"
             exit 1
           fi
+          if "$SIGN_SDK/build-tools/$BUILD_TOOLS_VERSION/aapt" dump xmltree "$APK" AndroidManifest.xml | grep -q 'testOnly'; then
+            echo "::error::APK is android:testOnly=true; Android blocks UI installs (do NOT use -Pandroid.injected.build.abi; build via splits.abi)"
+            exit 1
+          fi
           sha256sum "$APK" | tee SHA256SUMS.txt
           echo "VALIDATION PASSED for $APK"
 
@@ -252,7 +255,7 @@ jobs:
           - version name: `${{ steps.metadata.outputs.version_name }}`
           - ABI: `${{ github.event.inputs.abi }}`
           - patch status: applied by `automation/op7/apply_patches.sh` (fail = stopped before build)
-          - validation: aapt badging + native-lib ABI check + SHA-256
+          - validation: aapt badging + native-lib ABI check + testOnly gate + SHA-256
           - release mode: ${{ github.event.inputs.release }}
           - fast mode (no R8): ${{ github.event.inputs.fast }}
           SUMMARY

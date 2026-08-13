@@ -33,3 +33,20 @@ Upstream relationship: (does this belong upstream? bugzilla/issue link)
   auto-resolved.
 - Removing a patch = revert, not `sed`-style whack-a-mole.
 - `op7-revision.txt` is bumped (r1, r2, ...) whenever the patch set changes.
+
+
+## 002-op7-arm64-only.patch
+
+Problem: the arm64-only APK was marked `android:testOnly=true`, which Android
+refuses to install from the UI (generic "App not installed").
+Root cause: building with the Studio-injected property
+`-Pandroid.injected.build.abi=arm64-v8a` makes AGP mark the APK test-only.
+Affected layer: build (`app/build.gradle` `splits.abi` + `op7-build.yml`).
+Implementation: restrict `splits.abi` to `arm64-v8a` only and stop passing
+`-Pandroid.injected.build.abi`; CI validation now fails if the built manifest
+contains `testOnly`.
+Expected benefit: APK installs via the normal file-tap flow on the OnePlus 7.
+Benchmark: none (distribution change, no runtime perf impact).
+Regression risk: only arm64-v8a APKs are produced; other ABI inputs fail
+validation (intended for the OP7 target).
+Upstream relationship: N/A — distribution choice; upstream ships all ABIs.
