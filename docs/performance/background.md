@@ -40,3 +40,36 @@ and cold start + memory stay within ±5%.
 - Killing Gecko security (site isolation, HTTPS, sandboxing).
 - Forcing aggressive doze behavior that breaks tabs, push, or downloads.
 - Optimizing for synthetic benchmarks over real overnight behavior.
+
+## Results — 2026-08-13 (baseline run, r4 installed, one idle window)
+
+Verdict: **C2 = verify-only, no code change needed.** The browser is already
+near-silent in the background on this device.
+
+| Metric | Value | Note |
+|---|---|---|
+| Battery capacity (reported) | 3700 mAh | `dumpsys batterystats` |
+| Total discharge (window) | 30.1 mAh | window ~40 min, live-captured summary |
+| Screen-off discharge | 17.3 mAh | ≈ 0.43 %/h — dominated by *other* apps |
+| Iceraven (`u0a262`) wakeups | **0** | `u0a262:` history marker only, no events |
+| Top wakeup sources | WhatsApp 15, chat app 6, Instagram 5, Play Store 4, GMS 2 | none belong to Iceraven |
+
+Data: `docs/performance/data/20260813-idle-r4/drain-base.txt` (history section
+only — the summary section exceeds the ~400 KB Shizuku output cap, field note
+D9; summary numbers were captured live via targeted grep).
+
+### Honest caveats
+- The stored capture is the history section; summary lines were read live and
+  are not in the file (D9). Re-run with `baseline_capture.sh wakeups` if a
+  stored summary is ever required.
+- Possible mid-test versionCode change (2016178394 → 2016178418) and visible
+  app restarts mean the window may span slightly inconsistent app states —
+  label this run "contended" and treat ±20 % as noise.
+- 0 wakeups is a floor: a single window cannot prove *never*; but combined
+  with the small screen-off drain and process-cap data (C3), there is no
+  measured background problem to fix.
+
+### Decision
+- No r6 change for C2. Keep the runbook for future regression checks
+  (e.g., after an upstream sync, re-run one idle window to confirm nothing
+  regressed).
