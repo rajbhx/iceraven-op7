@@ -79,3 +79,31 @@ HomeActivity references it.
 
 Upstream relationship: not for upstream (device-build specific). A generic
 capability model could be proposed upstream later after Phase-7 measurements.
+
+## 004-op7-seamless-launch.patch
+
+Problem: on launch there is a visible color jump between the splash screen and
+the home screen (light: splash #FCF3EE vs surface #F7F6FB; dark: splash
+#210340 vs surface #1D1B1F) — reads as a "cheap app" flash.
+
+Root cause: the splash background color is a hard-coded brand color that does
+not match the app's actual first screen surface.
+
+Affected layer: app UI (resources only — `values/colors.xml`,
+`values-night/colors.xml`).
+
+Implementation: `fx_mobile_splashscreen_background` now references
+`@color/fx_mobile_surface`, so the splash always matches the first screen in
+both themes, automatically staying in sync if the palette changes.
+
+Expected benefit: perceived-performance ("sugar"): seamless, iOS-style launch
+transition. No performance claim — cosmetic continuity only.
+
+Benchmark: visual continuity (before/after launch screenshots); no cold-start
+time claim.
+
+Regression risk: negligible (color reference change; icon still shown on
+splash). If the home palette changes, splash follows by design.
+
+Upstream relationship: not for upstream (cosmetic preference); could be
+proposed as a general polish later.

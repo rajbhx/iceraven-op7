@@ -49,10 +49,11 @@ Decision: chase the *feel* (snappy, silent, integrated), not the install locatio
 
 ## Revision plan (one candidate each)
 
-- r4 = C1 (hardware codecs verified) — first battery-focused revision
-- r5 = C2 (background discipline)
-- r6 = C6 or C4 (startup or memory/smoothness) — after profiling
-- r7+ = remaining, each gated on the previous measurement
+- r4 = 004 seamless launch (perceived-performance sugar, cosmetic) — shipped
+- r5 = C1 (hardware codecs verified) — first battery-focused revision
+- r6 = C2 (background discipline)
+- r7 = C6 or C4 (startup or memory/smoothness) — after profiling
+- r8+ = remaining, each gated on the previous measurement
 
 ## "Premium / system-app feel" — definition and how we deliver it
 

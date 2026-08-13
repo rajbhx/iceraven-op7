@@ -1,0 +1,26 @@
+diff --git a/app/src/main/res/values-night/colors.xml b/app/src/main/res/values-night/colors.xml
+index cee5b72470..d74cdcb998 100644
+--- a/app/src/main/res/values-night/colors.xml
++++ b/app/src/main/res/values-night/colors.xml
+@@ -53,7 +53,7 @@
+     <color name="fx_mobile_icon_private">@color/novaViolet50</color>
+     <color name="fx_mobile_scrim">@color/novaBlackA50</color>
+ 
+-    <color name="fx_mobile_splashscreen_background">#210340</color>
++    <color name="fx_mobile_splashscreen_background">@color/fx_mobile_surface</color>
+ 
+     <!-- Design system color variables -->
+ 
+diff --git a/app/src/main/res/values/colors.xml b/app/src/main/res/values/colors.xml
+index 792cc22ea0..ebb371a9ab 100644
+--- a/app/src/main/res/values/colors.xml
++++ b/app/src/main/res/values/colors.xml
+@@ -53,7 +53,7 @@
+     <color name="fx_mobile_icon_private">@color/novaViolet50</color>
+     <color name="fx_mobile_scrim">@color/novaBlackA50</color>
+ 
+-    <color name="fx_mobile_splashscreen_background">#FCF3EE</color>
++    <color name="fx_mobile_splashscreen_background">@color/fx_mobile_surface</color>
+ 
+     <!-- Design system color variables -->
+ 
