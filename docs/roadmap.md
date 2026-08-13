@@ -146,3 +146,27 @@ No release without: sync ok, patches applied, compile ok, validation ok, signing
 | Free public infrastructure only | ✅ GitHub Actions/Releases/cache |
 | Conflict → stop, report, never overwrite | ✅ implemented |
 | Benchmark/regression loop with keep/revert | ⏳ Phase 8 |
+
+## 9. Optimization priority (chosen by maintainer): battery + smoothness
+
+Objective: an iOS-like experience — consistent 60 fps, low jank, minimal screen-off
+drain, hardware-accelerated media — built on measured gains, never vibes.
+
+Candidate optimizations, ranked by expected battery/smoothness value. Each is
+gated on a clean Phase-2/6 measurement and becomes one revision with before/after:
+
+| Rank | Candidate | Battery | Smoothness | Measurement needed |
+|---|---|---|---|---|
+| 1 | Verify GeckoView uses HW codecs (H.264/HEVC/VP9) | high (video) | — | MediaCodec session logs; playback drain test |
+| 2 | Background discipline: wakeups, timers, tab suspension policy | high (screen-off) | — | `batterystats --wakeups`; overnight drain test |
+| 3 | Memory stability: content-process count, GC stalls | medium | high | meminfo over 5/10-tab session; jank on scroll |
+| 4 | WebRender backend/rendering settings (GLES vs Vulkan on Adreno 640) | medium | medium | Perfetto frame timings; gfxinfo; drain test |
+| 5 | Image/cache policy (decode off main thread, cache pressure) | low-medium | medium | scroll jank on image-heavy pages |
+
+Decision rule unchanged: keep only if the primary metric improves AND memory,
+battery, stability, and web compatibility stay within ±5%. Never trade security
+for battery.
+
+Measurement infrastructure to add (Phase 6): screen-off drain harness
+(`battery_profile.sh drain`), wakeup counter extraction, Perfetto frame traces,
+gfxinfo framestats. Idle windows + adb preferred for trustworthy numbers.
