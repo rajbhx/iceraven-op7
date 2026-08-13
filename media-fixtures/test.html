@@ -1,0 +1,10 @@
+<!doctype html><html><head><meta charset="utf-8"><title>OP7 codec fixture</title></head>
+<body><h1>OP7 codec fixture</h1>
+<p id="s">video muted autoplay loop</p>
+<video id="v" src="avc.mp4" muted autoplay loop playsinline></video>
+<script>
+const v = document.getElementById('v');
+const s = document.getElementById('s');
+v.onplaying = () => { s.textContent = 'PLAYING: ' + v.currentSrc; };
+v.onerror = () => { s.textContent = 'ERROR: ' + v.error; };
+</script></body></html>

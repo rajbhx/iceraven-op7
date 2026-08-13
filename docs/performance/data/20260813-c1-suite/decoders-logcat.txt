@@ -1,0 +1,12 @@
+08-13 22:10:09.458 29011 29267 D MediaCodec:  name = OMX.qcom.video.decoder.avc
+08-13 22:10:09.461  1106 17960 I OMXMaster: makeComponentInstance(OMX.qcom.video.decoder.avc) in android.hardwar process
+08-13 22:10:09.470  1106 17960 I OMX-VDEC-1080P: component_init: OMX.qcom.video.decoder.avc : fd=8
+08-13 22:10:09.480 29011  3204 I MediaCodec: [OMX.qcom.video.decoder.avc] setting surface generation to 29707270
+08-13 22:10:09.705 29011 29267 D MediaCodec:  name = OMX.qcom.video.decoder.vp9
+08-13 22:10:09.709  1106 17960 I OMXMaster: makeComponentInstance(OMX.qcom.video.decoder.vp9) in android.hardwar process
+08-13 22:10:09.710  1106 17960 I OMX-VDEC-1080P: component_init: OMX.qcom.video.decoder.vp9 : fd=15
+08-13 22:10:09.716 29011  3213 I MediaCodec: [OMX.qcom.video.decoder.vp9] setting surface generation to 29707271
+08-13 22:10:10.270 29011 29044 D MediaCodec:  name = OMX.qcom.video.decoder.hevc
+08-13 22:10:10.276  1106 17960 I OMXMaster: makeComponentInstance(OMX.qcom.video.decoder.hevc) in android.hardwar process
+08-13 22:10:10.278  1106 17960 I OMX-VDEC-1080P: component_init: OMX.qcom.video.decoder.hevc : fd=89
+08-13 22:10:10.286 29011  3222 I MediaCodec: [OMX.qcom.video.decoder.hevc] setting surface generation to 29707272

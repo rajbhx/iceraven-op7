@@ -242,6 +242,18 @@ cmd_tabs() {
   log "results: $OUT_DIR/meminfo-${n}tabs.txt"
 }
 
+cmd_state() {
+  # Measure the CURRENT browser state as-is (user opens tabs manually; we never
+  # force-stop here — that would kill the tabs being measured).
+  local label="${1:-state}"
+  mkdir -p "$OUT_DIR"
+  log "state capture: $label (as-is, no force-stop)"
+  run_capture "dumpsys meminfo $PKG" "$OUT_DIR/meminfo-${label}.txt"
+  run_capture "ps -A -o NAME,USER,PID,RES | grep forkmaintainers" "$OUT_DIR/procs-${label}.txt" "forkmaintainers"
+  grep "TOTAL" "$OUT_DIR/meminfo-${label}.txt" | head -1
+  log "results: $OUT_DIR/meminfo-${label}.txt"
+}
+
 cmd_procstats() {
   mkdir -p "$OUT_DIR"
   log "procstats: current snapshot (package filter)"
@@ -361,6 +373,7 @@ case "${1:-}" in
   framestats)     cmd_framestats ;;
   procstats)      cmd_procstats ;;
   tabs)           cmd_tabs "${2:-5}" ;;
+  state)          cmd_state "${2:-state}" ;;
   cpu)            cmd_cpu "${2:-6}" ;;
   page-load)      cmd_page_load "${2:-https://example.com}" ;;
   profile)        cmd_profile ;;

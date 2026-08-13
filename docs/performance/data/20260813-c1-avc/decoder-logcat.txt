@@ -1,0 +1,10 @@
+08-13 21:55:41.137 28028 28047 D MediaCodec:  name = OMX.qcom.video.decoder.avc
+08-13 21:55:41.147  1106 31070 I OMXMaster: makeComponentInstance(OMX.qcom.video.decoder.avc) in android.hardwar process
+08-13 21:55:41.188  1106 31070 I OMX-VDEC-1080P: component_init: OMX.qcom.video.decoder.avc : fd=8
+08-13 21:55:41.199 28028 28050 I MediaCodec: [OMX.qcom.video.decoder.avc] setting surface generation to 28700673
+08-13 21:55:41.200  1106 31070 E OMXNodeInstance: getParameter(0xe7ee6144:qcom.decoder.avc, ??(0x7f000046)) ERROR: UnsupportedIndex(0x8000101a)
+08-13 21:55:41.201  1106  5866 E OMXNodeInstance: setParameter(0xe7ee6144:qcom.decoder.avc, OMX.google.android.index.allocateNativeHandle(0x7f00005d): Output:1 en=0) ERROR: UnsupportedSetting(0x80001019)
+08-13 21:55:41.203  1106  5866 E OMXNodeInstance: getConfig(0xe7ee6144:qcom.decoder.avc, ??(0x7f000062)) ERROR: UnsupportedSetting(0x80001019)
+08-13 21:55:41.254  1106 31070 E OMXNodeInstance: getConfig(0xe7ee6144:qcom.decoder.avc, ??(0x7f000062)) ERROR: UnsupportedSetting(0x80001019)
+08-13 21:55:41.269  1106  1106 E OMXNodeInstance: getConfig(0xe7ee6144:qcom.decoder.avc, ??(0x7f000062)) ERROR: UnsupportedSetting(0x80001019)
+08-13 21:55:59.928  7733 30984 D DeviceBridge: Bridge response: cmd=shizuku result={"exitCode":0,"stdout":"","stderr":"08-13 21:55:41.137 28028 28047 D MediaCodec:  name = OMX.qcom.video.decoder.avc\n08-13 21:55:41.144 28028 28051 I OMXClient: IOmx service obtained\n08-13 21:55:41.1

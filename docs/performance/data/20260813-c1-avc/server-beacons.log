@@ -1,0 +1,64 @@
+127.0.0.1 - - [13/Aug/2026 21:54:40] "GET /test-avc.html HTTP/1.1" 200 -
+127.0.0.1 - - [13/Aug/2026 21:54:40] "GET /fixture-common.js HTTP/1.1" 200 -
+127.0.0.1 - - [13/Aug/2026 21:55:40] "GET /test-avc.html HTTP/1.1" 200 -
+127.0.0.1 - - [13/Aug/2026 21:55:40] "GET /fixture-common.js HTTP/1.1" 200 -
+127.0.0.1 - - [13/Aug/2026 21:55:41] code 404, message File not found
+127.0.0.1 - - [13/Aug/2026 21:55:41] "GET /b-avc-playing HTTP/1.1" 404 -
+127.0.0.1 - - [13/Aug/2026 21:55:42] code 404, message File not found
+127.0.0.1 - - [13/Aug/2026 21:55:42] "GET /b-avc-t=14/4/r HTTP/1.1" 404 -
+127.0.0.1 - - [13/Aug/2026 21:55:44] code 404, message File not found
+127.0.0.1 - - [13/Aug/2026 21:55:44] "GET /b-avc-t=34/4/r HTTP/1.1" 404 -
+127.0.0.1 - - [13/Aug/2026 21:55:46] code 404, message File not found
+127.0.0.1 - - [13/Aug/2026 21:55:46] "GET /b-avc-t=54/4/r HTTP/1.1" 404 -
+127.0.0.1 - - [13/Aug/2026 21:55:48] code 404, message File not found
+127.0.0.1 - - [13/Aug/2026 21:55:48] "GET /b-avc-t=74/4/r HTTP/1.1" 404 -
+127.0.0.1 - - [13/Aug/2026 21:55:50] code 404, message File not found
+127.0.0.1 - - [13/Aug/2026 21:55:50] "GET /b-avc-t=94/4/r HTTP/1.1" 404 -
+127.0.0.1 - - [13/Aug/2026 21:55:52] code 404, message File not found
+127.0.0.1 - - [13/Aug/2026 21:55:52] "GET /b-avc-t=14/4/r HTTP/1.1" 404 -
+127.0.0.1 - - [13/Aug/2026 21:55:54] code 404, message File not found
+127.0.0.1 - - [13/Aug/2026 21:55:54] "GET /b-avc-t=34/4/r HTTP/1.1" 404 -
+127.0.0.1 - - [13/Aug/2026 21:55:56] code 404, message File not found
+127.0.0.1 - - [13/Aug/2026 21:55:56] "GET /b-avc-t=54/4/r HTTP/1.1" 404 -
+127.0.0.1 - - [13/Aug/2026 21:55:58] code 404, message File not found
+127.0.0.1 - - [13/Aug/2026 21:55:58] "GET /b-avc-t=74/4/r HTTP/1.1" 404 -
+127.0.0.1 - - [13/Aug/2026 21:56:00] code 404, message File not found
+127.0.0.1 - - [13/Aug/2026 21:56:00] "GET /b-avc-t=94/4/r HTTP/1.1" 404 -
+127.0.0.1 - - [13/Aug/2026 21:56:02] code 404, message File not found
+127.0.0.1 - - [13/Aug/2026 21:56:02] "GET /b-avc-t=14/4/r HTTP/1.1" 404 -
+127.0.0.1 - - [13/Aug/2026 21:56:04] code 404, message File not found
+127.0.0.1 - - [13/Aug/2026 21:56:04] "GET /b-avc-t=34/4/r HTTP/1.1" 404 -
+127.0.0.1 - - [13/Aug/2026 21:56:06] code 404, message File not found
+127.0.0.1 - - [13/Aug/2026 21:56:06] "GET /b-avc-t=54/4/r HTTP/1.1" 404 -
+127.0.0.1 - - [13/Aug/2026 21:56:08] code 404, message File not found
+127.0.0.1 - - [13/Aug/2026 21:56:08] "GET /b-avc-t=74/4/r HTTP/1.1" 404 -
+127.0.0.1 - - [13/Aug/2026 21:56:10] code 404, message File not found
+127.0.0.1 - - [13/Aug/2026 21:56:10] "GET /b-avc-t=94/4/r HTTP/1.1" 404 -
+127.0.0.1 - - [13/Aug/2026 21:56:12] code 404, message File not found
+127.0.0.1 - - [13/Aug/2026 21:56:12] "GET /b-avc-t=14/4/r HTTP/1.1" 404 -
+127.0.0.1 - - [13/Aug/2026 21:56:14] code 404, message File not found
+127.0.0.1 - - [13/Aug/2026 21:56:14] "GET /b-avc-t=34/4/r HTTP/1.1" 404 -
+127.0.0.1 - - [13/Aug/2026 21:56:16] code 404, message File not found
+127.0.0.1 - - [13/Aug/2026 21:56:16] "GET /b-avc-t=54/4/r HTTP/1.1" 404 -
+127.0.0.1 - - [13/Aug/2026 21:56:18] code 404, message File not found
+127.0.0.1 - - [13/Aug/2026 21:56:18] "GET /b-avc-t=74/4/r HTTP/1.1" 404 -
+127.0.0.1 - - [13/Aug/2026 21:56:20] code 404, message File not found
+127.0.0.1 - - [13/Aug/2026 21:56:20] "GET /b-avc-t=95/4/r HTTP/1.1" 404 -
+127.0.0.1 - - [13/Aug/2026 21:56:22] code 404, message File not found
+127.0.0.1 - - [13/Aug/2026 21:56:22] "GET /b-avc-t=15/4/r HTTP/1.1" 404 -
+127.0.0.1 - - [13/Aug/2026 21:56:24] code 404, message File not found
+127.0.0.1 - - [13/Aug/2026 21:56:24] "GET /b-avc-t=35/4/r HTTP/1.1" 404 -
+127.0.0.1 - - [13/Aug/2026 21:56:26] code 404, message File not found
+127.0.0.1 - - [13/Aug/2026 21:56:26] "GET /b-avc-t=55/4/r HTTP/1.1" 404 -
+127.0.0.1 - - [13/Aug/2026 21:56:28] code 404, message File not found
+127.0.0.1 - - [13/Aug/2026 21:56:28] "GET /b-avc-t=75/4/r HTTP/1.1" 404 -
+127.0.0.1 - - [13/Aug/2026 21:56:30] code 404, message File not found
+127.0.0.1 - - [13/Aug/2026 21:56:30] "GET /b-avc-t=95/4/r HTTP/1.1" 404 -
+127.0.0.1 - - [13/Aug/2026 21:56:32] code 404, message File not found
+127.0.0.1 - - [13/Aug/2026 21:56:32] "GET /b-avc-t=15/4/r HTTP/1.1" 404 -
+127.0.0.1 - - [13/Aug/2026 21:56:34] code 404, message File not found
+127.0.0.1 - - [13/Aug/2026 21:56:34] "GET /b-avc-t=35/4/r HTTP/1.1" 404 -
+127.0.0.1 - - [13/Aug/2026 21:56:36] code 404, message File not found
+127.0.0.1 - - [13/Aug/2026 21:56:36] "GET /b-avc-t=55/4/r HTTP/1.1" 404 -
+127.0.0.1 - - [13/Aug/2026 21:56:38] code 404, message File not found
+127.0.0.1 - - [13/Aug/2026 21:56:38] "GET /b-avc-t=75/4/r HTTP/1.1" 404 -

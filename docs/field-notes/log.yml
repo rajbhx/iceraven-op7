@@ -196,6 +196,21 @@ sections:
         solution: "verified via logcat `GeckoViewRemoteDebugger: listening on .../firefox-debugger-socket`"
         tags: [devtools, debugging, socket, geckoview]
       - id: D18
+      - id: D19
+        problem: "C1 'verified' was wrong — codec enumeration is not playback"
+        cause: "r5 probe logged HardwareCodecCapability decoder selection + low CPU, but the probe clip URLs were 404, so no MediaCodec session ever ran; 'verified' was inferred, not observed"
+        solution: "prove playback three ways: (1) fixture page beacons currentTime to a local HTTP server every 2 s (time-series must advance), (2) logcat must show a live MediaCodec session (OMX.qcom.video.decoder.*, component_init success, surface generation set) in our media pid, (3) user confirms video visible on screen"
+        tags: [media, codecs, c1, verification, honest-benchmark]
+      - id: D20
+        problem: "muted video never plays when tab goes background; decoder deinit on backgrounding"
+        cause: "Gecko pauses muted background media (correct energy behavior); audible media keeps playing with decoder alive"
+        solution: "for background-capable media tests: let the page unmute+play on a user tap (autoplay policy), then capture dumpsys/logcat from the agent side while user keeps chatting"
+        tags: [media, background, energy, autoplay]
+      - id: D21
+        problem: "VIEW intent on already-running Fenix task does not deliver the URL"
+        cause: "am start -n on a foreground activity logs 'Activity not started' and only brings the task forward; new tab was never fetched (background tabs don't fetch until foregrounded)"
+        solution: "cold-start reliably: am force-stop, then am start with the intent; or let the chooser resolve (no -n); drive navigation by tapping the URL bar + input text + keyevent 66"
+        tags: [intents, fenix, navigation, tabs]
         problem: "cannot reach the abstract socket without adb"
         cause: "SELinux denies the proot app domain (EACCES on connect); shell toybox nc has no -U; user declined adb authorization"
         solution: "accept the constraint — devtools measurement channel is unavailable on this setup; keep Shizuku dumpsys/top/logcat as the measurement stack"
