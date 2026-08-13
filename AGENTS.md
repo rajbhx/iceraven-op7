@@ -34,5 +34,10 @@ app source, never replace GeckoView with WebView.
    `**P** problem` / `cause:` / `solution:` / `section:` / optional `tags:`.
 2. `python3 automation/op7/session_to_notes.py <digest>` → appends to
    `docs/field-notes/log.yml` (dedupe, auto-id, preserves tags).
-3. Commit + push. The playbook sync workflow regenerates its searchable notes
-   layer automatically — no other action needed.
+3. `python3 automation/op7/conversation_to_notes.py` → archives the useful
+   typed knowledge (RULE/DECISION/REQUEST/GOTCHA/GOAL) from the local Codex
+   session into `docs/field-notes/conversations/` (local-only, trimmed, never
+   raw transcripts).
+4. Commit + push. The playbook sync workflow (every 6h + manual +
+   repository_dispatch) regenerates its searchable notes layer automatically —
+   no other action needed.
