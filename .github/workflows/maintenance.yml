@@ -1,0 +1,83 @@
+name: Maintenance
+
+# Keep the free-tier repo clean over time: prune old artifacts, caches, runs.
+# Lightweight (no build). Monthly schedule + manual dispatch + repository_dispatch.
+# Guards GitHub free limits: 500 MB artifact storage, 10 GB cache, 90-day
+# retention; the monthly run also resets the scheduled-workflow activity window.
+
+on:
+  schedule:
+    - cron: '0 5 1 * *'
+  workflow_dispatch:
+  repository_dispatch:
+    types: [maintenance]
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  prune:
+    name: Prune artifacts, caches, runs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Delete artifacts older than 14 days
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          NOW=$(date +%s)
+          PAGE=1
+          DELETED=0
+          while :; do
+            JSON=$(gh api "repos/${{ github.repository }}/actions/artifacts?per_page=100&page=$PAGE")
+            N=$(echo "$JSON" | jq '.artifacts | length')
+            [ "$N" -eq 0 ] && break
+            for ROW in $(echo "$JSON" | jq -c '.artifacts[]'); do
+              ID=$(echo "$ROW" | jq -r '.id')
+              NAME=$(echo "$ROW" | jq -r '.name')
+              CREATED=$(echo "$ROW" | jq -r '.created_at')
+              AGE=$(( (NOW - $(date -d "$CREATED" +%s)) / 86400 ))
+              if [ "$AGE" -gt 14 ]; then
+                gh api -X DELETE "repos/${{ github.repository }}/actions/artifacts/$ID" >/dev/null
+                echo "deleted artifact $NAME (${AGE}d)"
+                DELETED=$((DELETED+1))
+              fi
+            done
+            PAGE=$((PAGE+1))
+            [ "$N" -lt 100 ] && break
+          done
+          echo "total artifacts deleted: $DELETED"
+
+      - name: Evict caches older than 14 days
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          CACHES=$(gh api "repos/${{ github.repository }}/actions/caches" --jq '.actions_caches[] | [.id, .key, .created_at] | @tsv' 2>/dev/null || true)
+          if [ -z "$CACHES" ]; then
+            echo "no caches to evict"
+            exit 0
+          fi
+          NOW=$(date +%s)
+          while IFS=$'\t' read -r ID KEY CREATED; do
+            AGE=$(( (NOW - $(date -d "$CREATED" +%s)) / 86400 ))
+            if [ "$AGE" -gt 14 ]; then
+              gh api -X DELETE "repos/${{ github.repository }}/actions/caches/$ID" >/dev/null && echo "deleted cache $KEY (${AGE}d)"
+            fi
+          done <<< "$CACHES"
+
+      - name: Trim workflow runs (keep newest 20)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run list -R "${{ github.repository }}" -L 100 --json databaseId,createdAt --jq '.[] | [.databaseId, .createdAt] | @tsv' | sort -k2 | head -n -20 | cut -f1 | while read -r RID; do
+            gh api -X DELETE "repos/${{ github.repository }}/actions/runs/$RID" >/dev/null && echo "deleted run $RID"
+          done
+
+      - name: Write summary
+        if: always()
+        run: |
+          echo "## Maintenance" >> "$GITHUB_STEP_SUMMARY"
+          echo "- pruned artifacts >14d, caches >14d, runs beyond newest 20" >> "$GITHUB_STEP_SUMMARY"
+          echo "- keeps the repo inside GitHub free-tier storage limits automatically" >> "$GITHUB_STEP_SUMMARY"

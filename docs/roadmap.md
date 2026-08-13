@@ -14,6 +14,7 @@ Iceraven OP7 = **stock Iceraven, engineered for this OnePlus 7**:
 - OP7 layer = build/distribution choices + capability-driven runtime settings + *measured* optimizations, nothing else.
 - Distribution is **arm64-v8a only** — the only ABI this device runs.
 - Every revision is traceable: upstream commit + Iceraven version + OP7 patch revision + workflow run (see `docs/reproducible-build.md`).
+- Second source of truth (reference only): mozilla-central `mobile/android` (GeckoView) — https://hg-edge.mozilla.org/mozilla-central/file/tip/mobile/android — consumed as the prebuilt `org.mozilla.geckoview:geckoview-omni` AAR pinned by the Iceraven version; it is not built or synced directly here.
 
 **What it must never change:** Gecko/GeckoView architecture, security (sandboxing, HTTPS, site isolation), privacy defaults, extension support, web compatibility. Optimization only where the baseline shows a real, measured bottleneck.
 

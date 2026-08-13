@@ -216,7 +216,8 @@ jobs:
         run: |
           "$GITHUB_WORKSPACE/automation/op7/write_build_metadata.sh" build-metadata.json
 
-      - name: Upload unsigned APK + validation artifacts
+      - name: Upload unsigned APK + validation artifacts (release builds only; needed to sign with the release key)
+        if: github.event.inputs.release == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: op7-validation-${{ steps.metadata.outputs.version_name }}
@@ -224,7 +225,7 @@ jobs:
             ${{ env.APK_PATH }}
             SHA256SUMS.txt
             build-metadata.json
-          retention-days: 30
+          retention-days: 7
 
       - name: Debug-sign APK (validation builds only)
         if: github.event.inputs.release != 'true'
@@ -244,7 +245,7 @@ jobs:
         with:
           name: op7-signed-${{ steps.metadata.outputs.version_name }}
           path: ${{ env.SIGNED_PATH }}
-          retention-days: 30
+          retention-days: 14
 
       - name: Write job summary
         if: always()

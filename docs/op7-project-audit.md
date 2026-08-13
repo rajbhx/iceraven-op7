@@ -28,6 +28,7 @@ modifying it:
 | SDK levels | `android-components/.config.yml` (submodule) | `minSdk 26`, `targetSdk 36`, `compileSdk 37.0`, `jvmTarget 17` |
 | Version catalog | `gradle/libs.versions.toml` | AGP `8.13.2`, Kotlin `2.3.21`, KSP `2.3.9`, detekt `1.23.8`, ktlint `1.8.0`, Glean `67.3.2` |
 | GeckoView | A-C `engine-gecko` + Mozilla Maven | `org.mozilla.geckoview:geckoview-omni:153.0.20260715202819` (verified present on `maven.mozilla.org`, 240 MB fat AAR) |
+| GeckoView source (2nd upstream) | mozilla-central `mobile/android` (https://hg-edge.mozilla.org/mozilla-central/file/tip/mobile/android) | reference only — consumed as the prebuilt `geckoview-omni` AAR pinned by the Iceraven version; not built or synced directly |
 | APK ABIs | `app/build.gradle` `splits.abi` | `arm64-v8a`, `armeabi-v7a`, `x86_64` |
 | Versioning scheme | tags | `iceraven-x.y.z` (e.g. `iceraven-2.46.0`) |
 
