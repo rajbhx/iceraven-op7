@@ -105,6 +105,11 @@ sections:
         cause: "launcher activity is the Fenix delegate `.App`, and the package id is io.github.forkmaintainers.iceraven.op7 (not org.mozilla.fenix.iceraven.op7)"
         solution: "resolve the launcher with `cmd package resolve-activity --brief -c android.intent.category.LAUNCHER <pkg>` before launching"
         tags: [install, activity, package-id]
+      - id: C6
+        problem: "user asked to undo bulk per-user uninstalls on a daily-driver phone"
+        cause: "cleanup removed 12 already-disabled packages via pm uninstall --user 0 without asking first"
+        solution: "restore exactly via `pm install-existing --user 0 <pkg>` then `pm disable-user --user 0 <pkg>`; verify with `pm list packages -d` matches the original list. Rule: on a daily-driver, present a candidate list and get a go-ahead before uninstalling packages; files/app-data need explicit confirmation too"
+        tags: [uninstall, restore, safety, daily-driver]
   - id: D
     title: Measurement and transfer
     entries:
