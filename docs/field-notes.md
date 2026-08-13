@@ -7,8 +7,10 @@ is maintained in a standalone, app-agnostic playbook:
 
 Highlights you can reuse for other apps / special builds:
 
-- `docs/09-field-notes-journey.md` — chronological problems→solutions log
+- `projects/iceraven-op7/README.md` — auto-generated problems→solutions log
   (testOnly APK, Shizuku stdout races, transfer tricks, cache outages, etc.)
+- `projects/` — register any new app in `projects/<slug>/manifest.yml`; the
+  playbook syncs its field-notes log automatically (see `AGENTS.md` for agents)
 - `docs/02-device-access-and-transfer.md` — adb-less device access via Shizuku,
   staging installs, loopback transfers, proot quirks
 - `docs/04-build-pipeline-blueprint.md` — GitHub Actions build/sign/gate pattern
