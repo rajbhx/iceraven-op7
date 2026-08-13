@@ -147,9 +147,21 @@ sections:
         cause: "GitHub policy for public repos"
         solution: "daily check + dispatch + monthly maintenance reset the activity window; manual/repo-dispatch secondary"
       - id: E4
+        problem: "r3 build failed at app:compileForkReleaseKotlin"
+        cause: "missing import for DeviceCapabilities in HomeActivity; PackageManager.getSystemFeatureInfo/FEATURE_OPENGLES_* unresolved in this module (used deviceConfigurationInfo.reqGlEsVersion instead)"
+        solution: "review imports before shipping a patch; prefer deviceConfigurationInfo for GLES version; ALWAYS re-stage BOTH files before regenerating a patch (git reset unstaged them and the regenerated patch silently lost the HomeActivity hunks)"
       - id: E5
+        problem: "r3 build failed at app:compileForkReleaseKotlin (Unresolved references)"
+        cause: "missing DeviceCapabilities import in HomeActivity; PackageManager feature APIs unresolved in this module"
+        solution: "added import; use deviceConfigurationInfo.reqGlEsVersion for GLES; review imports/APIs before dispatching"
       - id: E6
+        problem: "full 40-min build wasted on a compile error"
+        cause: "dispatched full build before local review of the Kotlin patch"
+        solution: "use fast=true validation builds during patch iteration (compile-level proof, cheap); full R8 only when ready"
       - id: E7
+        problem: "regenerated patch silently lost hunks after git reset"
+        cause: "git reset unstaged files; regenerated diff from only one staged file"
+        solution: "always re-stage ALL touched files before regenerating a patch; verify patch touches expected files (grep '^diff --git')"
   - id: F
     title: UI / perceived performance
     entries:
@@ -157,18 +169,6 @@ sections:
         problem: "visible color jump between splash and home screen on launch"
         cause: "hard-coded splash brand color (#FCF3EE / #210340) differs from home surface (#F7F6FB / #1D1B1F)"
         solution: "splash background references @color/fx_mobile_surface (patch 004) — seamless iOS-style launch, cosmetic only"
-        problem: "regenerated patch silently lost hunks after git reset"
-        cause: "git reset unstaged files; regenerated diff from only one staged file"
-        solution: "always re-stage ALL touched files before regenerating a patch; verify patch touches expected files (grep '^diff --git')"
-        problem: "full 40-min build wasted on a compile error"
-        cause: "dispatched full build before local review of the Kotlin patch"
-        solution: "use fast=true validation builds during patch iteration (compile-level proof, cheap); full R8 only when ready"
-        problem: "r3 build failed at app:compileForkReleaseKotlin (Unresolved references)"
-        cause: "missing DeviceCapabilities import in HomeActivity; PackageManager feature APIs unresolved in this module"
-        solution: "added import; use deviceConfigurationInfo.reqGlEsVersion for GLES; review imports/APIs before dispatching"
-        problem: "r3 build failed at app:compileForkReleaseKotlin"
-        cause: "missing import for DeviceCapabilities in HomeActivity; PackageManager.getSystemFeatureInfo/FEATURE_OPENGLES_* unresolved in this module (used deviceConfigurationInfo.reqGlEsVersion instead)"
-        solution: "review imports before shipping a patch; prefer deviceConfigurationInfo for GLES version; ALWAYS re-stage BOTH files before regenerating a patch (git reset unstaged them and the regenerated patch silently lost the HomeActivity hunks)"
 recurring_signature: |
   If output is "sometimes there, sometimes not": it is almost always a transport
   race, not the command. Fix by staging on-device + verifying size/content, then

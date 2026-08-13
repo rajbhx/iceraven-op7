@@ -7,59 +7,52 @@ Reads `## Problems solved` blocks:
     cause: <root cause>
     solution: <fix>
     section: <A-F>   (optional, default: last section in log)
-Dedupes by problem text; auto-assigns the next id in the section.
+Model-based: loads the log with yaml, appends entries, re-renders canonically
+(dedupe by problem text, auto-ids). Safe to run repeatedly.
 """
 import re
 import sys
 from pathlib import Path
 
+import yaml
+
 ROOT = Path(__file__).resolve().parent.parent.parent
 LOG = ROOT / "docs" / "field-notes" / "log.yml"
 
-def load_sections(text):
-    sections = {}
-    cur = None
-    for line in text.splitlines():
-        m = re.match(r"^  - id: ([A-Z])\n?$", line) or re.match(r"^  - id: ([A-Z])$", line)
-        if m:
-            cur = m.group(1)
-            sections.setdefault(cur, {"start": None, "end": None, "ids": set()})
-        elif cur is not None:
-            s = sections[cur]
-            if s["start"] is None:
-                s["start"] = None
-            m2 = re.match(r"^      - id: (\S+)$", line)
-            if m2:
-                sections[cur]["ids"].add(m2.group(1))
-    return sections
 
-def main():
-    if len(sys.argv) != 2:
-        sys.exit("usage: session_to_notes.py <session-digest.md>")
-    digest = Path(sys.argv[1])
-    if not digest.is_file():
-        sys.exit(f"no such digest: {digest}")
-    dtext = digest.read_text()
+def esc(value: str) -> str:
+    return value.replace("\\", "\\\\").replace('"', '\\"')
 
-    log = LOG.read_text()
-    # section spans: find '  - id: X' block starts and the tail marker
-    lines = log.splitlines(keepends=True)
-    section_starts = {}
-    for i, line in enumerate(lines):
-        m = re.match(r"^  - id: ([A-Z])$", line.rstrip("\n"))
-        if m:
-            section_starts[m.group(1)] = i
-    tail = None
-    for i, line in enumerate(lines):
-        if line.startswith("recurring_signature:"):
-            tail = i
-            break
 
+def render(log_text: str, data: dict) -> str:
+    head, _, rest = log_text.partition("sections:")
+    sig_marker = "recurring_signature: |"
+    sig = ""
+    if sig_marker in rest:
+        sig = rest.split(sig_marker, 1)[1].lstrip("\n")
+        sig = "\n".join(line[2:] if line.startswith("  ") else line for line in sig.splitlines())
+    out = head + "sections:\n"
+    for section in data["sections"]:
+        out += f"  - id: {section['id']}\n"
+        out += f"    title: {section['title']}\n"
+        out += "    entries:\n"
+        for entry in section["entries"]:
+            out += f"      - id: {entry['id']}\n"
+            out += f"        problem: \"{esc(entry['problem'])}\"\n"
+            out += f"        cause: \"{esc(entry['cause'])}\"\n"
+            out += f"        solution: \"{esc(entry['solution'])}\"\n"
+    out += "recurring_signature: |\n"
+    out += "\n".join("  " + line if line else "" for line in sig.splitlines()) + "\n"
+    return out
+
+
+def parse_digest(text: str):
     problems = []
     current = None
-    for raw in dtext.splitlines():
+    for raw in text.splitlines():
         line = raw.strip()
-        if ("**P" in line) and ("**" in line[line.find("**P") + 3:]):
+        idx = line.find("**P")
+        if idx >= 0 and "**" in line[idx + 3:]:
             if current:
                 problems.append(current)
             current = {"problem": line.split("**")[2].strip(), "cause": "", "solution": "", "section": None}
@@ -70,83 +63,53 @@ def main():
             m = re.match(r"^solution:\s*(.+)$", line)
             if m:
                 current["solution"] = m.group(1).strip()
-            m = re.match(r"^section:\s*([A-F])$", line)
+            m = re.match(r"^section:\s*([A-Z])$", line)
             if m:
                 current["section"] = m.group(1)
     if current:
         problems.append(current)
+    return [p for p in problems if p["problem"]]
 
+
+def main():
+    if len(sys.argv) != 2:
+        sys.exit("usage: session_to_notes.py <session-digest.md>")
+    digest = Path(sys.argv[1])
+    if not digest.is_file():
+        sys.exit(f"no such digest: {digest}")
+    problems = parse_digest(digest.read_text())
     if not problems:
         print("no problem blocks found; nothing to do")
         return
 
-    existing_sections = sorted(section_starts)
+    log_text = LOG.read_text()
+    data = yaml.safe_load(log_text)
+    sections = {s["id"]: s for s in data["sections"]}
     added = 0
     for p in problems:
-        if not p["problem"]:
-            continue
-        if p["problem"] in log:
+        if p["problem"] in log_text:
             print(f"skip (already logged): {p['problem'][:60]}")
             continue
-        section = p["section"] or existing_sections[-1]
-        ids = set(re.findall(rf"^      - id: ({re.escape(section)}\d+)$", log, re.M))
+        section_id = p["section"] or data["sections"][-1]["id"]
+        if section_id not in sections:
+            sections[section_id] = {"id": section_id, "title": "Additional", "entries": []}
+            data["sections"].append(sections[section_id])
+        entries = sections[section_id]["entries"]
         n = 1
-        while f"{section}{n}" in ids:
+        while any(e["id"] == f"{section_id}{n}" for e in entries):
             n += 1
-        entry = (
-            f"      - id: {section}{n}\n"
-            f"        problem: \"{p['problem']}\"\n"
-            f"        cause: \"{p['cause']}\"\n"
-            f"        solution: \"{p['solution']}\"\n"
-        )
-        if section in section_starts:
-            # insert after the last entry line of this section
-            idx = section_starts[section]
-            end = section_starts.get(existing_sections[existing_sections.index(section) + 1], tail) if existing_sections.index(section) + 1 < len(existing_sections) else tail
-            block = "".join(lines[idx:end])
-            last_entry = max(block.rfind("      - id:"), 0)
-            insert_at = idx + block[:last_entry].count("\n") + 1 if False else None
-            # simpler: find last '      - id:' line within the section block
-            pos = -1
-            search_start = idx
-            for j in range(idx, end):
-                if re.match(r"^      - id: ", lines[j]):
-                    pos = j
-            if pos >= 0:
-                lines.insert(pos + 1, entry)
-            else:
-                # no entries yet: insert right after 'entries:' line
-                for j in range(idx, end):
-                    if lines[j].strip() == "entries:":
-                        lines.insert(j + 1, entry)
-                        break
-        else:
-            # new section: insert before tail (or append)
-            new_block = (
-                f"  - id: {section}\n"
-                f"    title: {('UI / perceived performance' if section == 'F' else 'Additional')}\n"
-                f"    entries:\n"
-            ) + entry
-            if tail is not None:
-                lines.insert(tail, new_block)
-            else:
-                lines.append(new_block)
+        entries.append({"id": f"{section_id}{n}", "problem": p["problem"],
+                        "cause": p["cause"], "solution": p["solution"]})
         added += 1
-        LOG.write_text("".join(lines))
-        log = LOG.read_text()
-        lines = log.splitlines(keepends=True)
-        section_starts = {}
-        for i, line in enumerate(lines):
-            m = re.match(r"^  - id: ([A-Z])$", line.rstrip("\n"))
-            if m:
-                section_starts[m.group(1)] = i
-        existing_sections = sorted(section_starts)
-        print(f"added {section}{n}: {p['problem'][:60]}")
+        print(f"added {section_id}{n}: {p['problem'][:60]}")
 
-    import yaml
+    LOG.write_text(render(log_text, data))
+    # validate
     with open(LOG) as f:
-        data = yaml.safe_load(f)
-    print("total entries now:", sum(len(s["entries"]) for s in data["sections"]))
+        d2 = yaml.safe_load(f)
+    print("total entries now:", sum(len(s["entries"]) for s in d2["sections"]),
+          "| sections:", [s["id"] for s in d2["sections"]])
+
 
 if __name__ == "__main__":
     main()
