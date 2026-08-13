@@ -1,0 +1,4 @@
+Applications Memory Usage (in Kilobytes):
+Uptime: 39793234 Realtime: 44256063
+
+** MEMINFO in pid 9007 [io.github.forkmaintainers.iceraven.op7] **

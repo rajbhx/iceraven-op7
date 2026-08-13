@@ -180,6 +180,16 @@ sections:
         cause: "the assistant host app renders its own floating UI on top; `uiautomator dump` captured that package's nodes"
         solution: "grep the dump for package=\"...iceraven...\" and confirm mCurrentFocus before trusting coordinates/taps"
         tags: [shizuku, ui-automation, overlay]
+      - id: D15
+        problem: "needed real per-tab memory data but VIEW intents cannot create tabs in a foreground Fenix"
+        cause: "repeated VIEW intents reuse the current tab (see D13); UI automation is blocked by the host app overlay (D14)"
+        solution: "collaborative measurement — user opens 3/6/10 tabs by hand, `baseline_capture.sh state <n>` captures meminfo + processes as-is without force-stop"
+        tags: [tabs, memory, measurement, collaboration]
+      - id: D16
+        problem: "browser restarted between captures, changing the main pid and invalidating one sample"
+        cause: "app instance churn mid-test (no crash logged); transient"
+        solution: "use only settled states; verify pid + process set consistency before trusting a capture; retry truncated meminfo captures (146-byte truncation seen once)"
+        tags: [measurement, meminfo, stability]
   - id: E
     title: CI quality
     entries:
