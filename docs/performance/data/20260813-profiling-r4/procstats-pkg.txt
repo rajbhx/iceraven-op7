@@ -1,0 +1,40 @@
+          <- io.github.forkmaintainers.iceraven.op7/u0a262 (io.github.forkmaintainers.iceraven.op7):
+             Total count 1: time 100% (running)
+  * com.google.android.gms / u0a206 / v262932013:
+      * Asc com.google.android.gms.fonts.provider.FontsProvider:
+        Process: com.google.android.gms.persistent
+          <- io.github.forkmaintainers.iceraven.op7/u0a262 (io.github.forkmaintainers.iceraven.op7):
+             Total count 8: time 0.15%
+             Active count 8:
+                Imp Fg: time 0.15%
+                 TOTAL: time 0.15%
+  * io.github.forkmaintainers.iceraven.op7 / u0a262 / v2016178394:
+      * Prc io.github.forkmaintainers.iceraven.op7:crashhelper_disable_art_image_ / u0a262 / v2016178394:
+             TOTAL: 16% (9.7MB-9.9MB-10MB/5.6MB-5.7MB-5.8MB/89MB-92MB-93MB over 3)
+            Imp Fg: 16% (9.7MB-9.9MB-10MB/5.6MB-5.7MB-5.8MB/89MB-92MB-93MB over 3)
+            Imp Bg: 0.02%
+           Service: 0.06%
+--
+      * Prc io.github.forkmaintainers.iceraven.op7 / u0a262 / v2016178394:
+             TOTAL: 16% (197MB-212MB-225MB/174MB-185MB-195MB/348MB-366MB-380MB over 3)
+               Top: 16% (197MB-212MB-225MB/174MB-185MB-195MB/348MB-366MB-380MB over 3)
+            Imp Bg: 0.02%
+        (Last Act): 46% (158MB-172MB-186MB/146MB-154MB-161MB/265MB-296MB-328MB over 2)
+--
+      * Prc io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_35 / u0a262 / v2016178394:
+             TOTAL: 8.9% (200MB-207MB-214MB/177MB-184MB-191MB/335MB-342MB-349MB over 2)
+            Imp Fg: 8.9% (200MB-207MB-214MB/177MB-184MB-191MB/335MB-342MB-349MB over 2)
+            Imp Bg: 0.01%
+           Service: 0.03%
+--
+      * Prc io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_34 / u0a262 / v2016178394:
+             TOTAL: 1.9% (31MB-31MB-31MB/17MB-17MB-17MB/146MB-147MB-147MB over 2)
+            Imp Fg: 1.9% (31MB-31MB-31MB/17MB-17MB-17MB/146MB-147MB-147MB over 2)
+        (Last Act): 0.01%
+      * Prc io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_29 / u0a262 / v2016178394:
+             TOTAL: 14% (65MB-125MB-216MB/44MB-103MB-193MB/192MB-253MB-345MB over 3)
+            Imp Fg: 14% (65MB-125MB-216MB/44MB-103MB-193MB/192MB-253MB-345MB over 3)
+            Imp Bg: 0.02%
+           Service: 0.05%
+--
+      * Prc io.github.forkmaintainers.iceraven.op7:media / u0a262 / v2016178394:

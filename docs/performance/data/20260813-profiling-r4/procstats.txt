@@ -1,0 +1,910 @@
+CURRENT STATS:
+System memory usage:
+  SOff/Norm: 1 samples:
+    Cached: 1.9GB min, 1.9GB avg, 1.9GB max
+    Free: 321MB min, 321MB avg, 321MB max
+    ZRam: 225MB min, 225MB avg, 225MB max
+    Kernel: 611MB min, 611MB avg, 611MB max
+    Native: 546MB min, 546MB avg, 546MB max
+   SOn/Norm: 3 samples:
+    Cached: 1.1GB min, 1.6GB avg, 2.5GB max
+    Free: 357MB min, 873MB avg, 1.3GB max
+    ZRam: 227MB min, 281MB avg, 380MB max
+    Kernel: 569MB min, 600MB avg, 627MB max
+    Native: 531MB min, 539MB avg, 548MB max
+        Mod: 1 samples:
+    Cached: 2.3GB min, 2.3GB avg, 2.3GB max
+    Free: 535MB min, 535MB avg, 535MB max
+    ZRam: 231MB min, 231MB avg, 231MB max
+    Kernel: 595MB min, 595MB avg, 595MB max
+    Native: 544MB min, 544MB avg, 544MB max
+
+Per-Package Stats:
+  * com.android.providers.settings / 1000 / v29:
+      * Asc com.android.providers.settings.SettingsProvider:
+        Process: system
+          <- io.github.forkmaintainers.iceraven.op7/u0a262 (io.github.forkmaintainers.iceraven.op7):
+             Total count 1: time 100% (running)
+  * com.google.android.gms / u0a206 / v262932013:
+      * Asc com.google.android.gms.fonts.provider.FontsProvider:
+        Process: com.google.android.gms.persistent
+          <- io.github.forkmaintainers.iceraven.op7/u0a262 (io.github.forkmaintainers.iceraven.op7):
+             Total count 8: time 0.15%
+             Active count 8:
+                Imp Fg: time 0.15%
+                 TOTAL: time 0.15%
+  * io.github.forkmaintainers.iceraven.op7 / u0a262 / v2016178394:
+      * Prc io.github.forkmaintainers.iceraven.op7:crashhelper_disable_art_image_ / u0a262 / v2016178394:
+             TOTAL: 16% (9.7MB-9.9MB-10MB/5.6MB-5.7MB-5.8MB/89MB-92MB-93MB over 3)
+            Imp Fg: 16% (9.7MB-9.9MB-10MB/5.6MB-5.7MB-5.8MB/89MB-92MB-93MB over 3)
+            Imp Bg: 0.02%
+           Service: 0.06%
+        (Last Act): 45% (8.0MB-10MB-13MB/4.9MB-5.5MB-5.8MB/84MB-89MB-93MB over 3)
+          (Cached): 21% (8.0MB-8.0MB-8.0MB/4.9MB-4.9MB-4.9MB/84MB-84MB-84MB over 1)
+      * Prc io.github.forkmaintainers.iceraven.op7 / u0a262 / v2016178394:
+             TOTAL: 16% (197MB-212MB-225MB/174MB-185MB-195MB/348MB-366MB-380MB over 3)
+               Top: 16% (197MB-212MB-225MB/174MB-185MB-195MB/348MB-366MB-380MB over 3)
+            Imp Bg: 0.02%
+        (Last Act): 46% (158MB-172MB-186MB/146MB-154MB-161MB/265MB-296MB-328MB over 2)
+          (Cached): 21%
+      * Prc io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_35 / u0a262 / v2016178394:
+             TOTAL: 8.9% (200MB-207MB-214MB/177MB-184MB-191MB/335MB-342MB-349MB over 2)
+            Imp Fg: 8.9% (200MB-207MB-214MB/177MB-184MB-191MB/335MB-342MB-349MB over 2)
+            Imp Bg: 0.01%
+           Service: 0.03%
+        (Last Act): 9.6%
+          (Cached): 50% (159MB-212MB-239MB/137MB-188MB-214MB/287MB-343MB-370MB over 4)
+      * Prc io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_34 / u0a262 / v2016178394:
+             TOTAL: 1.9% (31MB-31MB-31MB/17MB-17MB-17MB/146MB-147MB-147MB over 2)
+            Imp Fg: 1.9% (31MB-31MB-31MB/17MB-17MB-17MB/146MB-147MB-147MB over 2)
+        (Last Act): 0.01%
+      * Prc io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_29 / u0a262 / v2016178394:
+             TOTAL: 14% (65MB-125MB-216MB/44MB-103MB-193MB/192MB-253MB-345MB over 3)
+            Imp Fg: 14% (65MB-125MB-216MB/44MB-103MB-193MB/192MB-253MB-345MB over 3)
+            Imp Bg: 0.02%
+           Service: 0.05%
+        (Last Act): 38% (148MB-207MB-266MB/123MB-183MB-243MB/269MB-333MB-396MB over 2)
+          (Cached): 24% (204MB-204MB-204MB/181MB-181MB-181MB/332MB-332MB-332MB over 1)
+      * Prc io.github.forkmaintainers.iceraven.op7:media / u0a262 / v2016178394:
+             TOTAL: 0.01%
+            Imp Fg: 0.01%
+          (Cached): 32% (11MB-13MB-14MB/6.5MB-7.2MB-7.5MB/94MB-100MB-103MB over 4)
+      * Prc io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_7 / u0a262 / v2016178394:
+             TOTAL: 16% (35MB-39MB-41MB/20MB-23MB-24MB/150MB-158MB-161MB over 3)
+            Imp Fg: 16% (35MB-39MB-41MB/20MB-23MB-24MB/150MB-158MB-161MB over 3)
+            Imp Bg: 0.02%
+           Service: 0.06%
+        (Last Act): 45% (11MB-29MB-42MB/4.6MB-16MB-23MB/92MB-131MB-156MB over 3)
+          (Cached): 21% (33MB-33MB-33MB/20MB-20MB-20MB/144MB-144MB-144MB over 1)
+      * Prc io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_5 / u0a262 / v2016178394:
+             TOTAL: 2.1% (31MB-31MB-31MB/17MB-17MB-17MB/149MB-149MB-149MB over 2)
+            Imp Fg: 2.1% (31MB-31MB-31MB/17MB-17MB-17MB/149MB-149MB-149MB over 2)
+        (Last Act): 0.01%
+      * Prc io.github.forkmaintainers.iceraven.op7:gpu_disable_art_image_ / u0a262 / v2016178394:
+             TOTAL: 16% (45MB-53MB-64MB/32MB-39MB-47MB/160MB-168MB-181MB over 3)
+            Imp Fg: 16% (45MB-53MB-64MB/32MB-39MB-47MB/160MB-168MB-181MB over 3)
+        (Last Act): 0.20%
+          (Cached): 59% (49MB-53MB-58MB/35MB-40MB-44MB/159MB-164MB-170MB over 3)
+      * Svc org.mozilla.gecko.process.GeckoChildProcessServices$gpu:
+        Process: io.github.forkmaintainers.iceraven.op7:gpu_disable_art_image_
+            Running count 2 / time 76%
+            Started count 1 / time 0.00%
+            Bound count 1 / time 76%
+            Executing count 1 / time 0.00%
+      * Svc org.mozilla.gecko.process.GeckoChildProcessServices$tab5:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_5
+            Running count 1 / time 2.2%
+            Bound count 1 / time 2.2%
+            Executing count 2 / time 0.00%
+      * Svc org.mozilla.gecko.process.GeckoChildProcessServices$tab7:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_7
+            Running count 2 / time 83%
+            Started count 1 / time 0.00%
+            Bound count 1 / time 83%
+      * Svc org.mozilla.gecko.crashhelper.CrashHelper:
+        Process: io.github.forkmaintainers.iceraven.op7:crashhelper_disable_art_image_
+            Running count 1 / time 83%
+            Bound count 1 / time 83%
+            Executing count 1 / time 0.00%
+      * Svc org.mozilla.gecko.process.GeckoChildProcessServices$tab29:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_29
+            Running count 2 / time 76%
+            Started count 1 / time 0.00%
+            Bound count 1 / time 76%
+            Executing count 1 / time 0.00%
+      * Svc org.mozilla.gecko.process.GeckoChildProcessServices$tab34:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_34
+            Running count 1 / time 1.9%
+            Bound count 1 / time 1.9%
+            Executing count 2 / time 0.00%
+      * Svc org.mozilla.gecko.process.GeckoChildProcessServices$tab35:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_35
+            Running count 2 / time 69%
+            Started count 1 / time 0.00%
+            Bound count 1 / time 69%
+            Executing count 1 / time 0.00%
+      * Svc org.mozilla.gecko.media.MediaManager:
+        Process: io.github.forkmaintainers.iceraven.op7:media
+            Running count 1 / time 0.01%
+            Bound count 1 / time 0.01%
+            Executing count 2 / time 0.00%
+      * Svc androidx.work.impl.background.systemjob.SystemJobService:
+        Process: io.github.forkmaintainers.iceraven.op7
+            Running count 34 / time 0.05%
+            Bound count 34 / time 0.05%
+            Executing count 68 / time 0.02%
+      * Asc org.mozilla.gecko.process.GeckoChildProcessServices$gpu:
+        Process: io.github.forkmaintainers.iceraven.op7:gpu_disable_art_image_
+          <- io.github.forkmaintainers.iceraven.op7/u0a262 (io.github.forkmaintainers.iceraven.op7):
+             Total count 1: time 76%
+             Active count 17:
+                Imp Fg: time 76%
+                 TOTAL: time 76%
+      * Asc org.mozilla.gecko.process.GeckoChildProcessServices$tab5:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_5
+          <- io.github.forkmaintainers.iceraven.op7/u0a262 (io.github.forkmaintainers.iceraven.op7):
+             Total count 1: time 2.2%
+             Active count 1:
+                Imp Fg: time 2.2%
+                 TOTAL: time 2.2%
+      * Asc org.mozilla.gecko.process.GeckoChildProcessServices$tab7:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_7
+          <- io.github.forkmaintainers.iceraven.op7/u0a262 (io.github.forkmaintainers.iceraven.op7):
+             Total count 1: time 83%
+             Active count 34:
+                Imp Fg: time 16%
+                Imp Bg: time 0.02%
+               Service: time 0.06%
+                 TOTAL: time 16%
+      * Asc org.mozilla.gecko.crashhelper.CrashHelper:
+        Process: io.github.forkmaintainers.iceraven.op7:crashhelper_disable_art_image_
+          <- io.github.forkmaintainers.iceraven.op7/u0a262 (io.github.forkmaintainers.iceraven.op7):
+             Total count 1: time 83%
+             Active count 34:
+                Imp Fg: time 16%
+                Imp Bg: time 0.02%
+               Service: time 0.06%
+                 TOTAL: time 16%
+      * Asc org.mozilla.gecko.process.GeckoChildProcessServices$tab29:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_29
+          <- io.github.forkmaintainers.iceraven.op7/u0a262 (io.github.forkmaintainers.iceraven.op7):
+             Total count 1: time 76%
+             Active count 32:
+                Imp Fg: time 14%
+                Imp Bg: time 0.02%
+               Service: time 0.05%
+                 TOTAL: time 14%
+      * Asc org.mozilla.gecko.process.GeckoChildProcessServices$tab34:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_34
+          <- io.github.forkmaintainers.iceraven.op7/u0a262 (io.github.forkmaintainers.iceraven.op7):
+             Total count 1: time 1.9%
+             Active count 1:
+                Imp Fg: time 1.9%
+                 TOTAL: time 1.9%
+      * Asc org.mozilla.gecko.process.GeckoChildProcessServices$tab35:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_35
+          <- io.github.forkmaintainers.iceraven.op7/u0a262 (io.github.forkmaintainers.iceraven.op7):
+             Total count 1: time 69%
+             Active count 20:
+                Imp Fg: time 8.9%
+                Imp Bg: time 0.01%
+               Service: time 0.03%
+                 TOTAL: time 8.9%
+      * Asc org.mozilla.gecko.media.MediaManager:
+        Process: io.github.forkmaintainers.iceraven.op7:media
+          <- io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_29/u0a262 (io.github.forkmaintainers.iceraven.op7):
+             Total count 1: time 0.01%
+             Active count 1:
+                Imp Fg: time 0.01%
+                 TOTAL: time 0.01%
+      * Asc androidx.work.impl.background.systemjob.SystemJobService:
+        Process: io.github.forkmaintainers.iceraven.op7
+          <- system/1000 (android):
+             Total count 34: time 0.05%
+             Active count 17:
+                Imp Bg: time 0.05%
+                 TOTAL: time 0.05%
+  * io.github.forkmaintainers.iceraven.op7 / u0a262 / v2016178418:
+      * Prc io.github.forkmaintainers.iceraven.op7:crashhelper_disable_art_image_ / u0a262 / v2016178418:
+             TOTAL: 3.5% (16MB-16MB-16MB/8.2MB-8.2MB-8.2MB/111MB-111MB-111MB over 2)
+            Imp Fg: 3.5% (16MB-16MB-16MB/8.2MB-8.2MB-8.2MB/111MB-111MB-111MB over 2)
+            Imp Bg: 0.02%
+           Service: 0.04%
+        (Last Act): 8.0% (15MB-16MB-16MB/8.2MB-8.3MB-8.5MB/111MB-111MB-112MB over 6)
+          (Cached): 4.0%
+      * Prc io.github.forkmaintainers.iceraven.op7 / u0a262 / v2016178418:
+             TOTAL: 3.5% (217MB-232MB-249MB/169MB-190MB-202MB/405MB-423MB-451MB over 6)
+               Top: 3.5% (217MB-232MB-249MB/169MB-190MB-202MB/405MB-423MB-451MB over 6)
+            Imp Bg: 0.02%
+        (Last Act): 8.0% (195MB-210MB-244MB/143MB-163MB-199MB/386MB-396MB-424MB over 5)
+          (Cached): 4.1%
+      * Prc io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_39 / u0a262 / v2016178418:
+             TOTAL: 0.03%
+            Imp Fg: 0.03%
+        (Last Act): 0.01%
+      * Prc io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_34 / u0a262 / v2016178418:
+             TOTAL: 0.65%
+            Imp Fg: 0.65%
+        (Last Act): 0.16%
+      * Prc io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_33 / u0a262 / v2016178418:
+             TOTAL: 0.62%
+            Imp Fg: 0.62%
+        (Last Act): 0.18%
+          (Cached): 0.02%
+      * Prc io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_32 / u0a262 / v2016178418:
+             TOTAL: 0.24%
+            Imp Fg: 0.23%
+           Service: 0.01%
+        (Last Act): 1.7% (38MB-38MB-38MB/20MB-20MB-20MB/177MB-177MB-177MB over 2)
+          (Cached): 0.11%
+      * Prc io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_31 / u0a262 / v2016178418:
+             TOTAL: 0.06%
+            Imp Fg: 0.06%
+        (Last Act): 0.70% (49MB-49MB-49MB/25MB-25MB-25MB/189MB-189MB-189MB over 1)
+      * Prc io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_28 / u0a262 / v2016178418:
+             TOTAL: 0.07%
+            Imp Fg: 0.06%
+        (Last Act): 0.70% (174MB-174MB-174MB/144MB-144MB-144MB/318MB-318MB-318MB over 1)
+      * Prc io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_24 / u0a262 / v2016178418:
+             TOTAL: 0.06%
+            Imp Fg: 0.05%
+        (Last Act): 0.11%
+      * Prc io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_23 / u0a262 / v2016178418:
+             TOTAL: 0.51%
+            Imp Fg: 0.49%
+            Imp Bg: 0.01%
+           Service: 0.01%
+        (Last Act): 2.3% (50MB-50MB-50MB/24MB-24MB-24MB/189MB-189MB-189MB over 1)
+          (Cached): 0.11%
+      * Prc io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_19 / u0a262 / v2016178418:
+             TOTAL: 0.01%
+            Imp Fg: 0.01%
+        (Last Act): 0.01%
+      * Prc io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_18 / u0a262 / v2016178418:
+             TOTAL: 0.04%
+            Imp Fg: 0.04%
+      * Prc io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_17 / u0a262 / v2016178418:
+             TOTAL: 1.5% (52MB-52MB-52MB/26MB-26MB-26MB/190MB-190MB-190MB over 2)
+            Imp Fg: 1.5% (52MB-52MB-52MB/26MB-26MB-26MB/190MB-190MB-190MB over 2)
+           Service: 0.01%
+        (Last Act): 4.3% (52MB-52MB-52MB/26MB-26MB-26MB/190MB-190MB-190MB over 3)
+          (Cached): 3.9%
+      * Prc io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_16 / u0a262 / v2016178418:
+             TOTAL: 0.28%
+            Imp Fg: 0.28%
+      * Prc io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_15 / u0a262 / v2016178418:
+             TOTAL: 1.5% (254MB-270MB-287MB/221MB-237MB-254MB/400MB-417MB-433MB over 2)
+            Imp Fg: 1.5% (254MB-270MB-287MB/221MB-237MB-254MB/400MB-417MB-433MB over 2)
+           Service: 0.01%
+        (Last Act): 4.3% (204MB-245MB-276MB/171MB-212MB-243MB/349MB-391MB-423MB over 3)
+          (Cached): 3.9%
+      * Prc io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_13 / u0a262 / v2016178418:
+             TOTAL: 0.33%
+            Imp Fg: 0.33%
+        (Last Act): 0.44% (49MB-49MB-49MB/24MB-24MB-24MB/189MB-189MB-189MB over 1)
+      * Prc io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_10 / u0a262 / v2016178418:
+             TOTAL: 0.75%
+            Imp Fg: 0.73%
+            Imp Bg: 0.01%
+           Service: 0.01%
+        (Last Act): 2.3% (177MB-177MB-177MB/147MB-147MB-147MB/322MB-322MB-322MB over 1)
+          (Cached): 0.12%
+      * Prc io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_8 / u0a262 / v2016178418:
+             TOTAL: 0.67% (36MB-36MB-36MB/18MB-18MB-18MB/170MB-170MB-170MB over 1)
+            Imp Fg: 0.67% (36MB-36MB-36MB/18MB-18MB-18MB/170MB-170MB-170MB over 1)
+        (Last Act): 0.01%
+      * Prc io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_5 / u0a262 / v2016178418:
+             TOTAL: 0.49%
+            Imp Fg: 0.49%
+        (Last Act): 0.01%
+      * Prc io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_2 / u0a262 / v2016178418:
+             TOTAL: 0.31%
+            Imp Fg: 0.31%
+        (Last Act): 0.17%
+          (Cached): 0.02%
+      * Prc io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_1 / u0a262 / v2016178418:
+             TOTAL: 0.08%
+            Imp Fg: 0.08%
+        (Last Act): 0.01%
+      * Prc io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_0 / u0a262 / v2016178418:
+             TOTAL: 0.73%
+            Imp Fg: 0.72%
+           Service: 0.01%
+        (Last Act): 0.59% (167MB-167MB-167MB/137MB-137MB-137MB/312MB-312MB-312MB over 1)
+      * Prc io.github.forkmaintainers.iceraven.op7:gpu_disable_art_image_ / u0a262 / v2016178418:
+             TOTAL: 3.4% (62MB-62MB-63MB/43MB-43MB-44MB/192MB-193MB-194MB over 2)
+            Imp Fg: 3.4% (62MB-62MB-63MB/43MB-43MB-44MB/192MB-193MB-194MB over 2)
+        (Last Act): 0.14%
+          (Cached): 12% (51MB-54MB-58MB/33MB-35MB-38MB/182MB-184MB-189MB over 6)
+      * Svc org.mozilla.gecko.process.GeckoChildProcessServices$gpu:
+        Process: io.github.forkmaintainers.iceraven.op7:gpu_disable_art_image_
+            Running count 15 / time 15%
+            Started count 7 / time 0.00%
+            Bound count 8 / time 15%
+            Executing count 8 / time 0.01%
+      * Svc org.mozilla.gecko.process.GeckoChildProcessServices$tab0:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_0
+            Running count 4 / time 1.3%
+            Started count 2 / time 0.00%
+            Bound count 2 / time 1.3%
+            Executing count 2 / time 0.00%
+      * Svc org.mozilla.gecko.process.GeckoChildProcessServices$tab1:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_1
+            Running count 1 / time 0.09%
+            Bound count 1 / time 0.09%
+            Executing count 2 / time 0.00%
+      * Svc org.mozilla.gecko.process.GeckoChildProcessServices$tab2:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_2
+            Running count 2 / time 0.50%
+            Started count 1 / time 0.00%
+            Bound count 1 / time 0.49%
+            Executing count 1 / time 0.00%
+      * Svc org.mozilla.gecko.process.GeckoChildProcessServices$tab5:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_5
+            Running count 3 / time 0.50%
+            Started count 1 / time 0.00%
+            Bound count 2 / time 0.50%
+            Executing count 3 / time 0.00%
+      * Svc org.mozilla.gecko.process.GeckoChildProcessServices$tab8:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_8
+            Running count 3 / time 0.68%
+            Started count 1 / time 0.00%
+            Bound count 2 / time 0.68%
+            Executing count 3 / time 0.00%
+      * Svc org.mozilla.gecko.crashhelper.CrashHelper:
+        Process: io.github.forkmaintainers.iceraven.op7:crashhelper_disable_art_image_
+            Running count 9 / time 16%
+            Started count 1 / time 0.00%
+            Bound count 8 / time 16%
+            Executing count 14 / time 0.01%
+      * Svc org.mozilla.gecko.process.GeckoChildProcessServices$tab10:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_10
+            Running count 3 / time 3.2%
+            Started count 1 / time 0.00%
+            Bound count 2 / time 3.2%
+            Executing count 2 / time 0.00%
+      * Svc org.mozilla.gecko.process.GeckoChildProcessServices$tab13:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_13
+            Running count 2 / time 0.77%
+            Started count 1 / time 0.00%
+            Bound count 1 / time 0.77%
+            Executing count 1 / time 0.00%
+      * Svc org.mozilla.gecko.process.GeckoChildProcessServices$tab15:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_15
+            Running count 2 / time 9.7%
+            Started count 1 / time 0.00%
+            Bound count 1 / time 9.7%
+            Executing count 1 / time 0.00%
+      * Svc org.mozilla.gecko.process.GeckoChildProcessServices$tab16:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_16
+            Running count 2 / time 0.28%
+            Started count 1 / time 0.00%
+            Bound count 1 / time 0.28%
+            Executing count 1 / time 0.00%
+      * Svc org.mozilla.gecko.process.GeckoChildProcessServices$tab17:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_17
+            Running count 2 / time 9.7%
+            Started count 1 / time 0.00%
+            Bound count 1 / time 9.7%
+            Executing count 1 / time 0.00%
+      * Svc org.mozilla.gecko.process.GeckoChildProcessServices$tab18:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_18
+            Running count 1 / time 0.04%
+            Bound count 1 / time 0.04%
+            Executing count 2 / time 0.00%
+      * Svc org.mozilla.gecko.process.GeckoChildProcessServices$tab19:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_19
+            Running count 1 / time 0.02%
+            Bound count 1 / time 0.02%
+            Executing count 2 / time 0.00%
+      * Svc org.mozilla.gecko.process.GeckoChildProcessServices$tab23:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_23
+            Running count 3 / time 2.9%
+            Started count 1 / time 0.00%
+            Bound count 2 / time 2.9%
+            Executing count 2 / time 0.00%
+      * Svc org.mozilla.gecko.process.GeckoChildProcessServices$tab24:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_24
+            Running count 2 / time 0.17%
+            Started count 1 / time 0.00%
+            Bound count 1 / time 0.17%
+            Executing count 1 / time 0.00%
+      * Svc org.mozilla.gecko.process.GeckoChildProcessServices$tab28:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_28
+            Running count 2 / time 0.77%
+            Started count 1 / time 0.00%
+            Bound count 1 / time 0.77%
+            Executing count 1 / time 0.00%
+      * Svc org.mozilla.gecko.process.GeckoChildProcessServices$tab31:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_31
+            Running count 2 / time 0.76%
+            Started count 1 / time 0.00%
+            Bound count 1 / time 0.76%
+            Executing count 1 / time 0.00%
+      * Svc org.mozilla.gecko.process.GeckoChildProcessServices$tab32:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_32
+            Running count 1 / time 2.1%
+            Bound count 1 / time 2.1%
+            Executing count 1 / time 0.00%
+      * Svc org.mozilla.gecko.process.GeckoChildProcessServices$tab33:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_33
+            Running count 3 / time 0.82%
+            Started count 1 / time 0.00%
+            Bound count 2 / time 0.82%
+            Executing count 3 / time 0.00%
+      * Svc org.mozilla.gecko.process.GeckoChildProcessServices$tab34:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_34
+            Running count 3 / time 0.82%
+            Started count 1 / time 0.00%
+            Bound count 2 / time 0.82%
+            Executing count 3 / time 0.00%
+      * Svc org.mozilla.gecko.process.GeckoChildProcessServices$tab39:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_39
+            Running count 1 / time 0.05%
+            Bound count 1 / time 0.05%
+            Executing count 2 / time 0.00%
+      * Svc androidx.work.impl.background.systemjob.SystemJobService:
+        Process: io.github.forkmaintainers.iceraven.op7
+            Running count 25 / time 0.10%
+            Bound count 25 / time 0.10%
+            Executing count 50 / time 0.05%
+      * Asc org.mozilla.gecko.process.GeckoChildProcessServices$gpu:
+        Process: io.github.forkmaintainers.iceraven.op7:gpu_disable_art_image_
+          <- io.github.forkmaintainers.iceraven.op7/u0a262 (io.github.forkmaintainers.iceraven.op7):
+             Total count 8: time 15% (running / LastAct #154479)
+             Active count 13:
+                Imp Fg: time 13%
+                 TOTAL: time 13%
+      * Asc org.mozilla.gecko.process.GeckoChildProcessServices$tab0:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_0
+          <- io.github.forkmaintainers.iceraven.op7/u0a262 (io.github.forkmaintainers.iceraven.op7):
+             Total count 2: time 1.3%
+             Active count 4:
+                Imp Fg: time 0.72%
+                Imp Bg: time 0.00%
+               Service: time 0.01%
+                 TOTAL: time 0.73%
+      * Asc org.mozilla.gecko.process.GeckoChildProcessServices$tab1:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_1
+          <- io.github.forkmaintainers.iceraven.op7/u0a262 (io.github.forkmaintainers.iceraven.op7):
+             Total count 1: time 0.09%
+             Active count 1:
+                Imp Fg: time 0.09%
+                 TOTAL: time 0.09%
+      * Asc org.mozilla.gecko.process.GeckoChildProcessServices$tab2:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_2
+          <- io.github.forkmaintainers.iceraven.op7/u0a262 (io.github.forkmaintainers.iceraven.op7):
+             Total count 1: time 0.49%
+             Active count 2:
+                Imp Fg: time 0.31%
+                Imp Bg: time 0.00%
+               Service: time 0.00%
+                 TOTAL: time 0.31%
+      * Asc org.mozilla.gecko.process.GeckoChildProcessServices$tab5:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_5
+          <- io.github.forkmaintainers.iceraven.op7/u0a262 (io.github.forkmaintainers.iceraven.op7):
+             Total count 2: time 0.50%
+             Active count 2:
+                Imp Fg: time 0.50%
+                 TOTAL: time 0.50%
+      * Asc org.mozilla.gecko.process.GeckoChildProcessServices$tab8:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_8
+          <- io.github.forkmaintainers.iceraven.op7/u0a262 (io.github.forkmaintainers.iceraven.op7):
+             Total count 2: time 0.68%
+             Active count 2:
+                Imp Fg: time 0.68%
+                 TOTAL: time 0.68%
+      * Asc org.mozilla.gecko.crashhelper.CrashHelper:
+        Process: io.github.forkmaintainers.iceraven.op7:crashhelper_disable_art_image_
+          <- io.github.forkmaintainers.iceraven.op7/u0a262 (io.github.forkmaintainers.iceraven.op7):
+             Total count 8: time 16% (running / CchEmty #154523)
+             Active count 25:
+                Imp Fg: time 3.5%
+                Imp Bg: time 0.02%
+               Service: time 0.04%
+                 TOTAL: time 3.5%
+      * Asc org.mozilla.gecko.process.GeckoChildProcessServices$tab10:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_10
+          <- io.github.forkmaintainers.iceraven.op7/u0a262 (io.github.forkmaintainers.iceraven.op7):
+             Total count 2: time 3.2% (running / CchEmty #154523)
+             Active count 10:
+                Imp Fg: time 0.73%
+                Imp Bg: time 0.01%
+               Service: time 0.01%
+                 TOTAL: time 0.75%
+      * Asc org.mozilla.gecko.process.GeckoChildProcessServices$tab13:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_13
+          <- io.github.forkmaintainers.iceraven.op7/u0a262 (io.github.forkmaintainers.iceraven.op7):
+             Total count 1: time 0.77%
+             Active count 2:
+                Imp Fg: time 0.33%
+                Imp Bg: time 0.00%
+               Service: time 0.00%
+                 TOTAL: time 0.33%
+      * Asc org.mozilla.gecko.process.GeckoChildProcessServices$tab15:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_15
+          <- io.github.forkmaintainers.iceraven.op7/u0a262 (io.github.forkmaintainers.iceraven.op7):
+             Total count 1: time 9.7%
+             Active count 6:
+                Imp Fg: time 1.5%
+                Imp Bg: time 0.00%
+               Service: time 0.01%
+                 TOTAL: time 1.5%
+      * Asc org.mozilla.gecko.process.GeckoChildProcessServices$tab16:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_16
+          <- io.github.forkmaintainers.iceraven.op7/u0a262 (io.github.forkmaintainers.iceraven.op7):
+             Total count 1: time 0.28%
+             Active count 1:
+                Imp Fg: time 0.28%
+                 TOTAL: time 0.28%
+      * Asc org.mozilla.gecko.process.GeckoChildProcessServices$tab17:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_17
+          <- io.github.forkmaintainers.iceraven.op7/u0a262 (io.github.forkmaintainers.iceraven.op7):
+             Total count 1: time 9.7%
+             Active count 6:
+                Imp Fg: time 1.5%
+                Imp Bg: time 0.00%
+               Service: time 0.01%
+                 TOTAL: time 1.5%
+      * Asc org.mozilla.gecko.process.GeckoChildProcessServices$tab18:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_18
+          <- io.github.forkmaintainers.iceraven.op7/u0a262 (io.github.forkmaintainers.iceraven.op7):
+             Total count 1: time 0.04%
+             Active count 1:
+                Imp Fg: time 0.04%
+                 TOTAL: time 0.04%
+      * Asc org.mozilla.gecko.process.GeckoChildProcessServices$tab19:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_19
+          <- io.github.forkmaintainers.iceraven.op7/u0a262 (io.github.forkmaintainers.iceraven.op7):
+             Total count 1: time 0.02%
+             Active count 1:
+                Imp Fg: time 0.02%
+                 TOTAL: time 0.02%
+      * Asc org.mozilla.gecko.process.GeckoChildProcessServices$tab23:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_23
+          <- io.github.forkmaintainers.iceraven.op7/u0a262 (io.github.forkmaintainers.iceraven.op7):
+             Total count 2: time 2.9% (running / CchEmty #154523)
+             Active count 10:
+                Imp Fg: time 0.49%
+                Imp Bg: time 0.01%
+               Service: time 0.01%
+                 TOTAL: time 0.51%
+      * Asc org.mozilla.gecko.process.GeckoChildProcessServices$tab24:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_24
+          <- io.github.forkmaintainers.iceraven.op7/u0a262 (io.github.forkmaintainers.iceraven.op7):
+             Total count 1: time 0.16%
+             Active count 2:
+                Imp Fg: time 0.05%
+                Imp Bg: time 0.00%
+               Service: time 0.00%
+                 TOTAL: time 0.06%
+      * Asc org.mozilla.gecko.process.GeckoChildProcessServices$tab28:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_28
+          <- io.github.forkmaintainers.iceraven.op7/u0a262 (io.github.forkmaintainers.iceraven.op7):
+             Total count 1: time 0.76%
+             Active count 2:
+                Imp Fg: time 0.06%
+                Imp Bg: time 0.00%
+               Service: time 0.00%
+                 TOTAL: time 0.07%
+      * Asc org.mozilla.gecko.process.GeckoChildProcessServices$tab31:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_31
+          <- io.github.forkmaintainers.iceraven.op7/u0a262 (io.github.forkmaintainers.iceraven.op7):
+             Total count 1: time 0.76%
+             Active count 2:
+                Imp Fg: time 0.06%
+                Imp Bg: time 0.00%
+               Service: time 0.00%
+                 TOTAL: time 0.06%
+      * Asc org.mozilla.gecko.process.GeckoChildProcessServices$tab32:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_32
+          <- io.github.forkmaintainers.iceraven.op7/u0a262 (io.github.forkmaintainers.iceraven.op7):
+             Total count 1: time 2.1% (running / CchEmty #154523)
+             Active count 6:
+                Imp Fg: time 0.23%
+                Imp Bg: time 0.00%
+               Service: time 0.01%
+                 TOTAL: time 0.24%
+      * Asc org.mozilla.gecko.process.GeckoChildProcessServices$tab33:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_33
+          <- io.github.forkmaintainers.iceraven.op7/u0a262 (io.github.forkmaintainers.iceraven.op7):
+             Total count 2: time 0.82%
+             Active count 3:
+                Imp Fg: time 0.62%
+                Imp Bg: time 0.00%
+               Service: time 0.00%
+                 TOTAL: time 0.62%
+      * Asc org.mozilla.gecko.process.GeckoChildProcessServices$tab34:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_34
+          <- io.github.forkmaintainers.iceraven.op7/u0a262 (io.github.forkmaintainers.iceraven.op7):
+             Total count 2: time 0.82%
+             Active count 3:
+                Imp Fg: time 0.65%
+                Imp Bg: time 0.00%
+               Service: time 0.00%
+                 TOTAL: time 0.65%
+      * Asc org.mozilla.gecko.process.GeckoChildProcessServices$tab39:
+        Process: io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_39
+          <- io.github.forkmaintainers.iceraven.op7/u0a262 (io.github.forkmaintainers.iceraven.op7):
+             Total count 1: time 0.04%
+             Active count 1:
+                Imp Fg: time 0.04%
+                 TOTAL: time 0.04%
+      * Asc androidx.work.impl.background.systemjob.SystemJobService:
+        Process: io.github.forkmaintainers.iceraven.op7
+          <- system/1000 (android):
+             Total count 25: time 0.10%
+             Active count 12:
+                Imp Bg: time 0.10%
+                 TOTAL: time 0.10%
+
+Multi-Package Common Processes:
+  * io.github.forkmaintainers.iceraven.op7:gpu_disable_art_image_ / u0a262 (10 entries):
+        SOff/Norm/(Cch CAct): +4m31s67ms
+         SOn/Norm/    Imp Fg: +17m23s876ms
+                  Service Rs: +319ms
+                  (Last Act): +18s483ms
+                  (Cch CAct): +59m42s959ms (running)
+                  (Cch Emty): +131ms
+              Mod/    Imp Fg: +47s212ms
+                  Service Rs: +42ms
+                  (Last Act): +684ms
+                  (Cch CAct): +2m6s190ms
+                       TOTAL: +1h24m50s963ms
+        PSS/USS (3 entries):
+           SOn/Norm/    Imp Fg: 45MB-57MB-64MB/32MB-41MB-47MB/160MB-178MB-194MB over 5
+                    (Cch CAct): 49MB-54MB-58MB/33MB-38MB-44MB/159MB-177MB-189MB over 7
+                Mod/(Cch CAct): 51MB-52MB-52MB/34MB-34MB-34MB/182MB-182MB-182MB over 2
+        Cur time +2m32s761ms (running): 52MB-52MB-52MB/34MB-34MB-34MB/182MB-182MB-182MB over 1
+        mNumActiveServices=1 mNumStartedServices=0
+
+  * io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_5 / u0a262 (6 entries):
+         SOn/Norm/    Imp Fg: +2m11s428ms
+                     Service: +47ms
+                  Service Rs: +14ms
+                  (Last Act): +1s426ms
+                  (Cch CAct): +1ms
+              Mod/    Imp Fg: +14s996ms
+                       TOTAL: +2m27s912ms
+        PSS/USS (1 entries):
+           SOn/Norm/    Imp Fg: 31MB-31MB-31MB/17MB-17MB-17MB/149MB-149MB-149MB over 2
+        Cur time +14ms
+
+  * io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_34 / u0a262 (10 entries):
+         SOn/Norm/    Imp Fg: +2m13s988ms
+                      Imp Bg: +8ms
+                     Service: +83ms
+                  (Last Act): +2s59ms
+                  (Cch CAct): +2ms
+              Mod/    Imp Fg: +6s836ms
+                      Imp Bg: +49ms
+                     Service: +224ms
+                  Service Rs: +6ms
+                  (Last Act): +7s685ms
+                       TOTAL: +2m30s940ms
+        PSS/USS (1 entries):
+           SOn/Norm/    Imp Fg: 31MB-31MB-31MB/17MB-17MB-17MB/146MB-147MB-147MB over 2
+        Cur time +6ms
+
+  * io.github.forkmaintainers.iceraven.op7 / u0a262 (13 entries):
+        SOff/Norm/(Last Act): +2m1s444ms
+                   (Cch Act): +2m29s623ms
+         SOn/Norm/       Top: +17m30s227ms
+                      Imp Bg: +1s217ms
+                     Service: +147ms
+                  (Last Act): +45m44s404ms
+                   (Cch Act): +20m36s392ms (running)
+                  (Cch Emty): +188ms
+              Mod/       Top: +50s571ms
+                      Imp Bg: +696ms
+                     Service: +54ms
+                  (Last Act): +2m5s11ms
+                   (Cch Act): +1s124ms
+                       TOTAL: +1h31m21s98ms
+        PSS/USS (4 entries):
+           SOn/Norm/       Top: 197MB-226MB-249MB/169MB-188MB-202MB/348MB-404MB-451MB over 8
+                    (Last Act): 158MB-197MB-244MB/146MB-163MB-199MB/265MB-352MB-424MB over 4
+                Mod/       Top: 225MB-225MB-225MB/191MB-191MB-191MB/405MB-405MB-405MB over 1
+                    (Last Act): 195MB-202MB-214MB/143MB-156MB-177MB/386MB-388MB-390MB over 3
+        Cur time +2m33s809ms (running): 214MB-214MB-214MB/177MB-177MB-177MB/389MB-389MB-389MB over 1
+
+  * io.github.forkmaintainers.iceraven.op7:crashhelper_disable_art_image_ / u0a262 (14 entries):
+        SOff/Norm/(Last Act): +2m1s444ms
+                  (Cch CAct): +2m29s623ms
+         SOn/Norm/    Imp Fg: +17m29s320ms
+                      Imp Bg: +1s322ms
+                     Service: +3s935ms
+                  Service Rs: +87ms
+                  (Last Act): +45m40s778ms
+                  (Cch CAct): +20m36s392ms (running)
+                  (Cch Emty): +103ms
+              Mod/    Imp Fg: +50s29ms
+                      Imp Bg: +737ms
+                     Service: +1s639ms
+                  (Last Act): +2m3s449ms
+                  (Cch CAct): +1s124ms
+                       TOTAL: +1h31m19s982ms
+        PSS/USS (4 entries):
+           SOn/Norm/    Imp Fg: 9.7MB-12MB-16MB/5.6MB-6.7MB-8.2MB/89MB-99MB-111MB over 5
+                    (Last Act): 8.0MB-14MB-16MB/4.9MB-7.2MB-8.5MB/84MB-103MB-112MB over 8
+                    (Cch CAct): 8.0MB-8.0MB-8.0MB/4.9MB-4.9MB-4.9MB/84MB-84MB-84MB over 1
+                Mod/(Last Act): 15MB-15MB-15MB/8.3MB-8.3MB-8.3MB/111MB-111MB-111MB over 1
+        Cur time +2m33s631ms (running): 16MB-16MB-16MB/8.4MB-8.4MB-8.4MB/112MB-112MB-112MB over 1
+        mNumActiveServices=1 mNumStartedServices=0
+  Total procs: 5 shown of 118 total
+
+Process summary:
+  * io.github.forkmaintainers.iceraven.op7:crashhelper_disable_art_image_ / u0a262 / v2016178394:
+         TOTAL: 20% (9.7MB-12MB-16MB/5.6MB-6.7MB-8.2MB/89MB-99MB-111MB over 5)
+        Imp Fg: 20% (9.7MB-12MB-16MB/5.6MB-6.7MB-8.2MB/89MB-99MB-111MB over 5)
+        Imp Bg: 0.04%
+       Service: 0.10%
+    (Last Act): 53% (8.0MB-14MB-16MB/4.9MB-7.3MB-8.5MB/84MB-104MB-112MB over 9)
+      (Cached): 25% (8.0MB-8.0MB-8.0MB/4.9MB-4.9MB-4.9MB/84MB-84MB-84MB over 1)
+  * io.github.forkmaintainers.iceraven.op7 / u0a262 / v2016178394:
+         TOTAL: 20% (197MB-226MB-249MB/169MB-188MB-202MB/348MB-404MB-451MB over 9)
+           Top: 20% (197MB-226MB-249MB/169MB-188MB-202MB/348MB-404MB-451MB over 9)
+        Imp Bg: 0.03%
+    (Last Act): 54% (158MB-199MB-244MB/143MB-160MB-199MB/265MB-368MB-424MB over 7)
+      (Cached): 25%
+  * io.github.forkmaintainers.iceraven.op7:gpu_disable_art_image_ / u0a262 / v2016178394:
+         TOTAL: 20% (45MB-57MB-64MB/32MB-41MB-47MB/160MB-178MB-194MB over 5)
+        Imp Fg: 20% (45MB-57MB-64MB/32MB-41MB-47MB/160MB-178MB-194MB over 5)
+    Service Rs: 0.01%
+    (Last Act): 0.34%
+      (Cached): 71% (49MB-54MB-58MB/33MB-37MB-44MB/159MB-178MB-189MB over 9)
+  * io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_7 / u0a262 / v2016178394:
+         TOTAL: 16% (35MB-39MB-41MB/20MB-23MB-24MB/150MB-158MB-161MB over 3)
+        Imp Fg: 16% (35MB-39MB-41MB/20MB-23MB-24MB/150MB-158MB-161MB over 3)
+        Imp Bg: 0.02%
+       Service: 0.06%
+    (Last Act): 45% (11MB-29MB-42MB/4.6MB-16MB-23MB/92MB-131MB-156MB over 3)
+      (Cached): 21% (33MB-33MB-33MB/20MB-20MB-20MB/144MB-144MB-144MB over 1)
+  * io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_29 / u0a262 / v2016178394:
+         TOTAL: 14% (65MB-125MB-216MB/44MB-103MB-193MB/192MB-253MB-345MB over 3)
+        Imp Fg: 14% (65MB-125MB-216MB/44MB-103MB-193MB/192MB-253MB-345MB over 3)
+        Imp Bg: 0.02%
+       Service: 0.05%
+    (Last Act): 38% (148MB-207MB-266MB/123MB-183MB-243MB/269MB-333MB-396MB over 2)
+      (Cached): 24% (204MB-204MB-204MB/181MB-181MB-181MB/332MB-332MB-332MB over 1)
+  * io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_35 / u0a262 / v2016178394:
+         TOTAL: 8.9% (200MB-207MB-214MB/177MB-184MB-191MB/335MB-342MB-349MB over 2)
+        Imp Fg: 8.9% (200MB-207MB-214MB/177MB-184MB-191MB/335MB-342MB-349MB over 2)
+        Imp Bg: 0.01%
+       Service: 0.03%
+    (Last Act): 9.6%
+      (Cached): 50% (159MB-212MB-239MB/137MB-188MB-214MB/287MB-343MB-370MB over 4)
+  * io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_5 / u0a262 / v2016178394:
+         TOTAL: 2.6% (31MB-31MB-31MB/17MB-17MB-17MB/149MB-149MB-149MB over 2)
+        Imp Fg: 2.6% (31MB-31MB-31MB/17MB-17MB-17MB/149MB-149MB-149MB over 2)
+    (Last Act): 0.03%
+  * io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_34 / u0a262 / v2016178394:
+         TOTAL: 2.5% (31MB-31MB-31MB/17MB-17MB-17MB/146MB-147MB-147MB over 2)
+        Imp Fg: 2.5% (31MB-31MB-31MB/17MB-17MB-17MB/146MB-147MB-147MB over 2)
+       Service: 0.01%
+    (Last Act): 0.17%
+  * io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_15 / u0a262 / v2016178418:
+         TOTAL: 1.5% (254MB-270MB-287MB/221MB-237MB-254MB/400MB-417MB-433MB over 2)
+        Imp Fg: 1.5% (254MB-270MB-287MB/221MB-237MB-254MB/400MB-417MB-433MB over 2)
+       Service: 0.01%
+    (Last Act): 4.3% (204MB-245MB-276MB/171MB-212MB-243MB/349MB-391MB-423MB over 3)
+      (Cached): 3.9%
+  * io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_17 / u0a262 / v2016178418:
+         TOTAL: 1.5% (52MB-52MB-52MB/26MB-26MB-26MB/190MB-190MB-190MB over 2)
+        Imp Fg: 1.5% (52MB-52MB-52MB/26MB-26MB-26MB/190MB-190MB-190MB over 2)
+       Service: 0.01%
+    (Last Act): 4.3% (52MB-52MB-52MB/26MB-26MB-26MB/190MB-190MB-190MB over 3)
+      (Cached): 3.9%
+  * io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_10 / u0a262 / v2016178418:
+         TOTAL: 0.75%
+        Imp Fg: 0.73%
+        Imp Bg: 0.01%
+       Service: 0.01%
+    (Last Act): 2.3% (177MB-177MB-177MB/147MB-147MB-147MB/322MB-322MB-322MB over 1)
+      (Cached): 0.12%
+  * io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_0 / u0a262 / v2016178418:
+         TOTAL: 0.73%
+        Imp Fg: 0.72%
+       Service: 0.01%
+    (Last Act): 0.59% (167MB-167MB-167MB/137MB-137MB-137MB/312MB-312MB-312MB over 1)
+  * io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_8 / u0a262 / v2016178418:
+         TOTAL: 0.67% (36MB-36MB-36MB/18MB-18MB-18MB/170MB-170MB-170MB over 1)
+        Imp Fg: 0.67% (36MB-36MB-36MB/18MB-18MB-18MB/170MB-170MB-170MB over 1)
+    (Last Act): 0.01%
+  * io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_33 / u0a262 / v2016178418:
+         TOTAL: 0.62%
+        Imp Fg: 0.62%
+    (Last Act): 0.18%
+      (Cached): 0.02%
+  * io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_23 / u0a262 / v2016178418:
+         TOTAL: 0.51%
+        Imp Fg: 0.49%
+        Imp Bg: 0.01%
+       Service: 0.01%
+    (Last Act): 2.3% (50MB-50MB-50MB/24MB-24MB-24MB/189MB-189MB-189MB over 1)
+      (Cached): 0.11%
+  * io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_13 / u0a262 / v2016178418:
+         TOTAL: 0.33%
+        Imp Fg: 0.33%
+    (Last Act): 0.44% (49MB-49MB-49MB/24MB-24MB-24MB/189MB-189MB-189MB over 1)
+  * io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_2 / u0a262 / v2016178418:
+         TOTAL: 0.31%
+        Imp Fg: 0.31%
+    (Last Act): 0.17%
+      (Cached): 0.02%
+  * io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_16 / u0a262 / v2016178418:
+         TOTAL: 0.28%
+        Imp Fg: 0.28%
+  * io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_32 / u0a262 / v2016178418:
+         TOTAL: 0.24%
+        Imp Fg: 0.23%
+       Service: 0.01%
+    (Last Act): 1.7% (38MB-38MB-38MB/20MB-20MB-20MB/177MB-177MB-177MB over 2)
+      (Cached): 0.11%
+  * io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_1 / u0a262 / v2016178418:
+         TOTAL: 0.08%
+        Imp Fg: 0.08%
+    (Last Act): 0.01%
+  * io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_28 / u0a262 / v2016178418:
+         TOTAL: 0.07%
+        Imp Fg: 0.06%
+    (Last Act): 0.70% (174MB-174MB-174MB/144MB-144MB-144MB/318MB-318MB-318MB over 1)
+  * io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_31 / u0a262 / v2016178418:
+         TOTAL: 0.06%
+        Imp Fg: 0.06%
+    (Last Act): 0.70% (49MB-49MB-49MB/25MB-25MB-25MB/189MB-189MB-189MB over 1)
+  * io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_24 / u0a262 / v2016178418:
+         TOTAL: 0.06%
+        Imp Fg: 0.05%
+    (Last Act): 0.11%
+  * io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_18 / u0a262 / v2016178418:
+         TOTAL: 0.04%
+        Imp Fg: 0.04%
+  * io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_39 / u0a262 / v2016178418:
+         TOTAL: 0.03%
+        Imp Fg: 0.03%
+    (Last Act): 0.01%
+  * io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_19 / u0a262 / v2016178418:
+         TOTAL: 0.01%
+        Imp Fg: 0.01%
+    (Last Act): 0.01%
+  * io.github.forkmaintainers.iceraven.op7:media / u0a262 / v2016178394:
+         TOTAL: 0.01%
+        Imp Fg: 0.01%
+      (Cached): 32% (11MB-13MB-14MB/6.5MB-7.2MB-7.5MB/94MB-100MB-103MB over 4)
+
+Run time Stats:
+  SOff/Norm: +4m31s67ms
+   SOn/Norm: +1h25m5s954ms (running)
+        Mod: +3m24s188ms
+      TOTAL: +1h33m1s209ms
+
+Memory usage:
+  Kernel : 600MB (38 samples)
+  Native : 539MB (38 samples)
+  Persist: 457MB (90 samples)
+  Top: 212MB (68 samples)
+  ImpFg: 647MB (245 samples)
+  ImpBg: 105MB (160 samples)
+  Service: 36MB (273 samples)
+  Receivr: 231KB (97 samples)
+  LastAct: 358MB (222 samples)
+  CchAct: 322MB (59 samples)
+  CchCAct: 346MB (98 samples)
+  CchEmty: 848MB (346 samples)
+  Cached : 1.7GB (38 samples)
+  Free   : 858MB (38 samples)
+  Z-Ram  : 280MB (38 samples)
+  TOTAL  : 7.1GB
+  ServRst: 47KB (75 samples)
+
+PSS collection stats:
+  Internal Single: 225x over +4s200ms
+  Internal All Procs (Memory Change): 184x over +1s594ms
+  Internal All Procs (Polling): 71x over +996ms
+  External: 0x over 0
+  External Slow: 1x over +80ms
+
+          Start time: 2026-08-13 18:42:34
+        Total uptime: +1h33m1s303ms
+  Total elapsed time: +1h36m54s541ms (partial) libart.so

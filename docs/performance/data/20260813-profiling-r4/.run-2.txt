@@ -1,0 +1,7 @@
+Starting: Intent { cmp=io.github.forkmaintainers.iceraven.op7/org.mozilla.fenix.HomeActivity }
+Status: ok
+LaunchState: COLD
+Activity: io.github.forkmaintainers.iceraven.op7/org.mozilla.fenix.HomeActivity
+TotalTime: 828
+WaitTime: 828
+Complete

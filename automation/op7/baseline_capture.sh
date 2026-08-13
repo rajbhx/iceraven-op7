@@ -200,6 +200,89 @@ cmd_gfx() {
   log "results: $OUT_DIR/gfxinfo.txt"
 }
 
+# ---- Phase 6: profiling primitives (Shizuku-capable subset) ----
+
+# GPU frame timing: relaunch, scroll the page, dump gfxinfo framestats.
+cmd_framestats() {
+  mkdir -p "$OUT_DIR"
+  log "framestats: launch + 3 swipes"
+  kill_ensure
+  run_sh "am start -n $COMPONENT" >/dev/null 2>&1 || true
+  sleep 8
+  for _ in 1 2 3; do
+    run_sh "input swipe 540 1700 540 500 250" >/dev/null 2>&1 || true
+    sleep 1
+  done
+  sleep 2
+  run_capture "dumpsys gfxinfo $PKG framestats" "$OUT_DIR/framestats.txt"
+  python3 "$ROOT_DIR/automation/op7/framestats_analyze.py" "$OUT_DIR/framestats.txt" | tee "$OUT_DIR/framestats-summary.txt"
+  log "results: $OUT_DIR/framestats.txt"
+}
+
+# Background/process state: which of our processes stay alive after backgrounding.
+cmd_procstats() {
+  mkdir -p "$OUT_DIR"
+  log "procstats: current snapshot (package filter)"
+  run_sh "am start -n $COMPONENT" >/dev/null 2>&1 || true
+  sleep 6
+  run_sh "input keyevent KEYCODE_HOME" >/dev/null 2>&1 || true
+  sleep 5
+  run_capture "dumpsys procstats --current $PKG" "$OUT_DIR/procstats.txt"
+  grep -A4 "io.github.forkmaintainers.iceraven.op7" "$OUT_DIR/procstats.txt" | head -40 > "$OUT_DIR/procstats-pkg.txt" || true
+  log "results: $OUT_DIR/procstats.txt (+ procstats-pkg.txt)"
+}
+
+# CPU sample of our processes (top, 3 snapshots 2s apart).
+cmd_cpu() {
+  local secs="${1:-6}"
+  mkdir -p "$OUT_DIR"
+  local file="$OUT_DIR/cpu.txt"
+  : > "$file"
+  log "cpu: sampling top for ${secs}s"
+  run_sh "am start -n $COMPONENT" >/dev/null 2>&1 || true
+  sleep 4
+  for i in 1 2 3; do
+    {
+      echo "=== sample $i ==="
+      run_capture "top -b -n 1 -o %CPU,%MEM,RES,NAME | grep -E 'PID|forkmaintainers' | head -8" "$OUT_DIR/.cpu-$i.txt"
+      cat "$OUT_DIR/.cpu-$i.txt"
+    } >> "$file"
+    sleep 2
+  done
+  log "results: $file"
+}
+
+# Page-load probe: launch a URL, sample CPU+mem during load, keep logcat markers.
+cmd_page_load() {
+  local url="${1:-https://example.com}"
+  mkdir -p "$OUT_DIR"
+  log "page-load: $url (contended unless idle)"
+  kill_ensure
+  run_sh "logcat -c" >/dev/null 2>&1 || true
+  run_sh "am start -a android.intent.action.VIEW -d '$url' $PKG" >/dev/null 2>&1 || true
+  for s in 2 4 8; do
+    sleep 2
+    run_capture "top -b -n 1 -o %CPU,%MEM,RES,NAME | grep -E 'forkmaintainers' | head -6" "$OUT_DIR/.pl-$s.txt"
+  done
+  cat "$OUT_DIR/.pl-2.txt" "$OUT_DIR/.pl-4.txt" "$OUT_DIR/.pl-8.txt" > "$OUT_DIR/page-load-cpu.txt"
+  run_capture "dumpsys meminfo $PKG" "$OUT_DIR/page-load-meminfo.txt"
+  run_capture "logcat -d" "$OUT_DIR/page-load-logcat.txt"
+  grep -iE "Displayed|page|load|navigation|GeckoSession" "$OUT_DIR/page-load-logcat.txt" | head -20 > "$OUT_DIR/page-load-markers.txt" || true
+  log "results: $OUT_DIR/page-load-*.txt"
+}
+
+# Phase 6 sweep: short, contended-friendly; long drains/wakeups need an idle window.
+cmd_profile() {
+  mkdir -p "$OUT_DIR"
+  log "=== Phase 6 profile sweep (contended unless device idle) ==="
+  cmd_cold 3
+  cmd_mem 1
+  cmd_framestats
+  cmd_procstats
+  log "note: warm-start, clean drain/wakeups, and Perfetto need adb or an idle window (field notes D7/D9)"
+  log "profile complete -> $OUT_DIR"
+}
+
 cmd_battery_start() {
   run_sh "dumpsys batterystats --reset" >/dev/null
   log "batterystats reset"
@@ -253,6 +336,11 @@ case "${1:-}" in
   warm-start)     cmd_warm "${2:-5}" ;;
   mem)            cmd_mem "${2:-5}" ;;
   gfx)            cmd_gfx ;;
+  framestats)     cmd_framestats ;;
+  procstats)      cmd_procstats ;;
+  cpu)            cmd_cpu "${2:-6}" ;;
+  page-load)      cmd_page_load "${2:-https://example.com}" ;;
+  profile)        cmd_profile ;;
   battery-start)  cmd_battery_start ;;
   battery-stop)   cmd_battery_stop "$2" ;;
   drain)          cmd_drain "${2:-10}" "${3:-drain}" ;;

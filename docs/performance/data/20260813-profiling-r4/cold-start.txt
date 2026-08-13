@@ -1,0 +1,24 @@
+=== cold-start run 1 ===
+Starting: Intent { cmp=io.github.forkmaintainers.iceraven.op7/org.mozilla.fenix.HomeActivity }
+Status: ok
+LaunchState: COLD
+Activity: io.github.forkmaintainers.iceraven.op7/org.mozilla.fenix.HomeActivity
+TotalTime: 714
+WaitTime: 715
+Complete
+=== cold-start run 2 ===
+Starting: Intent { cmp=io.github.forkmaintainers.iceraven.op7/org.mozilla.fenix.HomeActivity }
+Status: ok
+LaunchState: COLD
+Activity: io.github.forkmaintainers.iceraven.op7/org.mozilla.fenix.HomeActivity
+TotalTime: 828
+WaitTime: 828
+Complete
+=== cold-start run 3 ===
+Starting: Intent { cmp=io.github.forkmaintainers.iceraven.op7/org.mozilla.fenix.HomeActivity }
+Status: ok
+LaunchState: COLD
+Activity: io.github.forkmaintainers.iceraven.op7/org.mozilla.fenix.HomeActivity
+TotalTime: 707
+WaitTime: 709
+Complete
