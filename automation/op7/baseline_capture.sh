@@ -10,6 +10,8 @@
 #   automation/op7/baseline_capture.sh gfx
 #   automation/op7/baseline_capture.sh battery-start
 #   automation/op7/baseline_capture.sh battery-stop <label>
+#   automation/op7/baseline_capture.sh drain <minutes> [label]
+#   automation/op7/baseline_capture.sh wakeups <batterystats-file>
 #   automation/op7/baseline_capture.sh all <path.apk> [runs]
 #
 # Shizuku mode: APK paths must be visible to the device (e.g. /sdcard/Download/...);
@@ -210,6 +212,29 @@ cmd_battery_stop() {
   log "results: $OUT_DIR/${label}.txt"
 }
 
+# Screen-off drain test: reset stats, try to sleep the display, wait, dump.
+# The phone must be untouched for <minutes> (idle window) for trustworthy data.
+cmd_drain() {
+  local minutes="${1:-10}" label="${2:-drain}" file
+  mkdir -p "$OUT_DIR"
+  file="$OUT_DIR/${label}.txt"
+  log "drain test: reset stats, screen off, ${minutes} min"
+  run_sh "dumpsys batterystats --reset" >/dev/null
+  run_sh "input keyevent KEYCODE_SLEEP" >/dev/null 2>&1 || true
+  log "waiting ${minutes} min (do not touch the phone)..."
+  sleep $((minutes * 60))
+  run_sh "input keyevent KEYCODE_WAKEUP" >/dev/null 2>&1 || true
+  run_capture "dumpsys batterystats" "$file" || log "warning: partial battery capture"
+  log "results: $file"
+}
+
+# Extract wakeup/drain summary lines from a batterystats dump file.
+cmd_wakeups() {
+  local file="${1:?usage: wakeups <batterystats-file>}"
+  [[ -f "$file" ]] || { echo "error: no such file: $file"; exit 1; }
+  grep -E "Estimated battery capacity|Discharge:|Screen (off|doze|on) discharge|Total (deep|idle) wake:|Wake lock" "$file" | head -30
+}
+
 cmd_all() {
   local apk="$1" runs="${2:-5}"
   cmd_install "$apk"
@@ -230,6 +255,8 @@ case "${1:-}" in
   gfx)            cmd_gfx ;;
   battery-start)  cmd_battery_start ;;
   battery-stop)   cmd_battery_stop "$2" ;;
+  drain)          cmd_drain "${2:-10}" "${3:-drain}" ;;
+  wakeups)        cmd_wakeups "$2" ;;
   all)            cmd_all "$2" "${3:-5}" ;;
   *) sed -n '2,20p' "$0" >&2; exit 1 ;;
 esac
