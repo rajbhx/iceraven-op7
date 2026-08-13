@@ -1,0 +1,7 @@
+=== cold-start (am start -W, LaunchState COLD) — 2026-08-13, Shizuku transport, device active ===
+run 1: TotalTime 617, WaitTime 618
+run 2: TotalTime 580, WaitTime 581
+run 3: TotalTime 599, WaitTime 600
+run 4: TotalTime 575, WaitTime 577
+run 5: TotalTime 595, WaitTime 597
+median TotalTime: 595 ms | min 575 | max 617
