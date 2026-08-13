@@ -18,3 +18,11 @@ Highlights you can reuse for other apps / special builds:
 In this repo, the same knowledge is captured operationally in:
 `docs/op7-project-audit.md`, `docs/roadmap.md` (error matrix), `docs/baseline.md`,
 `docs/performance/baseline.md`, and the error matrix inside `docs/roadmap.md`.
+
+## Auto-update
+
+This repo is the **source of truth** for field notes: `docs/field-notes/log.yml`
+(structured, machine-readable). The playbook repo
+(`rajbhx/op7-special-build-playbook`) regenerates its journey doc from it on a
+schedule and on demand — add an entry to `log.yml` whenever a problem is solved
+and the playbook updates itself on the next sync.

@@ -1,0 +1,144 @@
+# OP7 field-notes journal — machine-readable source of truth.
+# The playbook repo (rajbhx/op7-special-build-playbook) regenerates its
+# docs/09-field-notes-journey.md from this file automatically.
+# Add an entry whenever a new problem is solved; keep it one-line-per-field.
+sections:
+  - id: A
+    title: Build pipeline
+    entries:
+      - id: A1
+        problem: "destination path 'upstream' already exists"
+        cause: "workflow cloned into 'upstream/', a tracked dir of this repo"
+        solution: "clone into 'mirror/' instead; keep clone dirs out of tracked paths"
+      - id: A2
+        problem: "removeUnusedEntriesOlderThan write-only property crash"
+        cause: "gradle-build-action v3 cleanup incompatible with Gradle 9.5.1"
+        solution: "pin gradle-build-action v2 (upstream-proven)"
+      - id: A3
+        problem: "APK not found (first time)"
+        cause: "hardcoded AGP output path; ABI selection changes output layout"
+        solution: "find-based discovery, name-agnostic"
+      - id: A4
+        problem: "APK not found (second time)"
+        cause: "unsigned APKs named '*-forkRelease-unsigned.apk' (no signing config)"
+        solution: "discovery handles '-unsigned'; sign step renames to .apk"
+      - id: A5
+        problem: "AAPT unexpected package id"
+        cause: "OP7 patch appends '.iceraven.op7' to app id"
+        solution: "expect the patched id; derive at runtime from patches + defaultConfig"
+      - id: A6
+        problem: "sign action 'build-tools not found'"
+        cause: "action read ANDROID_HOME (runner SDK), we used ANDROID_SDK_ROOT (custom SDK)"
+        solution: "compute BUILD_TOOLS_VERSION from ANDROID_HOME like upstream; read third-party action source before use"
+      - id: A7
+        problem: "GitHub cache service outage (400 / services unavailable)"
+        cause: "GitHub-side transient"
+        solution: "cache misses are warnings not failures; stable cache keys; next run restores"
+      - id: A8
+        problem: "R8 OOM risk with --parallel on 2-core/7 GB runner"
+        cause: "workers vs heap"
+        solution: "tune GRADLE_OPTS, limit --max-workers, keep release builds serial if flaky"
+      - id: A9
+        problem: "'native-code' badging line missing"
+        cause: "ABI selection ignored by some AGP versions"
+        solution: "validation gates fail loudly; configure splits.abi explicitly"
+      - id: A10
+        problem: "Glean bootstrap (Miniconda3) not idempotent"
+        cause: "wrapper re-downloaded every build"
+        solution: "make bootstrap idempotent; skip when already present"
+      - id: A11
+        problem: "full build ~40 min on free runner"
+        cause: "GeckoView AAR download + R8 + all ABIs"
+        solution: "arm64-only split, Gradle/Rust/Maven caches, fast=true (no R8) for validation, --parallel when stable"
+  - id: B
+    title: Release, signing, storage
+    entries:
+      - id: B1
+        problem: "release asset became stale bytes"
+        cause: "validation build overwrote release asset data"
+        solution: "compare bytes; only update release asset from a validated release=true run"
+      - id: B2
+        problem: "PKCS12 alias mismatch risk"
+        cause: "keystore alias vs secret"
+        solution: "document exact alias; validate at first release"
+      - id: B3
+        problem: "release tag immutability"
+        cause: "GitHub tags are immutable"
+        solution: "fix version/tag in the dispatch; never reuse a tag"
+      - id: B4
+        problem: "APK commits sneaking into the repo"
+        cause: "git add -A picked up 3x126 MB APKs in a gitignored dir (tracked before ignore added)"
+        solution: "git rm --cached; verify git ls-files empty; keep binaries out of git history"
+      - id: B5
+        problem: "old artifacts/runs wasted the 500 MB quota"
+        cause: "90-day default retention"
+        solution: "monthly maintenance workflow prunes >14 d artifacts/caches, keeps newest 20 runs"
+  - id: C
+    title: Device and install
+    entries:
+      - id: C1
+        problem: "App not installed"
+        cause: "APK flagged android:testOnly=true (Studio-injected build flag); Android 10 blocks UI installs"
+        solution: "remove injected flag; splits.abi arm64-only; CI badging gate rejects testOnly; verify pm install -r without -t"
+      - id: C2
+        problem: "pm install -r from /sdcard/Download returns 255"
+        cause: "opaque failure installing directly from FUSE path"
+        solution: "copy to /data/local/tmp first, then pm install -r"
+      - id: C3
+        problem: "app open but Shizuku not connected"
+        cause: "Shizuku server stopped or killed by battery optimization"
+        solution: "shizuku whoami must print 'shell'; retry loops; user reopens Shizuku"
+      - id: C4
+        problem: "wrong activity launched in scripted runs"
+        cause: "assistant app foreground; HOME keyevent ineffective in proot env"
+        solution: "verify mCurrentFocus; use explicit component; validate LaunchState/Activity in logs"
+  - id: D
+    title: Measurement and transfer
+    entries:
+      - id: D1
+        problem: "am start -W returns TotalTime 0"
+        cause: "activity still top-most; not a launch at all"
+        solution: "background between runs; filter LaunchState: COLD; warm-start needs adb"
+      - id: D2
+        problem: "captured files empty (gfxinfo 0 B)"
+        cause: "Shizuku wrapper races: large remote output streams to tty, local pipe gets 0 bytes"
+        solution: "stage output to on-device temp file; pull with wc -c size probe + retry until sizes match"
+      - id: D3
+        problem: "exit codes unreliable through Shizuku"
+        cause: "wrapper mangles remote exit codes"
+        solution: "verify by output content (pidof empty, 'Complete' marker)"
+      - id: D4
+        problem: "GitHub artifact downloads truncated (4+ aborts)"
+        cause: "unreliable network"
+        solution: "local python3 -m http.server loopback transfer; 131 MB in ~1.5 s; SHA-256 verify"
+      - id: D5
+        problem: "/sdcard files from shell unreadable by app proot"
+        cause: "FUSE permission model; chmod unsupported"
+        solution: "transfer via app-visible storage or MediaStore; verify sizes"
+      - id: D6
+        problem: "bsh stdout looks odd"
+        cause: "returns JSON envelope {result,output}; no readAllBytes() (old Java)"
+        solution: "parse JSON; read streams with BufferedReader loops"
+      - id: D7
+        problem: "warm-start impossible in proot env"
+        cause: "HOME no-op; am finish unavailable; BACK intercepted"
+        solution: "record as pending; needs adb or HOME-capable session"
+  - id: E
+    title: CI quality
+    entries:
+      - id: E1
+        problem: "CI red after merge"
+        cause: "shellcheck SC2129 (individual >> redirects to summary)"
+        solution: "group echos with { ...; } >> file"
+      - id: E2
+        problem: "testOnly gate missing"
+        cause: "validation gap"
+        solution: "badging step fails when testOnly=true appears"
+      - id: E3
+        problem: "scheduled workflow 60-day caveat"
+        cause: "GitHub policy for public repos"
+        solution: "daily check + dispatch + monthly maintenance reset the activity window; manual/repo-dispatch secondary"
+recurring_signature: |
+  If output is "sometimes there, sometimes not": it is almost always a transport
+  race, not the command. Fix by staging on-device + verifying size/content, then
+  retry. This pattern solved the most frustrating debugging hours.
