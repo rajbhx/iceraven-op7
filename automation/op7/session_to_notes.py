@@ -41,6 +41,8 @@ def render(log_text: str, data: dict) -> str:
             out += f"        problem: \"{esc(entry['problem'])}\"\n"
             out += f"        cause: \"{esc(entry['cause'])}\"\n"
             out += f"        solution: \"{esc(entry['solution'])}\"\n"
+            if entry.get("tags"):
+                out += f"        tags: [{', '.join(entry['tags'])}]\n"
     out += "recurring_signature: |\n"
     out += "\n".join("  " + line if line else "" for line in sig.splitlines()) + "\n"
     return out
@@ -66,6 +68,9 @@ def parse_digest(text: str):
             m = re.match(r"^section:\s*([A-Z])$", line)
             if m:
                 current["section"] = m.group(1)
+            m = re.match(r"^tags:\s*(.+)$", line)
+            if m:
+                current["tags"] = [t.strip().lower() for t in m.group(1).split(",") if t.strip()]
     if current:
         problems.append(current)
     return [p for p in problems if p["problem"]]
@@ -98,8 +103,11 @@ def main():
         n = 1
         while any(e["id"] == f"{section_id}{n}" for e in entries):
             n += 1
-        entries.append({"id": f"{section_id}{n}", "problem": p["problem"],
-                        "cause": p["cause"], "solution": p["solution"]})
+        entry = {"id": f"{section_id}{n}", "problem": p["problem"],
+                 "cause": p["cause"], "solution": p["solution"]}
+        if p.get("tags"):
+            entry["tags"] = p["tags"]
+        entries.append(entry)
         added += 1
         print(f"added {section_id}{n}: {p['problem'][:60]}")
 

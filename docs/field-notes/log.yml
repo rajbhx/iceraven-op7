@@ -14,6 +14,7 @@ sections:
         problem: "removeUnusedEntriesOlderThan write-only property crash"
         cause: "gradle-build-action v3 cleanup incompatible with Gradle 9.5.1"
         solution: "pin gradle-build-action v2 (upstream-proven)"
+        tags: [gradle, cache, github-actions]
       - id: A3
         problem: "APK not found (first time)"
         cause: "hardcoded AGP output path; ABI selection changes output layout"
@@ -38,6 +39,7 @@ sections:
         problem: "R8 OOM risk with --parallel on 2-core/7 GB runner"
         cause: "workers vs heap"
         solution: "tune GRADLE_OPTS, limit --max-workers, keep release builds serial if flaky"
+        tags: [r8, oom, memory, gradle]
       - id: A9
         problem: "'native-code' badging line missing"
         cause: "ABI selection ignored by some AGP versions"
@@ -50,6 +52,7 @@ sections:
         problem: "full build ~40 min on free runner"
         cause: "GeckoView AAR download + R8 + all ABIs"
         solution: "arm64-only split, Gradle/Rust/Maven caches, fast=true (no R8) for validation, --parallel when stable"
+        tags: [build-time, caching, abi, free-tier]
   - id: B
     title: Release, signing, storage
     entries:
@@ -73,6 +76,7 @@ sections:
         problem: "old artifacts/runs wasted the 500 MB quota"
         cause: "90-day default retention"
         solution: "monthly maintenance workflow prunes >14 d artifacts/caches, keeps newest 20 runs"
+        tags: [storage, artifacts, cleanup]
   - id: C
     title: Device and install
     entries:
@@ -80,18 +84,22 @@ sections:
         problem: "App not installed"
         cause: "APK flagged android:testOnly=true (Studio-injected build flag); Android 10 blocks UI installs"
         solution: "remove injected flag; splits.abi arm64-only; CI badging gate rejects testOnly; verify pm install -r without -t"
+        tags: [install, testonly, abi, app-not-installed]
       - id: C2
         problem: "pm install -r from /sdcard/Download returns 255"
         cause: "opaque failure installing directly from FUSE path"
         solution: "copy to /data/local/tmp first, then pm install -r"
+        tags: [install, shizuku, storage]
       - id: C3
         problem: "app open but Shizuku not connected"
         cause: "Shizuku server stopped or killed by battery optimization"
         solution: "shizuku whoami must print 'shell'; retry loops; user reopens Shizuku"
+        tags: [shizuku, connection]
       - id: C4
         problem: "wrong activity launched in scripted runs"
         cause: "assistant app foreground; HOME keyevent ineffective in proot env"
         solution: "verify mCurrentFocus; use explicit component; validate LaunchState/Activity in logs"
+        tags: [automation, activity, shizuku]
   - id: D
     title: Measurement and transfer
     entries:
@@ -103,6 +111,7 @@ sections:
         problem: "captured files empty (gfxinfo 0 B)"
         cause: "Shizuku wrapper races: large remote output streams to tty, local pipe gets 0 bytes"
         solution: "stage output to on-device temp file; pull with wc -c size probe + retry until sizes match"
+        tags: [capture, shizuku, transfer, empty-output]
       - id: D3
         problem: "exit codes unreliable through Shizuku"
         cause: "wrapper mangles remote exit codes"
@@ -111,10 +120,12 @@ sections:
         problem: "GitHub artifact downloads truncated (4+ aborts)"
         cause: "unreliable network"
         solution: "local python3 -m http.server loopback transfer; 131 MB in ~1.5 s; SHA-256 verify"
+        tags: [transfer, artifact, checksum]
       - id: D5
         problem: "/sdcard files from shell unreadable by app proot"
         cause: "FUSE permission model; chmod unsupported"
         solution: "transfer via app-visible storage or MediaStore; verify sizes"
+        tags: [shizuku, storage, permissions]
       - id: D6
         problem: "bsh stdout looks odd"
         cause: "returns JSON envelope {result,output}; no readAllBytes() (old Java)"
@@ -123,14 +134,17 @@ sections:
         problem: "warm-start impossible in proot env"
         cause: "HOME no-op; am finish and am task move-task-to-back unknown on this Android build; BACK intercepted"
         solution: "record as pending; needs adb or HOME-capable session"
+        tags: [measurement, warm-start, adb]
       - id: D8
         problem: "dumpsys meminfo/gfxinfo returned 'No process found' or empty"
         cause: "app process was force-stopped by the preceding cold-start loop"
         solution: "launch the app and let it render BEFORE capturing mem/gfx (cmd_mem launches; run gfx after mem)"
+        tags: [dumpsys, measurement, shizuku]
       - id: D9
         problem: "large dumpsys outputs (>40 KB) only partially pull through Shizuku"
         cause: "wrapper stdout race gets worse with payload size; 400 KB batterystats truncated at 82% after 15 retries"
         solution: "accept partial captures and label them, or use chunked pulls / adb / MediaStore for full captures"
+        tags: [dumpsys, transfer, truncation]
   - id: E
     title: CI quality
     entries:
@@ -150,18 +164,22 @@ sections:
         problem: "r3 build failed at app:compileForkReleaseKotlin"
         cause: "missing import for DeviceCapabilities in HomeActivity; PackageManager.getSystemFeatureInfo/FEATURE_OPENGLES_* unresolved in this module (used deviceConfigurationInfo.reqGlEsVersion instead)"
         solution: "review imports before shipping a patch; prefer deviceConfigurationInfo for GLES version; ALWAYS re-stage BOTH files before regenerating a patch (git reset unstaged them and the regenerated patch silently lost the HomeActivity hunks)"
+        tags: [kotlin, compile, patch]
       - id: E5
         problem: "r3 build failed at app:compileForkReleaseKotlin (Unresolved references)"
         cause: "missing DeviceCapabilities import in HomeActivity; PackageManager feature APIs unresolved in this module"
         solution: "added import; use deviceConfigurationInfo.reqGlEsVersion for GLES; review imports/APIs before dispatching"
+        tags: [kotlin, compile, patch, imports]
       - id: E6
         problem: "full 40-min build wasted on a compile error"
         cause: "dispatched full build before local review of the Kotlin patch"
         solution: "use fast=true validation builds during patch iteration (compile-level proof, cheap); full R8 only when ready"
+        tags: [build-time, validation, fast-build]
       - id: E7
         problem: "regenerated patch silently lost hunks after git reset"
         cause: "git reset unstaged files; regenerated diff from only one staged file"
         solution: "always re-stage ALL touched files before regenerating a patch; verify patch touches expected files (grep '^diff --git')"
+        tags: [patch, git, regeneration]
   - id: F
     title: UI / perceived performance
     entries:
@@ -169,7 +187,9 @@ sections:
         problem: "visible color jump between splash and home screen on launch"
         cause: "hard-coded splash brand color (#FCF3EE / #210340) differs from home surface (#F7F6FB / #1D1B1F)"
         solution: "splash background references @color/fx_mobile_surface (patch 004) — seamless iOS-style launch, cosmetic only"
+        tags: [splash, theming, perceived-performance]
 recurring_signature: |
+
   If output is "sometimes there, sometimes not": it is almost always a transport
   race, not the command. Fix by staging on-device + verifying size/content, then
   retry. This pattern solved the most frustrating debugging hours.
