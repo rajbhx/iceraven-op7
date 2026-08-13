@@ -53,3 +53,26 @@ Decision: chase the *feel* (snappy, silent, integrated), not the install locatio
 - r5 = C2 (background discipline)
 - r6 = C6 or C4 (startup or memory/smoothness) — after profiling
 - r7+ = remaining, each gated on the previous measurement
+
+## "Premium / system-app feel" — definition and how we deliver it
+
+Feel is a set of measurable behaviors, not a vibe. Each feel item maps to a
+metric and a revision:
+
+| Feel | Metric | Delivery (revision) |
+|---|---|---|
+| Opens instantly | cold-start TotalTime | C6 (startup deferral) |
+| No white flash on launch | splash theme + first-frame time | already correct in source (`SplashScreenThemeBase`, splash bg color) — verify once, no patch needed |
+| Scrolls buttery, no dropped frames | scroll jank %, 50/90th frame times | C4/C5 (memory + renderer) |
+| Switch tabs without waiting | tab-switch + restore time | C3 (content-process policy) |
+| Returning to the app never reloads | process-survival: background 10 min → resume vs reload | C4 (memory so LMK doesn't kill it) |
+| No jank under load (5-10 tabs, heavy pages) | meminfo + jank on seeded session | C3/C4 |
+| Feels integrated | default-browser deep links, dark mode, gesture nav, media notification | already present in Fenix; verify on-device |
+| Stability = premium | crash/ANR rate per release | crash handler already present; report crashes in release notes |
+
+Already-verified-good in this source (no patch needed): splash theme with themed
+background, dark mode, gesture navigation, deep links, media session
+notification, isolated content processes, extensions support.
+
+Rule: a feel item ships only when its metric is measured before/after. Cosmetic
+"feel" claims without a metric are rejected.
