@@ -146,6 +146,10 @@ sections:
         problem: "scheduled workflow 60-day caveat"
         cause: "GitHub policy for public repos"
         solution: "daily check + dispatch + monthly maintenance reset the activity window; manual/repo-dispatch secondary"
+      - id: E4
+        problem: "r3 build failed at app:compileForkReleaseKotlin"
+        cause: "missing import for DeviceCapabilities in HomeActivity; PackageManager.getSystemFeatureInfo/FEATURE_OPENGLES_* unresolved in this module (used deviceConfigurationInfo.reqGlEsVersion instead)"
+        solution: "review imports before shipping a patch; prefer deviceConfigurationInfo for GLES version; ALWAYS re-stage BOTH files before regenerating a patch (git reset unstaged them and the regenerated patch silently lost the HomeActivity hunks)"
 recurring_signature: |
   If output is "sometimes there, sometimes not": it is almost always a transport
   race, not the command. Fix by staging on-device + verifying size/content, then

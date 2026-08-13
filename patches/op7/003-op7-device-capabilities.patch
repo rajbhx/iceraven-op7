@@ -1,15 +1,15 @@
 diff --git a/app/src/main/java/org/mozilla/fenix/HomeActivity.kt b/app/src/main/java/org/mozilla/fenix/HomeActivity.kt
-index 34d74f1d51..b2bab1f72c 100644
+index 34d74f1d51..e711e7bd1e 100644
 --- a/app/src/main/java/org/mozilla/fenix/HomeActivity.kt
 +++ b/app/src/main/java/org/mozilla/fenix/HomeActivity.kt
-@@ -16,6 +16,7 @@ import android.os.Build
- import android.os.Bundle
- import android.os.StrictMode
- import android.text.format.DateUtils
-+import android.util.Log
- import android.util.AttributeSet
- import android.view.ActionMode
- import android.view.KeyEvent
+@@ -179,6 +179,7 @@ import org.mozilla.fenix.splashscreen.SplashScreenOperation
+ import org.mozilla.fenix.tabhistory.TabHistoryDialogFragment
+ import org.mozilla.fenix.theme.DefaultThemeManager
+ import org.mozilla.fenix.theme.StatusBarColorManager
++import org.mozilla.fenix.op7.DeviceCapabilities
+ import org.mozilla.fenix.theme.ThemeManager
+ import org.mozilla.fenix.translations.TranslationsAIControllableFeatureRegistrar
+ import org.mozilla.fenix.translations.TranslationsEnabledSettings
 @@ -419,6 +420,9 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity, Crash
          // DO NOT MOVE ANYTHING ABOVE THIS getProfilerTime CALL.
          val startTimeProfiler = components.core.engine.profiler?.getProfilerTime()
@@ -22,10 +22,10 @@ index 34d74f1d51..b2bab1f72c 100644
          components.strictMode.attachListenerToDisablePenaltyDeath(supportFragmentManager)
 diff --git a/app/src/main/java/org/mozilla/fenix/op7/DeviceCapabilities.kt b/app/src/main/java/org/mozilla/fenix/op7/DeviceCapabilities.kt
 new file mode 100644
-index 0000000000..ff5dafd171
+index 0000000000..022265a731
 --- /dev/null
 +++ b/app/src/main/java/org/mozilla/fenix/op7/DeviceCapabilities.kt
-@@ -0,0 +1,121 @@
+@@ -0,0 +1,118 @@
 +package org.mozilla.fenix.op7
 +
 +import android.app.ActivityManager
@@ -103,8 +103,7 @@ index 0000000000..ff5dafd171
 +            val displayMetrics = context.resources.displayMetrics
 +            val dataStats = StatFs(Environment.getDataDirectory().path)
 +
-+            val glesFeature = packageManager
-+                .getSystemFeatureInfo(PackageManager.FEATURE_OPENGLES_VERSION)
++            val glesVersionInt = activityManager.deviceConfigurationInfo?.reqGlEsVersion
 +
 +            val videoDecoders = mutableListOf<String>()
 +            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -119,7 +118,6 @@ index 0000000000..ff5dafd171
 +                }
 +            }
 +            videoDecoders.sort()
-+            videoDecoders.distinct()
 +
 +            return DeviceCapabilities(
 +                abiList = Build.SUPPORTED_ABIS.toList(),
@@ -131,13 +129,12 @@ index 0000000000..ff5dafd171
 +                memoryClassMb = activityManager.memoryClass,
 +                largeMemoryClassMb = activityManager.largeMemoryClass,
 +                isLowRamDevice = activityManager.isLowRamDevice,
-+                glesVersion = glesFeature?.let { "0x%08x".format(it.version) },
++                glesVersion = glesVersionInt?.let { "0x%08x".format(it) },
 +                vulkanSupported = packageManager.hasSystemFeature(
 +                    PackageManager.FEATURE_VULKAN_HARDWARE_VERSION,
 +                ),
-+                openGlEsSupported = packageManager.hasSystemFeature(PackageManager.FEATURE_OPENGLES_3_1) ||
-+                    packageManager.hasSystemFeature(PackageManager.FEATURE_OPENGLES_3_2),
-+                hardwareVideoDecoders = videoDecoders,
++                openGlEsSupported = (glesVersionInt ?: 0) >= 0x30001,
++                hardwareVideoDecoders = videoDecoders.distinct(),
 +                displayWidthPx = displayMetrics.widthPixels,
 +                displayHeightPx = displayMetrics.heightPixels,
 +                densityDpi = displayMetrics.densityDpi,
