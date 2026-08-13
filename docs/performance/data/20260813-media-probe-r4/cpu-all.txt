@@ -1,0 +1,135 @@
+--- sample 1 ---
+ 0.0   0.0 2.3M mediaserver
+ 0.0   0.0 3.4M mediadrmserver
+ 0.0   0.0 3.1M media.codec
+ 0.0   2.3 175M io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_36
+ 0.0   3.6 272M io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_29
+ 0.0   2.1 158M io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_1
+ 0.0   2.1 163M io.github.forkmaintainers.iceraven.op7:gpu_disable_art_image_
+ 0.0   1.4 107M io.github.forkmaintainers.iceraven.op7:crashhelper_disable_art_image_
+10.3   4.6 349M io.github.forkmaintainers.iceraven.op7
+ 0.0   0.1  11M audioserver
+--- sample 2 ---
+--- sample 3 ---
+ 0.0   0.0 2.3M mediaserver
+ 0.0   0.0 3.4M mediadrmserver
+ 0.0   0.0 3.1M media.codec
+ 0.0   2.4 179M io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_36
+ 0.0   3.6 272M io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_29
+ 0.0   2.1 163M io.github.forkmaintainers.iceraven.op7:gpu_disable_art_image_
+ 0.0   1.4 108M io.github.forkmaintainers.iceraven.op7:crashhelper_disable_art_image_
+ 0.0   4.4 333M io.github.forkmaintainers.iceraven.op7
+ 0.0   0.1  11M audioserver
+--- sample 4 ---
+ 0.0   0.0 2.3M mediaserver
+ 0.0   0.0 3.4M mediadrmserver
+ 0.0   0.0 3.1M media.codec
+ 0.0   2.3 179M io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_36
+ 0.0   3.6 272M io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_29
+ 0.0   2.1 163M io.github.forkmaintainers.iceraven.op7:gpu_disable_art_image_
+ 0.0   1.4 108M io.github.forkmaintainers.iceraven.op7:crashhelper_disable_art_image_
+ 0.0   4.4 332M io.github.forkmaintainers.iceraven.op7
+ 0.0   0.1  11M audioserver
+--- sample 5 ---
+ 0.0   0.0 2.3M mediaserver
+ 0.0   0.0 3.4M mediadrmserver
+ 0.0   0.0 3.1M media.codec
+ 0.0   2.3 179M io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_36
+ 0.0   3.6 272M io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_29
+ 0.0   2.1 163M io.github.forkmaintainers.iceraven.op7:gpu_disable_art_image_
+ 0.0   1.4 108M io.github.forkmaintainers.iceraven.op7:crashhelper_disable_art_image_
+ 0.0   4.4 332M io.github.forkmaintainers.iceraven.op7
+ 0.0   0.1  11M audioserver--- sample 6 ---
+ 0.0   0.0 2.3M mediaserver
+ 0.0   0.0 3.4M mediadrmserver
+ 0.0   0.0 3.1M media.codec
+ 0.0   2.4 180M io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_36
+ 0.0   3.6 273M io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_29
+ 0.0   2.1 163M io.github.forkmaintainers.iceraven.op7:gpu_disable_art_image_
+ 0.0   1.4 108M io.github.forkmaintainers.iceraven.op7:crashhelper_disable_art_image_
+ 0.0   4.4 331M io.github.forkmaintainers.iceraven.op7
+ 0.0   0.1  11M audioserver
+--- sample 1 ---
+ 0.0   0.0 2.8M mediaserver
+ 0.0   0.0 3.4M mediadrmserver
+ 0.0   0.0 3.1M media.codec
+ 0.0   2.3 177M io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_26
+ 0.0   3.5 267M io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_11
+ 0.0   2.1 160M io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_0
+ 0.0   2.1 163M io.github.forkmaintainers.iceraven.op7:gpu_disable_art_image_
+ 0.0   1.4 108M io.github.forkmaintainers.iceraven.op7:crashhelper_disable_art_image_
+ 0.0   4.6 347M io.github.forkmaintainers.iceraven.op7
+ 0.0   0.1  11M audioserver--- sample 2 ---
+ 0.0   0.0 2.8M mediaserver
+ 0.0   0.0 3.4M mediadrmserver
+ 0.0   0.0 3.1M media.codec
+ 0.0   2.4 182M io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_26
+ 0.0   3.5 269M io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_11
+ 0.0   2.1 162M io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_0
+ 0.0   2.1 163M io.github.forkmaintainers.iceraven.op7:gpu_disable_art_image_
+ 0.0   1.4 109M io.github.forkmaintainers.iceraven.op7:crashhelper_disable_art_image_
+ 0.0   4.7 354M io.github.forkmaintainers.iceraven.op7
+ 0.0   0.1  11M audioserver
+--- sample 3 ---
+ 0.0   0.0 2.8M mediaserver
+ 0.0   0.0 3.4M mediadrmserver
+ 0.0   0.0 3.1M media.codec
+ 0.0   2.4 181M io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_26
+ 0.0   3.5 268M io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_11
+ 0.0   2.2 169M io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_0
+ 0.0   2.1 163M io.github.forkmaintainers.iceraven.op7:gpu_disable_art_image_
+ 0.0   1.4 109M io.github.forkmaintainers.iceraven.op7:crashhelper_disable_art_image_
+ 0.0   4.3 324M io.github.forkmaintainers.iceraven.op7
+ 0.0   0.1  11M audioserver--- sample 4 ---
+--- sample 5 ---
+--- sample 6 ---
+--- sample 1 ---
+--- sample 2 ---
+ 0.0   0.0 2.8M mediaserver
+ 0.0   0.0 3.4M mediadrmserver
+ 0.0   0.0 3.1M media.codec
+ 0.0   3.6 270M io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_2
+ 0.0   2.4 182M io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_10
+ 0.0   2.1 162M io.github.forkmaintainers.iceraven.op7:gpu_disable_art_image_
+ 0.0   1.4 107M io.github.forkmaintainers.iceraven.op7:crashhelper_disable_art_image_
+ 3.4   4.5 338M io.github.forkmaintainers.iceraven.op7
+ 0.0   0.1  11M audioserver
+--- sample 3 ---
+ 0.0   0.0 2.8M mediaserver
+ 0.0   0.0 3.4M mediadrmserver
+ 0.0   0.0 3.1M media.codec
+ 0.0   3.6 270M io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_2
+ 0.0   2.4 182M io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_10
+ 0.0   2.1 162M io.github.forkmaintainers.iceraven.op7:gpu_disable_art_image_
+ 0.0   1.4 107M io.github.forkmaintainers.iceraven.op7:crashhelper_disable_art_image_
+ 0.0   4.4 336M io.github.forkmaintainers.iceraven.op7
+ 0.0   0.1  11M audioserver
+--- sample 4 ---
+ 0.0   0.0 2.8M mediaserver
+ 0.0   0.0 3.4M mediadrmserver
+ 0.0   0.0 3.1M media.codec
+ 0.0   3.6 270M io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_2
+ 0.0   2.4 182M io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_10
+ 0.0   2.1 162M io.github.forkmaintainers.iceraven.op7:gpu_disable_art_image_
+ 0.0   1.4 107M io.github.forkmaintainers.iceraven.op7:crashhelper_disable_art_image_
+ 103   4.8 360M io.github.forkmaintainers.iceraven.op7
+ 0.0   0.1  11M audioserver--- sample 5 ---
+ 0.0   0.0 2.8M mediaserver
+ 0.0   0.0 3.4M mediadrmserver
+ 0.0   0.0 3.1M media.codec
+ 0.0   3.6 270M io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_2
+ 0.0   2.4 182M io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_10
+ 0.0   2.1 163M io.github.forkmaintainers.iceraven.op7:gpu_disable_art_image_
+ 0.0   1.4 107M io.github.forkmaintainers.iceraven.op7:crashhelper_disable_art_image_
+ 0.0   4.4 333M io.github.forkmaintainers.iceraven.op7
+ 0.0   0.1  11M audioserver
+--- sample 6 ---
+ 0.0   0.0 2.8M mediaserver
+ 0.0   0.0 3.4M mediadrmserver
+ 0.0   0.0 3.1M media.codec
+ 0.0   3.6 270M io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_2
+ 0.0   2.4 182M io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_10
+ 0.0   2.1 163M io.github.forkmaintainers.iceraven.op7:gpu_disable_art_image_
+ 0.0   1.4 107M io.github.forkmaintainers.iceraven.op7:crashhelper_disable_art_image_
+ 0.0   4.4 333M io.github.forkmaintainers.iceraven.op7
+ 0.0   0.1  11M audioserver

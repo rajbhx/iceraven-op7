@@ -1,0 +1,25 @@
+08-13 20:26:54.934 18875 18911 D HardwareCodecCapability: Found candidate encoder OMX.qcom.video.encoder.vp8
+08-13 20:26:54.934 18875 18911 D HardwareCodecCapability: Found target encoder OMX.qcom.video.encoder.vp8. Color: 0x15
+08-13 20:26:54.934 18875 18911 D HardwareCodecCapability: Found candidate decoder OMX.qcom.video.decoder.vp9
+08-13 20:26:54.935 18875 18911 D HardwareCodecCapability: Found target decoder OMX.qcom.video.decoder.vp9. Color: 0x13
+08-13 20:26:54.935 18875 18911 D HardwareCodecCapability: Found candidate encoder c2.android.vp9.encoder
+08-13 20:26:54.935 18875 18911 D HardwareCodecCapability: Found candidate encoder OMX.google.vp9.encoder
+08-13 20:26:54.935 18875 18911 D HardwareCodecCapability: Found candidate decoder OMX.qcom.video.decoder.avc
+08-13 20:26:54.935 18875 18911 D HardwareCodecCapability: Found target decoder OMX.qcom.video.decoder.avc. Color: 0x13
+08-13 20:26:54.935 18875 18911 D HardwareCodecCapability: Found candidate encoder OMX.qcom.video.encoder.avc
+08-13 20:26:54.935 18875 18911 D HardwareCodecCapability: Found target encoder OMX.qcom.video.encoder.avc. Color: 0x15
+08-13 20:26:54.935 18875 18911 D HardwareCodecCapability: Found candidate decoder OMX.qcom.video.decoder.hevc
+08-13 20:26:54.935 18875 18911 D HardwareCodecCapability: Found target decoder OMX.qcom.video.decoder.hevc. Color: 0x13
+08-13 20:26:54.935 18875 18911 D HardwareCodecCapability: Found candidate encoder OMX.qcom.video.encoder.hevc
+08-13 20:26:54.935 18875 18911 D HardwareCodecCapability: Found target encoder OMX.qcom.video.encoder.hevc. Color: 0x15
+08-13 20:26:54.935 18875 18911 D HardwareCodecCapability: Found candidate decoder c2.android.av1.decoder
+08-13 20:26:54.935 18875 18911 D HardwareCodecCapability: Found candidate decoder OMX.qcom.video.decoder.vp8
+08-13 20:26:54.935 18875 18911 D HardwareCodecCapability: Found target decoder OMX.qcom.video.decoder.vp8. Color: 0x13
+08-13 20:26:54.936 18875 18911 D HardwareCodecCapability: Found candidate encoder OMX.qcom.video.encoder.vp8
+08-13 20:26:54.937 18875 18911 D HardwareCodecCapability: Found target decoder OMX.qcom.video.decoder.avc. Color: 0x13
+08-13 20:26:54.937 18875 18911 D HardwareCodecCapability: Found candidate encoder OMX.qcom.video.encoder.avc
+08-13 20:26:54.937 18875 18911 D HardwareCodecCapability: Found target encoder OMX.qcom.video.encoder.avc. Color: 0x15
+08-13 20:26:54.937 18875 18911 D HardwareCodecCapability: Found candidate decoder OMX.qcom.video.decoder.hevc
+08-13 20:26:54.937 18875 18911 D HardwareCodecCapability: Found target decoder OMX.qcom.video.decoder.hevc. Color: 0x13
+08-13 20:26:54.937 18875 18911 D HardwareCodecCapability: Found candidate encoder OMX.qcom.video.encoder.hevc
+08-13 20:26:54.937 18875 18911 D HardwareCodecCapability: Found target encoder OMX.qcom.video.encoder.hevc. Color: 0x15

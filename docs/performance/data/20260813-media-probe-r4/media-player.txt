@@ -1,0 +1,34 @@
+ Client
+  pid(2142), connId(81), status(0), looping(false)
+ NuPlayer
+  state(6), atEOS(1), looping(0), autoLoop(0)
+  mime(audio/vorbis)
+    decoder(OMX.google.vorbis.decoder)
+ AudioOutput
+  stream type(0), left - right volume(0.100000, 0.100000)
+  msec per frame(0.020833), latency (548)
+  aux effect id(0), send level (0.000000)
+ AudioTrack::dump
+  id(299) status(0), state(1), session Id(2393), flags(0x2)
+  stream type(0), left - right volume(0.100000, 0.100000)
+  format(0x1), channel mask(0x1), channel count(1)
+  sample rate(48000), original sample rate(48000), speed(1.000000)
+  frame count(24000), req. frame count(24000)
+  notif. frame count(12000), req. notif. frame count(0), req. notif. per buff(0)
+  latency (548), selected device Id(0), routed device Id(2)
+  output(13) AF latency (48) AF frame count(960) AF SampleRate(48000)
+
+ 10 registered handlers:
+  567: MediaClock: 0 messages processed
+  568: NuPlayerDriver Looper: 14 messages processed
+  569: generic: 5 messages processed
+  570: NuPlayerRenderer: 68 messages processed
+  571: NPDecoder: 107 messages processed
+  572: NPDecoder-CL: 112 messages processed
+  573: NPDecoder-CL: 153 messages processed
+  934: <stale>
+  938: <stale>
+  939: <stale>
+ No media recorder client
+
+ Files opened and/or mapped:

@@ -12,7 +12,7 @@ would be added via `GeckoRuntimeSettings.Builder().setRuntimePrefs(mapOf(...))`.
 
 | # | Candidate | Knob / location | Expected | Measurement | Risk |
 |---|---|---|---|---|---|
-| C1 | Hardware media codecs (battery: video) | runtime pref `media.hardware-video-decoding.enabled=true` (verify default) | lower playback drain, HW decode confirmed | playback drain test (H.264/HEVC/VP9 fixtures) + MediaCodec session logs | low; fallback stays |
+| C1 | Hardware media codecs (battery: video) | ~~runtime pref~~ **VERIFIED r5: no change needed** | lower playback drain | done: `docs/performance/media.md` — GeckoView already selects OMX.qcom hw decoders for H.264/HEVC/VP9; peak decode CPU ~10 % | — |
 | C2 | Background discipline (battery: screen-off) | verify/keep tab discard + timers; wakeups audit | near-silent background | overnight `drain` test + `wakeups` | low-medium; keep privacy intact |
 | C3 | Content-process count on 8 GB | `GeckoRuntimeSettings.setContentProcessHint(n)` / `dom.ipc.processCount` | faster tab switch; smoother under load | meminfo 5/10 tabs + tab-switch timing | medium; more processes = more RAM/power if over-tuned |
 | C4 | Memory stability (smoothness) | image cache / GC pressure; discard policy | fewer GC stalls → less jank | scroll jank on image-heavy pages + meminfo over long session | low |
@@ -50,7 +50,7 @@ Decision: chase the *feel* (snappy, silent, integrated), not the install locatio
 ## Revision plan (one candidate each)
 
 - r4 = 004 seamless launch (perceived-performance sugar, cosmetic) — shipped
-- r5 = C1 (hardware codecs verified) — first battery-focused revision
+- r5 = C1 — **done (verification only): hardware decode already active, no change shipped** (`docs/performance/media.md`)
 - r6 = C2 (background discipline)
 - r7 = C6 or C4 (startup or memory/smoothness) — after profiling
 - r8+ = remaining, each gated on the previous measurement

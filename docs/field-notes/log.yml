@@ -160,6 +160,16 @@ sections:
         cause: "proot runs inside the app (gptos.intelligence.assistant); its /storage/emulated/0 is an app-private bind, not the real /sdcard"
         solution: "proot shares the device network, so serve the APK with a persistent loopback HTTP server (setsid nohup python3 -m http.server) and pull with curl on the real shell to /sdcard/Download/op7/; verify size; copy to /data/local/tmp then pm install -r"
         tags: [transfer, shizuku, sdcard, loopback]
+      - id: D11
+        problem: "verify GeckoView uses hardware video decoding before touching media prefs"
+        cause: "hardware decoders exist (Phase 5) but usage was unverified; changing prefs on assumptions is banned by the golden rule"
+        solution: "media_probe.sh — force-stop, clear logcat, open a direct 1080p clip in Iceraven, sample top every 4s, dump logcat + dumpsys media.player; GeckoView's HardwareCodecCapability log names the selected decoder"
+        tags: [media, codec, verification, cpu]
+      - id: D12
+        problem: "summary CPU parse showed a fake 1034% spike in the probe"
+        cause: "naive grep of leading digits grabbed the wrong column from top output"
+        solution: "report peak from raw per-process samples; verify against cpu-all.txt before trusting a number"
+        tags: [measurement, cpu, parsing]
   - id: E
     title: CI quality
     entries:

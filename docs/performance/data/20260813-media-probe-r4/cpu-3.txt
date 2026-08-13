@@ -1,0 +1,9 @@
+ 0.0   0.0 2.8M mediaserver
+ 0.0   0.0 3.4M mediadrmserver
+ 0.0   0.0 3.1M media.codec
+ 0.0   3.6 270M io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_2
+ 0.0   2.4 182M io.github.forkmaintainers.iceraven.op7:tab_disable_art_image_10
+ 0.0   2.1 162M io.github.forkmaintainers.iceraven.op7:gpu_disable_art_image_
+ 0.0   1.4 107M io.github.forkmaintainers.iceraven.op7:crashhelper_disable_art_image_
+ 0.0   4.4 336M io.github.forkmaintainers.iceraven.op7
+ 0.0   0.1  11M audioserver
