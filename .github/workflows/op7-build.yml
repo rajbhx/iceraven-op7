@@ -33,9 +33,13 @@ on:
         required: false
         default: 'false'
       release_tag:
-        description: 'Release tag, format op7-<iceraven-version>-r<rev> (required if release=true)'
+        description: 'Release tag, format op7-<iceraven-version>-r<rev> (required if release=true; auto-generated from version+revision when omitted and auto_release=true)'
         required: false
         default: ''
+      auto_release:
+        description: 'Auto-publish a release after ALL quality gates pass (used by the upstream-sync path); requires the release secrets; never combine with fast=true'
+        required: false
+        default: 'false'
       fast:
         description: 'Fast validation build (skips R8/shrink via -PdisableOptimization); use for iteration, NOT for release evidence'
         required: false
@@ -55,7 +59,8 @@ jobs:
     outputs:
       upstream_commit: ${{ steps.resolve.outputs.upstream_commit }}
       version_name: ${{ steps.metadata.outputs.version_name }}
-      release_tag: ${{ steps.resolve.outputs.release_tag }}
+      release: ${{ steps.release.outputs.release }}
+      release_tag: ${{ steps.release.outputs.release_tag || steps.resolve.outputs.release_tag }}
       apk_name: ${{ steps.validate.outputs.apk_name }}
     steps:
       - uses: actions/checkout@v4
@@ -139,6 +144,29 @@ jobs:
             echo "OP7_UPSTREAM_BRANCH=iceraven"
           } >> "$GITHUB_ENV"
           echo "version: $VERSION_NAME"
+
+      - name: Resolve release target (auto or explicit)
+        id: release
+        if: github.event.inputs.release == 'true' || github.event.inputs.auto_release == 'true'
+        run: |
+          if [[ "${{ github.event.inputs.fast }}" == "true" ]]; then
+            echo "::error::release/auto_release cannot be combined with fast=true (fast skips R8; not release evidence)"
+            exit 1
+          fi
+          REV="$(tr -d '[:space:]' < op7-revision.txt)"
+          TAG="${{ github.event.inputs.release_tag }}"
+          if [[ -z "$TAG" ]]; then
+            BASE="${OP7_VERSION_NAME%-op7r${REV}}"
+            BASE="${BASE#v}"
+            TAG="op7-${BASE}-r${REV}"
+          fi
+          if [[ -z "$TAG" || "$TAG" == op7--r* ]]; then
+            echo "::error::could not derive a valid release tag (version='$OP7_VERSION_NAME' revision='$REV' input='${{ github.event.inputs.release_tag }}')"
+            exit 1
+          fi
+          echo "release=true" >> "$GITHUB_OUTPUT"
+          echo "release_tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "release target: $TAG"
 
       - name: Build forkRelease (OP7 ABI)
         env:
@@ -257,21 +285,25 @@ jobs:
           - ABI: `${{ github.event.inputs.abi }}`
           - patch status: applied by `automation/op7/apply_patches.sh` (fail = stopped before build)
           - validation: aapt badging + native-lib ABI check + testOnly gate + SHA-256
-          - release mode: ${{ github.event.inputs.release }}
+          - release mode: ${{ github.event.inputs.release }} (auto_release: ${{ github.event.inputs.auto_release }})
           - fast mode (no R8): ${{ github.event.inputs.fast }}
           SUMMARY
 
   release:
     name: Sign with release key and publish
     needs: build
-    if: github.event.inputs.release == 'true'
+    if: needs.build.outputs.release == 'true'
     runs-on: ubuntu-latest
     environment: release
     permissions:
       contents: write
     steps:
-      - name: Guard release secrets
+      - name: Guard release tag and secrets
         run: |
+          if [[ -z "${{ needs.build.outputs.release_tag }}" ]]; then
+            echo "::error::release tag is missing; refusing to publish"
+            exit 1
+          fi
           for SECRET in OP7_RELEASE_KEYSTORE_BASE64 OP7_RELEASE_KEYSTORE_PASSWORD OP7_RELEASE_KEY_ALIAS OP7_RELEASE_KEY_PASSWORD; do
             if [[ -z "${!SECRET:-}" ]]; then
               echo "::error::$SECRET is not configured; refusing to publish"

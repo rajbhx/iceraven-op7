@@ -84,8 +84,8 @@ upstream/commit.txt          pinned upstream commit
 | Workflow | Trigger | What it does |
 |---|---|---|
 | `CI` | push / PR | actionlint + shellcheck + pin/revision format |
-| `Upstream Check` | schedule / manual / dispatch | detects upstream moves, opens sync issue |
-| `OP7 Build` | `workflow_dispatch` | mirror → patch → build → validate → (release) |
+| `Upstream Check` | schedule / manual / dispatch | detects upstream moves, opens sync issue, dispatches the full build with `auto_release=true` |
+| `OP7 Build` | `workflow_dispatch` | mirror → patch → build → validate → (auto release when gates pass) |
 | `Maintenance` | schedule / manual | monthly cleanup + self-check |
 
 Validation build (~13 min, no R8):
@@ -99,6 +99,14 @@ Release build (~40 min, gated, requires release secrets):
 ```
 gh workflow run op7-build.yml -f abi=arm64-v8a -f release=true -f release_tag=op7-<version>-r<rev>
 ```
+
+Automatic release: when `Upstream Check` detects a new upstream commit, the sync
+build runs with `auto_release=true`. A GitHub Release (`op7-<version>-r<rev>`,
+tag auto-generated from `version.txt` + `op7-revision.txt`) is published ONLY
+after every quality gate passes and the release secrets exist. Any patch
+conflict or failed gate stops the pipeline — nothing is published. Manual
+`release=true` still works for same-upstream revision bumps (e.g. r7 on an
+unchanged upstream).
 
 ## Secrets
 

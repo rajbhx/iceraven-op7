@@ -4,7 +4,10 @@ name: Upstream Check
 # This workflow NEVER builds the browser. It compares the pinned upstream commit
 # against the upstream `iceraven` branch HEAD; when a new commit exists it:
 #   1. opens/updates a sync issue,
-#   2. dispatches the op7-build pipeline with the new upstream commit,
+#   2. dispatches the op7-build pipeline with the new upstream commit
+#      (auto_release=true: publishes a GitHub Release ONLY after all quality
+#      gates pass and the release secrets exist; any patch conflict or gate
+#      failure stops the pipeline and nothing is published),
 #   3. writes a summary.
 #
 # NOTE on scheduling: GitHub may disable scheduled workflows in public repos after
@@ -95,7 +98,8 @@ jobs:
           gh workflow run op7-build.yml \
             -f upstream_commit="${{ needs.check.outputs.new_head }}" \
             -f abi=arm64-v8a \
-            -f release=false
+            -f release=false \
+            -f auto_release=true
         env:
           GH_TOKEN: ${{ github.token }}
 
@@ -104,6 +108,8 @@ jobs:
           cat >> "$GITHUB_STEP_SUMMARY" << 'SUMMARY'
           ## Sync dispatched
           - new upstream commit: `${{ needs.check.outputs.new_head }}`
-          - build pipeline: `op7-build.yml` (arm64-v8a, validation build)
-          - conflict policy: any patch failure stops publishing and is reported in the issue above.
+          - build pipeline: `op7-build.yml` (arm64-v8a, full build, auto_release=true)
+          - publish policy: release ONLY after validation passes; any patch
+            conflict or failed gate stops publishing and is reported in the
+            issue above.
           SUMMARY
