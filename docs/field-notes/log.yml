@@ -340,6 +340,11 @@ sections:
         cause: "CI applies patches AFTER 004 (seamless launch) and the Iceraven patch layer; 004 already rewrites the splash line (#210340 -> @color/fx_mobile_surface), so 005's combined hunk that edited the same line could not match"
         solution: "005 no longer touches the splash line — 004 references fx_mobile_surface, which 005 remaps to novaBlack, so the splash is pure black by reference; re-verified the CI order (pristine -> 004 -> 005 -> 006) in a scratch repo, tree byte-identical to target"
         tags: [patch-order, ci, 004-ownership, splash]
+      - id: E14
+        problem: "shellcheck SC2295 on the auto-tag expression broke CI (actionlint)"
+        cause: "nested expansion inside a parameter-expansion pattern: ${OP7_VERSION_NAME%-op7r${REV}} — the inner ${REV} matched as a pattern"
+        solution: "quote the inner expansion: ${OP7_VERSION_NAME%-op7r\"${REV}\"}; CI (actionlint+shellcheck) now green"
+        tags: [shellcheck, workflow, quoting, actionlint]
   - id: F
     title: UI / perceived performance
     entries:
@@ -436,6 +441,11 @@ sections:
         cause: "build_notes picked the first alphabetically-sorted log for docs/09"
         solution: "journey now selects the project with the most entries; docs/09 stays the richest history"
         tags: [playbook, journey, docs, sync]
+      - id: G13
+        problem: "releases were never created automatically even though the spec's success criteria require PASS -> release on every upstream sync"
+        cause: "upstream-check.yml dispatched op7-build with release=false; op7-build.yml only ran the release job when manually invoked with release=true + release_tag; nothing generated a tag"
+        solution: "new auto_release input on op7-build.yml — after ALL quality gates pass, the release job is gated on the build job's release output (not the raw dispatch input); tag auto-generated from version.txt + op7-revision.txt (op7-<version>-r<rev>, v-prefix stripped); refuses fast=true + release combos (fast skips R8, not release evidence); release tag+secrets guards fail closed; upstream-check.yml now dispatches auto_release=true so a new upstream commit -> sync -> build -> gates pass -> GitHub Release automatically, while any conflict/failed gate still stops publishing"
+        tags: [phase9, release, automation, gates, tag]
 recurring_signature: |
   If output is "sometimes there, sometimes not": it is almost always a transport
   race, not the command. Fix by staging on-device + verifying size/content, then
