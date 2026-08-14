@@ -70,7 +70,11 @@ def parse_digest(text: str):
                 current["section"] = m.group(1)
             m = re.match(r"^tags:\s*(.+)$", line)
             if m:
-                current["tags"] = [t.strip().lower() for t in m.group(1).split(",") if t.strip()]
+                # strip surrounding [ ] so 'tags: [a, b]' -> ['a', 'b']
+                raw = m.group(1).strip()
+                if raw.startswith("[") and raw.endswith("]"):
+                    raw = raw[1:-1]
+                current["tags"] = [t.strip().strip("'\"").lower() for t in raw.split(",") if t.strip()]
     if current:
         problems.append(current)
     return [p for p in problems if p["problem"]]
@@ -90,9 +94,12 @@ def main():
     log_text = LOG.read_text()
     data = yaml.safe_load(log_text)
     sections = {s["id"]: s for s in data["sections"]}
+    # dedupe against PARSED problem texts, not raw text: long scalars may be
+    # line-wrapped in the YAML file and would defeat substring matching
+    existing = {e["problem"] for s in data["sections"] for e in s.get("entries", [])}
     added = 0
     for p in problems:
-        if p["problem"] in log_text:
+        if p["problem"] in existing:
             print(f"skip (already logged): {p['problem'][:60]}")
             continue
         section_id = p["section"] or data["sections"][-1]["id"]
@@ -108,6 +115,7 @@ def main():
         if p.get("tags"):
             entry["tags"] = p["tags"]
         entries.append(entry)
+        existing.add(p["problem"])
         added += 1
         print(f"added {section_id}{n}: {p['problem'][:60]}")
 
