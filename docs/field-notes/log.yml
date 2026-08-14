@@ -53,6 +53,26 @@ sections:
         cause: "GeckoView AAR download + R8 + all ABIs"
         solution: "arm64-only split, Gradle/Rust/Maven caches, fast=true (no R8) for validation, --parallel when stable"
         tags: [build-time, caching, abi, free-tier]
+      - id: A12
+        problem: "Expo/RN build repos cannot use upstream's EAS-based CI"
+        cause: "eas build --local needs EAS project ownership + EXPO_TOKEN"
+        solution: "expo prebuild --platform android --no-install + plain gradle assemble"
+        tags: [[expo, rn, eas, github-actions]]
+      - id: A13
+        problem: "Expo SDK 55 lockfile drift broke compile (@siteed/audio-studio 3.2.1)"
+        cause: "fresh bun.lock resolved siteed 3.2.1 whose Promise.reject(String?,...)"
+        solution: "pin @siteed/audio-studio=3.0.3 via overrides/bun.lock; verify compile"
+        tags: [[expo, bun, lockfile, compile-error]]
+      - id: A14
+        problem: "ONNX InferenceSession leaked per denoise job (processing screen)"
+        cause: "process.tsx creates DeepFilterNet and never calls release(); recording"
+        solution: "OP7 patch 001 — release() in finally (stability fix, not perf claim)"
+        tags: [[onnx, memory-leak, stability]]
+      - id: A15
+        problem: "rainManager APK has no native-code badging entry (lspatch libs in assets)"
+        cause: "lspatch .so injected into patched Discord APK at patch time, not used by"
+        solution: "validation gate for manager checks package/SDK/testOnly only"
+        tags: [[rain, lspatch, badging, abi]]
   - id: B
     title: Release, signing, storage
     entries:
@@ -343,6 +363,11 @@ sections:
         cause: "r6 container scale lifted off pure black (lowest #0A0A0A < container #1A1A1A < highest #242424) plus layer_color_2/3 and outline tokens still referenced dark greys; every content surface was lit gray on black"
         solution: "r7 collapses the ENTIRE dark-theme surface scale to #000000 (background/surface/dim/surface_variant/surface_bright, all surface_container_*, layer_color_2, layer_color_3, splash #210340->#000000) and carries structure with hairlines instead of lit fills: outline #2A2A2A, outline_variant #242424, settings row card gets a 1dp #242424 stroke around its pure-black fill (op7_preference_row_background); result = true pure-black everywhere with cards still distinguishable"
         tags: [amoled, pureblack, theme, hairlines, resource-only, r7]
+      - id: F7
+        problem: "playbook sync failed parsing project field-notes logs"
+        cause: "unquoted YAML scalars containing ': ' broke generate_project_docs.py"
+        solution: "quote all scalar values in docs/field-notes/log.yml"
+        tags: [[playbook, yaml, field-notes]]
   - id: G
     title: Playbook & knowledge
     entries:
