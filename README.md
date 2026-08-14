@@ -16,6 +16,7 @@
   <a href="https://github.com/rajbhx/iceraven-op7/actions/workflows/ci.yml"><img src="https://github.com/rajbhx/iceraven-op7/actions/workflows/ci.yml/badge.svg" alt="CI"/></a>
   <a href="https://github.com/rajbhx/iceraven-op7/actions/workflows/upstream-check.yml"><img src="https://github.com/rajbhx/iceraven-op7/actions/workflows/upstream-check.yml/badge.svg" alt="Upstream Check"/></a>
   <img src="https://img.shields.io/badge/revision-r7-EB0028?style=flat-square" alt="OP7 revision r7"/>
+  <a href="https://github.com/rajbhx/iceraven-op7/releases"><img src="https://img.shields.io/github/v/release/rajbhx/iceraven-op7?style=flat-square&color=EB0028" alt="Latest release"/></a>
   <img src="https://img.shields.io/badge/license-MPL--2.0-blue?style=flat-square" alt="License"/>
 </p>
 
@@ -29,7 +30,7 @@ Everything Gecko does stays Gecko. The OP7 layer is thin, measurable, documented
 |---|---|
 | Pinned upstream | exact Iceraven commit (`upstream/commit.txt`), never a moving branch |
 | Upstream patch layer | Iceraven's own build-time patches, exactly like upstream CI |
-| OP7 patch set | tiny, documented `patches/op7/` — arm64-only, capability log, seamless launch, AMOLED black |
+| OP7 patch set | tiny, documented `patches/op7/` (001–006) — arm64-only, capability log, seamless launch, AMOLED pure-black + OnePlus red accent |
 | GitHub Actions | free runners: check upstream → sync → patch → build → validate → release |
 | Fails closed | upstream conflict or failed gate = **no build, no publish**, issue-style report |
 
@@ -73,6 +74,7 @@ docs/baseline.md             golden-rule baseline record
 docs/performance/            methodology + startup/smoothness/media/battery
 docs/roadmap.md              live plan + error matrix
 docs/reproducible-build.md   traceability + release identity
+docs/field-notes/            lessons log + session digests (auto-synced to the playbook)
 patches/op7/                 OP7 patch set (001–006)
 automation/op7/              check / sync / patch / metadata scripts
 upstream/commit.txt          pinned upstream commit
@@ -88,7 +90,7 @@ upstream/commit.txt          pinned upstream commit
 | `OP7 Build` | `workflow_dispatch` | mirror → patch → build → validate → (auto release when gates pass) |
 | `Maintenance` | schedule / manual | monthly cleanup + self-check |
 
-Validation build (~13 min, no R8):
+Validation build (~13–25 min, no R8; cold builds without cache take longer):
 
 ```
 gh workflow run op7-build.yml -f abi=arm64-v8a -f release=false -f fast=true
@@ -107,6 +109,26 @@ after every quality gate passes and the release secrets exist. Any patch
 conflict or failed gate stops the pipeline — nothing is published. Manual
 `release=true` still works for same-upstream revision bumps (e.g. r7 on an
 unchanged upstream).
+
+## Playbook & skill (agents)
+
+Every lesson from this project is recorded in `docs/field-notes/` and
+auto-synced into the [OP7 Special-Build Playbook](https://github.com/rajbhx/op7-special-build-playbook)
+— a searchable, reusable knowledge base for this and future special builds.
+
+Agents connect to it via the `op7-special-build` Codex skill:
+
+- New machine/agent (one command):
+  `git clone --depth 1 https://github.com/rajbhx/op7-special-build-playbook && bash op7-special-build-playbook/scripts/install_skill.sh`
+- Already installed — refresh at session start:
+  `bash /root/.shared-skills/op7-special-build/scripts/update_skill.sh`
+- No skill support — search the playbook clone directly:
+  `python3 scripts/lookup.py <problem words>`
+
+The skill self-updates from the playbook repo (cheap `git ls-remote` check,
+sparse fetch + atomic swap with backup, offline-safe), and the playbook
+auto-syncs this repo's field notes every 6h — the loop stays current with
+zero manual copying.
 
 ## Secrets
 
