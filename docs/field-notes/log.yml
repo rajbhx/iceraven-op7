@@ -345,6 +345,11 @@ sections:
         cause: "nested expansion inside a parameter-expansion pattern: ${OP7_VERSION_NAME%-op7r${REV}} — the inner ${REV} matched as a pattern"
         solution: "quote the inner expansion: ${OP7_VERSION_NAME%-op7r\"${REV}\"}; CI (actionlint+shellcheck) now green"
         tags: [shellcheck, workflow, quoting, actionlint]
+      - id: E15
+        problem: "local shellcheck/actionlint can't run under this sandbox (shellcheck binary gets killed), so workflow fixes had to round-trip through CI"
+        cause: "exec sandbox terminates the shellcheck subprocess; actionlint calls it per script"
+        solution: "rely on the CI actionlint step as the authoritative check (it runs in a container); keep local python yaml.safe_load as a fast pre-check"
+        tags: [actionlint, sandbox, ci]
   - id: F
     title: UI / perceived performance
     entries:
@@ -446,6 +451,11 @@ sections:
         cause: "upstream-check.yml dispatched op7-build with release=false; op7-build.yml only ran the release job when manually invoked with release=true + release_tag; nothing generated a tag"
         solution: "new auto_release input on op7-build.yml — after ALL quality gates pass, the release job is gated on the build job's release output (not the raw dispatch input); tag auto-generated from version.txt + op7-revision.txt (op7-<version>-r<rev>, v-prefix stripped); refuses fast=true + release combos (fast skips R8, not release evidence); release tag+secrets guards fail closed; upstream-check.yml now dispatches auto_release=true so a new upstream commit -> sync -> build -> gates pass -> GitHub Release automatically, while any conflict/failed gate still stops publishing"
         tags: [phase9, release, automation, gates, tag]
+      - id: G14
+        problem: "the op7-special-build skill that agents actually load (/root/.shared-skills/op7-special-build) was a static copy of the playbook repo's skills/op7-special-build — it could silently drift from the playbook source, so agents would re-derive stale knowledge"
+        cause: "no updater, no version marker; the playbook repo auto-syncs its notes layer but nothing pushed the skill directory to installs"
+        solution: "bundled scripts/update_skill.sh into the skill itself — cheap git ls-remote check against the playbook HEAD vs a .skill-installed-commit marker; only on change does it sparse-fetch, validate SKILL.md, and atomically swap with a timestamped backup (restores on failure); offline/rate-limited keeps the current copy and warns; resolves ~/.codex/skills symlink to update the real root; PLAYBOOK_REPO/SKILL_ROOT/EXTRA_SKILL_ROOTS overrides for other machines; SKILL.md/quickstart/README/AGENTS.md now tell agents to run it at session start"
+        tags: [skill, self-update, automation, playbook, bootstrap]
 recurring_signature: |
   If output is "sometimes there, sometimes not": it is almost always a transport
   race, not the command. Fix by staging on-device + verifying size/content, then
