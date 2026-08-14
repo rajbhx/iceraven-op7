@@ -12,7 +12,9 @@ app source, never replace GeckoView with WebView.
   refresh it first (self-updating):
   `bash /root/.shared-skills/op7-special-build/scripts/update_skill.sh`
   (one `git ls-remote` when up to date; sparse fetch + atomic backup on change;
-  offline keeps the current copy).
+  offline keeps the current copy). New machine/agent (no skill yet):
+  `git clone --depth 1 https://github.com/rajbhx/op7-special-build-playbook &&
+  bash op7-special-build-playbook/scripts/install_skill.sh`
 - Otherwise use the playbook: `gh repo clone rajbhx/op7-special-build-playbook`,
   then `python3 scripts/lookup.py <problem words>` (or grep `notes/*/INDEX.md`)
   before re-deriving anything. Every solved problem is recorded there.

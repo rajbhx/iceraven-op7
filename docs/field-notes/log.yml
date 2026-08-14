@@ -350,6 +350,11 @@ sections:
         cause: "exec sandbox terminates the shellcheck subprocess; actionlint calls it per script"
         solution: "rely on the CI actionlint step as the authoritative check (it runs in a container); keep local python yaml.safe_load as a fast pre-check"
         tags: [actionlint, sandbox, ci]
+      - id: E16
+        problem: "skill installs/updates in restricted sandboxes can report failure after a successful install"
+        cause: "the EXIT trap's rm -rf on the temp clone hit \"Operation not permitted\" on git pack files; with set -e the trap failure flipped the exit code"
+        solution: "cleanup is best-effort (rm -rf ... 2>/dev/null || true); verified fresh-install + idempotent re-run both exit 0"
+        tags: [sandbox, trap, exit-code, rm]
   - id: F
     title: UI / perceived performance
     entries:
@@ -456,6 +461,11 @@ sections:
         cause: "no updater, no version marker; the playbook repo auto-syncs its notes layer but nothing pushed the skill directory to installs"
         solution: "bundled scripts/update_skill.sh into the skill itself — cheap git ls-remote check against the playbook HEAD vs a .skill-installed-commit marker; only on change does it sparse-fetch, validate SKILL.md, and atomically swap with a timestamped backup (restores on failure); offline/rate-limited keeps the current copy and warns; resolves ~/.codex/skills symlink to update the real root; PLAYBOOK_REPO/SKILL_ROOT/EXTRA_SKILL_ROOTS overrides for other machines; SKILL.md/quickstart/README/AGENTS.md now tell agents to run it at session start"
         tags: [skill, self-update, automation, playbook, bootstrap]
+      - id: G15
+        problem: "connecting a NEW agent/machine to the playbook was a 3-step manual dance (clone, copy skill, write marker) with no single entry point"
+        cause: "only update_skill.sh existed (for already-installed skills); nothing bootstrapped the first install"
+        solution: "added scripts/install_skill.sh to the playbook — one command installs the skill from the playbook repo into $CODEX_HOME/skills (or ~/.codex/skills), writes the source-commit marker, then runs the skill's own updater to self-verify; idempotent (existing installs just refresh); KEEP_CLONE/SKILLS_DIR/PLAYBOOK_REPO overrides; cleanup trap tolerates sandboxes that deny rm (never flips exit code)"
+        tags: [skill, install, bootstrap, one-command, agents]
 recurring_signature: |
   If output is "sometimes there, sometimes not": it is almost always a transport
   race, not the command. Fix by staging on-device + verifying size/content, then
