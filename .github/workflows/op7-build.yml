@@ -156,7 +156,7 @@ jobs:
           REV="$(tr -d '[:space:]' < op7-revision.txt)"
           TAG="${{ github.event.inputs.release_tag }}"
           if [[ -z "$TAG" ]]; then
-            BASE="${OP7_VERSION_NAME%-op7r${REV}}"
+            BASE="${OP7_VERSION_NAME%-op7r"${REV}"}"
             BASE="${BASE#v}"
             TAG="op7-${BASE}-r${REV}"
           fi
