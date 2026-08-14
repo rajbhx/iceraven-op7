@@ -174,3 +174,23 @@ for battery.
 Measurement infrastructure to add (Phase 6): screen-off drain harness
 (`battery_profile.sh drain`), wakeup counter extraction, Perfetto frame traces,
 gfxinfo framestats. Idle windows + adb preferred for trustworthy numbers.
+
+## 10. omni-browser inspiration review (2026-08-14)
+
+Reviewed `https://github.com/REBEL-ROOT/omni-browser` via GitHub API only (no clone).
+Full notes: `docs/oneplus7/omni-inspiration.md`; lessons recorded in field-notes.
+
+- **Reuse (verified):** no-white-flash startup (== our 004+005), OLED-black chrome
+  discipline (== our 005 pure-black), separate dark/AMOLED toggle concept, per-ABI
+  release naming + keystore-wipe-in-`always()`.
+- **Highest-value gap found:** web *content* is not darkened by our UI patch. omni's
+  smart `force_dark` MV2 extension is the transferable model.
+  - **Now (Option A):** install a force-dark add-on from Iceraven's add-ons manager —
+    zero repo risk, works today.
+  - **Future (Option B):** bundle as a measured r8 patch, gated on Phase-2/6 data.
+- **Do NOT copy:** on-device AI (ASR/translation/captions), ExoPlayer media rewrite,
+  vault/QR/PDF/Discover/wallpaper, multi-ABI packaging.
+- **License:** omni is GPL-3.0, ours is MPL-2.0 — patterns only, never copy source.
+- **Status:** r7 (pure-black + OP7 red accent) is built and validated; only r1 has been
+  released so far. Releasing r7 is the next manual gate (dispatch `op7-build.yml` with
+  `release=true`).

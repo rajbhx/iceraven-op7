@@ -393,6 +393,11 @@ sections:
         cause: "unquoted YAML scalars containing ': ' broke generate_project_docs.py"
         solution: "quote all scalar values in docs/field-notes/log.yml"
         tags: [playbook, yaml, field-notes]
+      - id: F6
+        problem: "web content stays light even after app UI is pure-black"
+        cause: "005-amoled-dark patches only the app UI resources, not page rendering"
+        solution: "omni's force_dark MV2 extension (smart detection, scoped CSS, media-protected) is the transferable model; ship via add-on now (Option A), bundle as a measured r8 patch later (Option B)"
+        tags: [amoled, webcontent, addons]
   - id: G
     title: Playbook & knowledge
     entries:
@@ -481,6 +486,11 @@ sections:
         cause: "slug = args.pop(i) popped the literal '-s' flag, leaving the real slug in args"
         solution: "pop args[i + 1] for the slug, then pop the flag; verified all documented usages + edge cases (15/15)"
         tags: [playbook, lookup, scripts, bug]
+      - id: G18
+        problem: "need OP7 \"new things\" without cloning a second browser repo"
+        cause: "omni-browser (REBEL-ROOT) is a GeckoView-based browser; it is GPL-3.0 and a greenfield Compose app, not a Fenix fork"
+        solution: "reviewed via GitHub API only (tree + README + OmniApplication.kt + force_dark ext + release.yml); extracted transferable patterns into docs/oneplus7/omni-inspiration.md; recorded do-not-copy list + GPL-3.0 boundary"
+        tags: [research, inspiration, amoled, addons, gpl-3.0, release]
 recurring_signature: |
   If output is "sometimes there, sometimes not": it is almost always a transport
   race, not the command. Fix by staging on-device + verifying size/content, then
