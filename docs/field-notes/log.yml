@@ -57,22 +57,22 @@ sections:
         problem: "Expo/RN build repos cannot use upstream's EAS-based CI"
         cause: "eas build --local needs EAS project ownership + EXPO_TOKEN"
         solution: "expo prebuild --platform android --no-install + plain gradle assemble"
-        tags: [[expo, rn, eas, github-actions]]
+        tags: [expo, rn, eas, github-actions]
       - id: A13
         problem: "Expo SDK 55 lockfile drift broke compile (@siteed/audio-studio 3.2.1)"
         cause: "fresh bun.lock resolved siteed 3.2.1 whose Promise.reject(String?,...)"
         solution: "pin @siteed/audio-studio=3.0.3 via overrides/bun.lock; verify compile"
-        tags: [[expo, bun, lockfile, compile-error]]
+        tags: [expo, bun, lockfile, compile-error]
       - id: A14
         problem: "ONNX InferenceSession leaked per denoise job (processing screen)"
         cause: "process.tsx creates DeepFilterNet and never calls release(); recording"
         solution: "OP7 patch 001 — release() in finally (stability fix, not perf claim)"
-        tags: [[onnx, memory-leak, stability]]
+        tags: [onnx, memory-leak, stability]
       - id: A15
         problem: "rainManager APK has no native-code badging entry (lspatch libs in assets)"
         cause: "lspatch .so injected into patched Discord APK at patch time, not used by"
         solution: "validation gate for manager checks package/SDK/testOnly only"
-        tags: [[rain, lspatch, badging, abi]]
+        tags: [rain, lspatch, badging, abi]
   - id: B
     title: Release, signing, storage
     entries:
@@ -367,7 +367,7 @@ sections:
         problem: "playbook sync failed parsing project field-notes logs"
         cause: "unquoted YAML scalars containing ': ' broke generate_project_docs.py"
         solution: "quote all scalar values in docs/field-notes/log.yml"
-        tags: [[playbook, yaml, field-notes]]
+        tags: [playbook, yaml, field-notes]
   - id: G
     title: Playbook & knowledge
     entries:
